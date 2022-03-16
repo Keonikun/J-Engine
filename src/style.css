@@ -1,0 +1,72 @@
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body
+{
+    overflow: hidden;
+}
+
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+
+.title{
+    position: absolute;
+    left: 1%;
+    top: 1%;
+    z-index: 1;
+    color: white;
+}
+
+input[type=range] {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    background: rgb(66, 66, 66);
+    height: 5px
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 1px solid #000000;
+  height: 13px;
+  width: 13px;
+  border-radius: 6px;
+  background: #a0a0a0;
+  cursor: pointer;
+  }
+
+.yearSlider
+{
+    position: absolute;
+    left: 50%;
+    top: 90%;
+    width: 40%;
+    transform: translate(-50%,-50%);
+}
+
+.heightSlider
+{
+    position: absolute;
+    left: 80%;
+    top: 50%;
+    width: 30%;
+    transform: rotate(90deg);
+    background-color: grey;
+}
+
+.currentYear
+{
+    position: absolute;
+    left: 50%;
+    top: 85%;
+    transform: translate(-50%,-50%);
+    color: white;
+}
+
