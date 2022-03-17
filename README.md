@@ -1,5 +1,5 @@
 # J-Engine
- A THREE.js engine with a collection of tools to create online immersive 3D expreiences.
+ A THREE.js engine with a collection of tools to create online immersive 3D experiences.
 
 # Features
 
