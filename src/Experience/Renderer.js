@@ -21,7 +21,7 @@ export default class Renderer
             antialias: true
         })
         this.instance.outputEncoding = THREE.sRGBEncoding
-        this.instance.setClearColor('#000000')
+        this.instance.setClearColor('#ffffff')
         this.instance.setSize(this.sizes.width, this.sizes.height)
         this.instance.setPixelRatio(this.sizes.pixelRatio)
     }

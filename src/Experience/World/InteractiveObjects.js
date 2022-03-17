@@ -9,8 +9,13 @@ export default class InteractiveObjects
         this.firstPersonControls = this.experience.firstPersonControls
 
         // Setup
-        this.door = this.experience.world.models.door
-        this.door.scene.children.forEach(element =>
+        this.doorSpeed = 1.5
+
+        // Model Setup
+        this.door1 = this.experience.world.models.door1
+        this.door1.isOpen = false
+        this.door1.isMoving = false
+        this.door1.scene.children.forEach(element =>
         {
             element.children.forEach(element =>
                 {
@@ -27,23 +32,51 @@ export default class InteractiveObjects
     {
         this.firstPersonControls.on('interaction', () =>
         {
-            this.firstPersonControls.camRayIntersect.forEach(element =>
-            {
-                this.interactionType = element.object.name.substring(0,4)
-                this.interactionID = element.object.name.substring(4,10)
+            this.interactionElement = this.firstPersonControls.camRayIntersect[0]
+            this.interactionType = this.interactionElement.object.name.substring(0,4)
+            this.interactionID = this.interactionElement.object.name.substring(4,10)
 
-                // Triggrer Door Interaction
-                if(this.interactionType === 'door')
-                {
-                    this.doorInteraction()
-                }
-            })
+            // Door Interaction Trigger
+            if(this.interactionType === 'door')
+            {
+                this.doorInteraction()
+            }
         })
         
     }
 
     doorInteraction()
     {
-
+        this.currentDoor = eval("this." + this.interactionType + this.interactionID)
+        if(this.currentDoor.isOpen === false && this.currentDoor.isMoving === false)
+        {
+            // Set open state to true
+            this.currentDoor.isOpen = true
+            // Disallow interaction while active
+            this.currentDoor.isMoving = true
+            // Set rotation target and rotate
+            this.rotationTarget = this.currentDoor.scene.rotation.y + Math.PI * 0.5
+            gsap.to(this.currentDoor.scene.rotation, 
+            {y: this.rotationTarget, duration: this.doorSpeed, onComplete: () => 
+                {
+                    this.currentDoor.isMoving = false
+                }
+            }) 
+        }
+        else if(this.currentDoor.isOpen === true && this.currentDoor.isMoving === false)
+        {
+            // Set open state to false
+            this.currentDoor.isOpen = false
+            // Disallow interaction while active
+            this.currentDoor.isMoving = true
+            // Set rotation target and rotate
+            this.rotationTarget = this.currentDoor.scene.rotation.y - Math.PI * 0.5
+            gsap.to(this.currentDoor.scene.rotation, 
+            {y: this.rotationTarget, duration: this.doorSpeed, onComplete: () => 
+                {
+                    this.currentDoor.isMoving = false
+                }
+            }) 
+        }
     }
 }

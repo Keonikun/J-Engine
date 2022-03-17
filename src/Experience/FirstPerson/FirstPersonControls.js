@@ -66,7 +66,10 @@ export default class FirstPersonControls extends EventEmitter
         this.camRayCoords = new THREE.Vector2(0,0)
         this.camRay.setFromCamera(this.camRayCoords, this.camera)
         this.camRayIntersect = this.camRay.intersectObjects(this.scene.children, true)
-        this.trigger('interaction')
+        if(this.camRayIntersect[0] != null)
+        {
+            this.trigger('interaction')
+        }   
     }
 
     update()

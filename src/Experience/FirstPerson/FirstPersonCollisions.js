@@ -82,7 +82,7 @@ export default class FirstPersonCollisions
                 }
             }
             
-            if(this.northDetection.length != 0)
+            if(this.northDetection[0] != null)
             {
                 if(this.northDetection[0].distance <= this.collisionDistance)
                 {
@@ -90,15 +90,15 @@ export default class FirstPersonCollisions
                 }
                 else
                 {
-                    this.collisionMin.z = 1000
+                    this.collisionMax.z = 1000
                 }
             }
             else
             {
-                this.collisionMin.z = 1000
+                this.collisionMax.z = 1000
             }
 
-            if(this.eastDetection.length != 0)
+            if(this.eastDetection[0] != null)
             {
                 if(this.eastDetection[0].distance <= this.collisionDistance)
                 {
@@ -114,7 +114,7 @@ export default class FirstPersonCollisions
                 this.collisionMax.x = 1000
             }
 
-            if(this.southDetection.length != 0)
+            if(this.southDetection[0] != null)
             {
                 if(this.southDetection[0].distance <= this.collisionDistance)
                 {
@@ -130,7 +130,7 @@ export default class FirstPersonCollisions
                 this.collisionMin.z = -1000
             }
             
-            if(this.westDetection.length != 0)
+            if(this.westDetection[0] != null)
             {
                 if(this.westDetection[0].distance <= this.collisionDistance)
                 {

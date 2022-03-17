@@ -1,6 +1,6 @@
 {
     "asset" : {
-        "generator" : "Khronos glTF Blender I/O v1.8.19",
+        "generator" : "Khronos glTF Blender I/O v1.7.33",
         "version" : "2.0"
     },
     "scene" : 0,
@@ -16,10 +16,11 @@
         {
             "mesh" : 0,
             "name" : "door1",
-            "translation" : [
-                3.20833420753479,
-                1.0215859413146973,
-                -4.686225414276123
+            "rotation" : [
+                0,
+                0.7071068286895752,
+                0,
+                0.7071068286895752
             ]
         }
     ],

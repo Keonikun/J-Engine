@@ -5,8 +5,13 @@ export default [
         path: 'models/physMesh.gltf'
     },
     {
-        name: 'door',
+        name: 'door1',
         type: 'gltfModel',
-        path: 'models/door.gltf'
+        path: 'models/door1.gltf'
+    },
+    {
+        name: 'winterAnimation',
+        type: 'texture',
+        path: 'textures/winterAnimation.png'
     }
 ]
