@@ -6,20 +6,20 @@ import Renderer from './Renderer.js'
 import World from './World/World.js'
 import Resources from './Utils/Resources'
 import sources from './sources.js'
-import FirstPersonControls from './FirstPerson/FirstPersonControls'
-import FirstPersonCollisions from './FirstPerson/FirstPersonCollisions'
-
-
+import Debug from './Utils/Debug'
 
 export default class Experience
 {
     constructor(canvas)
     {
-        // Uncomment below for global access
+        // Uncomment below for global access in console
         // window.experience = this
 
         // Options
         this.canvas = canvas
+
+        // Debug
+        this.debug = new Debug(this)
 
         // Setup
         this.sizes = new Sizes()
@@ -29,9 +29,6 @@ export default class Experience
         this.camera = new Camera(this)
         this.renderer = new Renderer(this)
         this.world = new World(this)
-        this.firstPersonControls = new FirstPersonControls(this)
-        this.firstPersonCollisions = new FirstPersonCollisions(this)
-        
 
         // Loading
         this.loadingFinished = false
@@ -60,8 +57,6 @@ export default class Experience
         this.camera.update()
         this.world.update()
         this.renderer.update()
-        this.firstPersonControls.update()
-        this.firstPersonCollisions.update()
     }
 }
 

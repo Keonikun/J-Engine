@@ -12,15 +12,37 @@ export default class Camera{
         this.canvas = this.experience.canvas
 
         this.setInstance()
+
         // Uncomment below to enable Orbit Controls
         // this.setOrbitControls()
+
+        // Debug
+        this.debug = this.experience.debug
+
+        if(this.debug.active)
+        {
+            this.setSpawn = {
+                moveCameraToDefault: () => 
+                {
+                    this.instance.position.set( 0, 0, 0 )
+                }
+            }
+
+            this.cameraFolder = this.debug.ui.addFolder('Camera')
+            this.cameraFolder.add(this.instance.position, 'x')
+            this.cameraFolder.add(this.instance.position, 'y')
+            this.cameraFolder.add(this.instance.position, 'z')
+            this.cameraFolder.add(this.setSpawn, 'moveCameraToDefault')
+
+        }
     }
 
     setInstance()
     {
-        this.instance = new THREE.PerspectiveCamera(35, this.sizes.width / this.sizes.height, 0.1, 100)
-        this.instance.position.set(0,1.6,0)
-        this.instance.rotation.y = Math.PI * 0.5
+        this.instance = new THREE.PerspectiveCamera(40, this.sizes.width / this.sizes.height, 0.1, 100000)
+        this.instance.position.set(0,1000,0)
+        this.instance.rotation.x = Math.PI * 0.5
+        this.instance.rotation.y = Math.PI * 1
         this.scene.add(this.instance)
     }
 
@@ -38,10 +60,10 @@ export default class Camera{
         this.instance.updateProjectionMatrix()
     }
 
+
     update()
     {
-        // Enable Orbit Controls
+        // Enable Orbit Controls Below
         // this.controls.update()
-        
     }
 }

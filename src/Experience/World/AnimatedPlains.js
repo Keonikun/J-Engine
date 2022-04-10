@@ -10,24 +10,32 @@ export default class AnimatedPlains
         this.resources = this.experience.resources
 
         // Setup
-        this.winterAnimationTexture = this.resources.items.winterAnimation
+        this.doorSpriteSheet = this.resources.items.doorSpriteSheet
 
-        this.setWinterAnimationModel()
+        this.setAnimatedPlanes()
+
+        this.positionPlanes()
     }
 
-    setWinterAnimationModel()
+    setAnimatedPlanes()
     {
-        this.winterAnimation = new PlainAnimator(this.winterAnimationTexture, 6, 6, 10, 10)
-        this.winterAnimationGeo = new THREE.PlaneGeometry(2, 2)
-        this.winterAnimationMap = this.winterAnimation.init()
-        this.winterAnimationMat = new THREE.MeshBasicMaterial({map: this.winterAnimationMap, transparrent: true})
-        this.winterAnimationMesh = new THREE.Mesh(this.winterAnimationGeo, this.winterAnimationMat)
-        this.winterAnimationMesh.position.set(7.3,-1,3.5)
-        this.scene.add(this.winterAnimationMesh)
+        this.doorAnimPlane = new PlainAnimator( this.doorSpriteSheet, 3, 1, 3, 10 )
+        this.doorAnimPlaneGeo = new THREE.PlaneGeometry(1.3, 1)
+        this.doorAnimPlaneMap = this.doorAnimPlane.init()
+        this.doorAnimPlaneMat = new THREE.MeshBasicMaterial({map: this.doorAnimPlaneMap})
+        this.doorAnimPlaneMesh = new THREE.Mesh(this.doorAnimPlaneGeo, this.doorAnimPlaneMat)
+        this.scene.add(this.doorAnimPlaneMesh)
+    }
+
+
+    positionPlanes()
+    {
+        this.doorAnimPlaneMesh.position.set(7.10413,1.69006,-3.54885)
+        this.doorAnimPlaneMesh.rotation.y = Math.PI * 1.5
     }
 
     update()
     {
-        this.winterAnimation.animate()
+        this.doorAnimPlane.animate()
     }
 }

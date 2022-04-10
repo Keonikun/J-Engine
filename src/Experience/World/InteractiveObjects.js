@@ -6,24 +6,12 @@ export default class InteractiveObjects
     {
         this.experience = experience
         this.resources = this.experience.resources
-        this.firstPersonControls = this.experience.firstPersonControls
+        this.firstPersonControls = this.experience.world.firstPersonControls
 
         // Setup
         this.doorSpeed = 1.5
 
         // Model Setup
-        this.door1 = this.experience.world.models.door1
-        this.door1.isOpen = false
-        this.door1.isMoving = false
-        this.door1.scene.children.forEach(element =>
-        {
-            element.children.forEach(element =>
-                {
-                    // IMPORTANT: first 4 elements determine object type,
-                    // while numbers after determine object ID
-                    element.name = 'door1'
-                })
-        })
 
         this.interactionTrigger()
     }

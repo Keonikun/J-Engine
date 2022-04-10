@@ -11,20 +11,45 @@ export default class Models
     
         // GLTF Setup
         this.physMesh = this.resources.items.physMesh
-        this.door1 = this.resources.items.door1
 
         this.setModels()
+        this.setModelAnimations()
         this.positionModels()
     }
 
     setModels()
     {
         this.scene.add(this.physMesh.scene)
-        this.scene.add(this.door1.scene)
+    }
+    
+    setModelAnimations()
+    {
+        this.doorMixer = new THREE.AnimationMixer( this.physMesh.scene )
+        this.doorAnimation = this.doorMixer.clipAction(this.physMesh.animations[0])
+        this.doorAnimation.setLoop( THREE.LoopOnce )
+        this.doorAnimation.clampWhenFinished = true
+
+        this.drawerMixer = new THREE.AnimationMixer( this.physMesh.scene )
+        this.drawerAnimation = this.drawerMixer.clipAction(this.physMesh.animations[1])
+        this.drawerAnimation.clampWhenFinished = false
     }
 
     positionModels()
     {
-        this.door1.scene.position.set(-5.95,0.9,-15.2)
+        
+    }
+
+    playAnimation(animation)
+    {
+        eval("this." + animation + ".play()")
+    }
+
+    update()
+    {
+        if(this.experience.loadingFinished === true)
+        {
+            this.doorMixer.update(this.time.delta * 0.001)
+            this.drawerMixer.update(this.time.delta * 0.001)
+        }
     }
 }
