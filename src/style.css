@@ -1,0 +1,437 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    overflow: hidden;
+}
+
+html,
+body
+{
+    background-color: rgb(240, 240, 240);
+}
+
+.experienceContainer
+{
+    height: 100%;
+    width: 100%;
+    background-color: rgb(87, 49, 49);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+}
+
+.experienceContainer.square
+{
+    max-width: 100vh;
+}
+
+@media only screen and (max-width: 700px), (max-height: 700px)
+{
+    .experienceContainer
+    {
+        min-width: 0;
+        min-height: 0;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        transform: none;
+    }
+}
+
+.titleScreen
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(40, 52, 63);
+    box-sizing: border-box;
+    border: 10px solid rgb(18, 22, 34);
+    opacity: 1;
+    transition: 0.5s;
+    z-index: 3;
+}
+
+.titleScreen.hidden
+{
+    opacity: 0;
+}
+
+.titleText
+{
+    position: absolute;
+    left: 50%;
+    top: 39%;
+    transform: translate(-50%,-50%);
+    font-size: 30px;
+    text-align: center;
+    color: rgb(162, 211, 255);
+    font-style: italic;
+}
+
+.authorText
+{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 15px;
+    text-align: center;
+    color: rgb(98, 110, 121);
+}
+
+.loadingText
+{
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%,-50%);
+    font-size: 20px;
+    text-align: center;
+    opacity: 1;
+    transition: 0.5s;
+    color: white;
+}
+
+.loadingText.hidden
+{
+    opacity: 0;
+}
+
+.loadingBarContainer
+{
+    position: absolute;
+    top: 64%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30%;
+    height: 10px;
+    background-color: rgb(20, 23, 31);
+    overflow: hidden;
+    opacity: 1;
+    transition: 1s;
+}
+
+.loadingBarContainer.hidden
+{
+    opacity: 0;
+}
+
+.loadingBar
+{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0;
+    height: 25%;
+    background-color: white;
+    box-sizing: border-box;
+    margin-left: 4px;
+    transform: translate(0,-50%);
+}
+
+.startGame
+{
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%,-50%);
+    font-size: 20px;
+    text-align: center;
+    color: white;
+    visibility: visible;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.startGame.hidden
+{
+    visibility: hidden;
+    opacity: 0;
+}
+
+.startGame:hover
+{
+    color: rgb(200, 230, 255);
+}
+
+.loadGame
+{
+    position: absolute;
+    left: 50%;
+    top: 75%;
+    transform: translate(-50%,-50%);
+    font-size: 20px;
+    text-align: center;
+    color: white;
+    visibility: visible;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.loadGame.hidden
+{
+    visibility: hidden;
+    opacity: 0;
+}
+
+.loadGame:hover
+{
+    color: rgb(200, 230, 255);
+}
+
+.titleScreen.hidden
+{
+    opacity: 0;
+}
+
+.webgl
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    outline: none;
+    visibility: visible;
+}
+
+.experienceContainer.webglHidden .webgl
+{
+    visibility: hidden;
+}
+
+.navBox
+{
+    z-index: 2;
+    position: absolute;
+    background-color: rgb(54, 54, 54);
+    width: 100%;
+    overflow: visible;
+    height: 0%;
+    bottom: 0;
+    color: white;
+    justify-content: center;
+    display: flex;
+    flex-flow: wrap;
+    transition: 1s;
+}
+
+.experienceContainer.navBoxDefault .navBox
+{
+    height: 30%;
+}
+
+.experienceContainer.navBoxFull .navBox
+{
+    height: 100%;
+}
+
+.experienceContainer.webglHidden .navBox
+{
+    height: 100%;
+}
+
+.pointerLockNotification
+{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    background-color: rgba(255,255,255,0.5);
+    backdrop-filter: blur(10px);
+    opacity: 1;
+    transition: 1s;
+    padding: 10px;
+}
+
+.pointerLockNotification.hidden
+{
+    opacity: 0;
+}
+
+.score
+{
+    z-index: 3;
+    position: absolute;
+    bottom: 2%;
+    left: 20px;
+    color: lightcoral;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.score.hidden
+{
+    opacity: 0;
+}
+
+.textBox
+{
+    margin: 10px;
+    width: 100%;
+    height: 70%;
+    box-sizing: border-box;
+    top: 0;
+    overflow: auto;
+    background-color: rgb(41, 41, 41);
+    transition: 1s;
+    /* display: flex;
+    flex-direction: column-reverse; */
+}
+
+.textBox p
+{
+    margin: 10px;
+    margin-right: 40px;
+}
+
+.textBox a
+{
+    margin-left: 40px;
+    line-height: 40px;
+    margin-right: 20px;
+}
+
+.experienceContainer.userInputHidden .textBox
+{
+    height: 90%;
+}
+
+.experienceContainer.webglHidden .textBox
+{
+    height: 90%;
+}
+
+.flexDivider
+{
+    flex-basis: 100%;
+    height: 0;
+    margin: 0;
+    border: 0;
+}
+
+.userInput
+{
+    margin: 10px;
+    margin-top: 0;
+    width: 100%;
+    bottom: 0;
+    height: 5%;
+    overflow: hidden;
+}
+
+.experienceContainer.userInputHidden .userInput
+{
+    visibility: hidden;
+}
+
+.textInput
+{
+    width: 100%;
+    padding: 5px;
+    border: none;
+    background-color: rgb(0, 0, 0);
+    color: rgb(218, 170, 170);
+    overflow: hidden;
+}
+
+.textInput:focus, input:focus
+{
+    outline: none;
+}
+
+.submitInput
+{
+    height: 100%;
+    width: 50px;
+    right: 0;
+    transform: translate(0,-50%);
+    background-color: black;
+    text-decoration: none;
+    color: rgb(218, 170, 170);
+    font-size: 20px;
+    border: none;
+    transition: 0.2s;
+    visibility: hidden;
+}
+
+.submitInput:hover
+{
+    color: rgb(99, 78, 78);
+    cursor: pointer;
+}
+
+.controlsBox
+{
+    position: absolute;
+    width: 17%;
+    bottom: 10px;
+    right: 0;
+}
+
+.controlsBox *
+{
+    color: rgb(218, 170, 170);
+    text-align: center;
+    font-size: 18px;
+    margin: 8px;
+}
+
+.cardinalDirections
+{
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    display: grid;
+    gap: 2px;
+    grid-template-columns: 3;
+    grid-template-rows: 3;
+    background-color: rgb(36, 36, 36);
+    left: 83%;
+    top: 0;
+    margin: 10px;
+}
+
+.cardinalDirections *
+{
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+}
+
+.cardinalDirections *.active
+{
+    color: rgb(218, 170, 170);
+}
+
+.forwardControl
+{
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.backwardControl
+{
+    grid-column: 2;
+    grid-row: 3;
+    color: red;
+}
+
+.leftControl
+{
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.rightControl
+{
+    grid-column: 3;
+    grid-row: 2;
+}

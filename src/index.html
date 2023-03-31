@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J-Engine</title>
+</head>
+<body>
+    <div class="experienceContainer navBoxDefault userInputHidden square">
+        <div class="titleScreen">
+            <p class="titleText">J-Engine</p>
+            <p class="authorText">By Julien Darling-Funk</p>
+            <p class="loadingText">Loading: 0%</p>
+            <div class="loadingBarContainer">
+                <div class="loadingBar"></div>
+            </div>
+            <p class="startGame hidden">Begin</p>
+            <p class="loadGame hidden">Load</p>
+        </div>
+        <!-- THREE JS CANVAS -->
+        <canvas class="webgl"></canvas>
+        <div class="2DVisual"></div>
+        <div class="navBox">
+            <div class="textBox">
+            </div>
+            <hr class="flexDivider">
+            <div class="userInput hidden" id="userInput"> 
+                <input class="textInput" id="textInput" type="text" value="">
+                <button class="submitInput">►</button>
+            </div>
+            <!-- <div class="cardinalDirections">
+                <a href="#" class="forwardControl" draggable="false">↑</a>
+                <a href="#" class="rightControl" draggable="false">→</a>
+                <a href="#" class="backwardControl" draggable="false">↓</a>
+                <a href="#" class="leftControl" draggable="false">←</a>
+            </div>
+            <div class="score hidden">Score: </div>  -->
+        </div>
+    </div>
+    
+</body>
+</html>
