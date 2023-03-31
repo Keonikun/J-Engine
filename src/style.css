@@ -24,14 +24,27 @@ body
     top: 50%;
     transform: translate(-50%, -50%);
     overflow: hidden;
+    border: none;
 }
 
-.experienceContainer.square
+.experienceContainer.fullSquare
 {
     max-width: 100vh;
 }
 
-@media only screen and (max-width: 700px), (max-height: 700px)
+.experienceContainer.fullscreen
+{
+    max-width: 100%;
+}
+
+.experienceContainer.square
+{
+    max-width: 700px;
+    max-height: 700px;
+    border: 7px solid rgb(44, 44, 53);
+}
+
+@media only screen and (max-height: 700px)
 {
     .experienceContainer
     {
@@ -39,9 +52,7 @@ body
         min-height: 0;
         width: 100%;
         height: 100%;
-        left: 0;
-        top: 0;
-        transform: none;
+        top: 50%;
     }
 }
 

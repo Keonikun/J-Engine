@@ -3,30 +3,41 @@
 
 # Features
 
-First Person Controls - Look around with mouse, WASD to move
-
-Collision detection - a bit rough but it works
-
-Resource Loader - gltf, jpg, png
-
-Animated textures (three-plain-animator)
-
+- First Person Controls
+- Collision detection
+- Resource Loader
+- Animated textures (three-plain-animator)
+- Text dialogue with choice-based events
+- Rain system (Particles)
+- Dev Mode (Debug)
+- Visual ambience
+- Skybox
 
 # In development
 
-CSS Renderer to Run HTML within the 3D scene
-
-Positional audio with volume adjustment
-
-Reticle
-
+- CSS Renderer (html within 3d scene)
+- Positional audio with volume adjustment
+- Ambient audio
+- Footsteps system
+- Dynamic events
+- Skybox/fog mixing
+- Day/night cycle
+- Water shader
+- Weather system
+- Functioning doors
+- Interactive objects
+- NPC system
 
 # Sources
 
 Based on Bruno Simon's code structured project.
 
-https://threejs-journey.com/
+https://github.com/brunosimon
 
 three-plain-animator by MaciejWWojcik
 
 https://github.com/MaciejWWojcik/three-plain-animator
+
+typewriterjs by tameemsafi
+
+https://github.com/tameemsafi/typewriterjs
