@@ -1,7 +1,13 @@
 # J-Engine
- A THREE.js engine with a collection of tools to create online immersive 3D experiences.
+ A THREE.js engine with a collection of tools to create online 3D/2D experiences.
 
-# Features
+#### Table of Contents
+[Features](#Features)
+[In Development](#In-Development)
+[Installation](#Installation)
+[Sources](#Sources)
+
+## Features
 
 - First Person Controls
 - Collision detection
@@ -13,7 +19,7 @@
 - Visual ambience
 - Skybox
 
-# In development
+## In Development
 
 - CSS Renderer (html within 3d scene)
 - Positional audio with volume adjustment
@@ -28,7 +34,14 @@
 - Interactive objects
 - NPC system
 
-# Sources
+## Installation
+
+1. Click 'Code', then download zip or open with Github Desktop.
+2. Unzip file and open folder with IDE (code editor): https://code.visualstudio.com/
+3. In the IDE terminal, install project dependencies by typing 'npm install'
+4. To run the project locally, type 'npm run dev'
+
+## Sources
 
 Based on Bruno Simon's code structured project.
 
