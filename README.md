@@ -3,8 +3,11 @@
 
 #### Table of Contents
 [Features](#Features)
+
 [In Development](#In-Development)
+
 [Installation](#Installation)
+
 [Sources](#Sources)
 
 ## Features
