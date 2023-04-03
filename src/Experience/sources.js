@@ -10,6 +10,12 @@ export default [
     /**
      * ---------TEXTURES---------
      */
+    // simple textures
+    {
+        name: 'rainTexture',
+        type: 'texture',
+        path: 'textures/static/rain.png'
+    },
     // texture animations
     {
         name: 'winterAnimation',
@@ -34,8 +40,18 @@ export default [
      * ---------AUDIO-----------
      */
     {
-        name: 'footsteps',
+        name: 'trainCrossing',
         type: 'audio',
-        path: 'audio/footsteps.mp3'
-    }
+        path: 'audio/trainCrossing.ogg'
+    },
+    {
+        name: 'windowRain',
+        type: 'audio',
+        path: 'audio/windowRain.ogg'
+    },
+    {
+        name: 'rain',
+        type: 'audio',
+        path: 'audio/rain.ogg'
+    },
 ]

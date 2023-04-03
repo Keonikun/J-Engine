@@ -10,8 +10,8 @@ export default class Environment
         this.debug = this.experience.debug
 
         this.params = {
-            backgroundAndFogCol: '#adadad',
-            backgroundCol: '#adadad',
+            backgroundAndFogCol: '#5c5c5c',
+            backgroundCol: '#5c5c5c',
             ambientLightInt: 1,
             ambientLightCol: '#ffffff',
             dirLightInt: 0.8,
@@ -19,7 +19,7 @@ export default class Environment
             dirLightPosX: 3.5,
             dirLightPosY: 2,
             dirLightPosZ: - 1.25,
-            fogCol: '#adadad',
+            fogCol: '#5c5c5c',
             fogNear: 20,
             fogFar: 35,
             envMapEnabled: false,

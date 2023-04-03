@@ -26,7 +26,7 @@ export default class Camera{
 
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder('Player Camera')
+            this.debugFolder = this.debug.FPDebugFolder
             this.debugFolder.add(this.params, 'resetPosition')
             this.debugFolder.add(this.params, 'posX').onChange(() =>
             {

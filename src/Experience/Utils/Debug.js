@@ -25,8 +25,9 @@ export default class Debug
             }
             document.body.appendChild(this.stats.dom)
             this.gui = new GUI()
+            this.gui.close()
 
-            this.debugFolder = this.gui.addFolder('debug')
+            this.debugFolder = this.gui.addFolder('Debug Tools')
             this.debugFolder.add(this.params, 'fpsMonitor').onChange(() =>
             {
                 if(this.params.fpsMonitor === true)
@@ -39,6 +40,8 @@ export default class Debug
                 }
             })
             this.debugFolder.close()
+            this.FPDebugFolder = this.gui.addFolder( 'Player' )
+            this.FPDebugFolder.close()
         }
     }
 

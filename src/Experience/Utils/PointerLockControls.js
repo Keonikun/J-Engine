@@ -28,6 +28,7 @@ class PointerLockControls extends EventDispatcher {
 		// Range is 0 to Math.PI radians
 		this.minPolarAngle = 0; // radians
 		this.maxPolarAngle = Math.PI; // radians
+		this.eulerX = 0
 
 		this.params = {
 			pointerSpeed: 1.0
@@ -60,6 +61,7 @@ class PointerLockControls extends EventDispatcher {
 
 			scope.dispatchEvent( _changeEvent );
 
+			scope.eulerX = _euler.x
 		}
 
 		function onPointerlockChange() {

@@ -16,8 +16,6 @@ export default class TextEvents
         
         // currently, cursor does not work as intended. Leave as "" for now
         this.params = {
-            navBoxSetting: 'default',
-            windowMode: 'fullscreen',
             textCursor: "",
             typeSpeed: 20,
             textDelay: 1000,
@@ -42,7 +40,6 @@ export default class TextEvents
             })   
         })
 
-        this.setExperienceContainer()
         this.pinScrollToBottom()
         this.setDebug()
         this.createTypewriter()
@@ -245,41 +242,6 @@ export default class TextEvents
         
     }
 
-    navBoxModify(setting)
-    {
-        if(setting === 'default')
-        {
-            document.querySelector('.experienceContainer').classList.add('navBoxDefault')
-            document.querySelector('.experienceContainer').classList.remove('navBoxFull')
-        }
-        if(setting === 'hidden')
-        {
-            document.querySelector('.experienceContainer').classList.remove('navBoxDefault')
-            document.querySelector('.experienceContainer').classList.remove('navBoxFull')
-        }
-        if(setting === 'fullscreen')
-        {
-            document.querySelector('.experienceContainer').classList.remove('navBoxDefault')
-            document.querySelector('.experienceContainer').classList.add('navBoxFull')
-        }
-    }
-
-    setExperienceContainer()
-    {
-        if(this.params.windowMode === 'fullscreen')
-        {
-
-        }
-        else if(this.params.windowMode === 'fullSquare')
-        {
-
-        }
-        else if(this.params.windowMode === 'square')
-        {
-
-        }
-    }
-
     pinScrollToBottom()
     {
         this.textBoxHeight = 0
@@ -299,10 +261,6 @@ export default class TextEvents
         if(this.debug.active)
         {
             this.debugFolder = this.debug.gui.addFolder( 'Textbox' )
-            this.debugFolder.add(this.params, 'navBoxSetting', [ 'default', 'hidden', 'fullscreen']).onChange(() =>
-            {
-                this.navBoxModify(this.params.navBoxSetting)
-            })
             // this.debugFolder.add(this.params, 'textCursor', { none: "", simple: "|", slanted: "/", upArrow: "^" }).onChange((cursor) =>
             // {
             //     this.typewriter.changeCursor(cursor)

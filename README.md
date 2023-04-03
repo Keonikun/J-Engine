@@ -2,13 +2,10 @@
  A THREE.js engine with a collection of tools to create online 3D/2D experiences.
 
 #### Table of Contents
-[Features](#Features)
-
-[In Development](#In-Development)
-
-[Installation](#Installation)
-
-[Sources](#Sources)
+-[Features](#Features)
+-[In Development](#In-Development)
+-[Installation](#Installation)
+-[Sources](#Sources)
 
 ## Features
 

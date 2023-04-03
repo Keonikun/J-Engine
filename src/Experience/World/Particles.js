@@ -11,14 +11,14 @@ export default class Particles
         this.debug = this.experience.debug
 
         this.params = {
-            rainEnabled: false,
-            rainDropCount: 1000,
-            rainDropSpeed: 0.2,
-            rainDropColor: '#103032',
-            rainDropSize: 0.1,
+            rainEnabled: true,
+            rainDropCount: 2000,
+            rainDropSpeed: 0.16,
+            rainDropColor: '#3a3489',
+            rainDropSize: 0.8,
             rainSimDistance: 20,
             rainHeightSpawn: 40,
-            rainHeightDeath: -10,
+            rainHeightDeath: -20,
             windX: 0,
             windZ: 0
         }
@@ -28,10 +28,7 @@ export default class Particles
             this.setRain()
         }
 
-        if(this.debug.active)
-        {
-            this.setDebug()
-        }
+        this.setDebug()
     }
 
     setRain()
@@ -49,9 +46,12 @@ export default class Particles
         this.rainGeo.setAttribute( 'position', new THREE.BufferAttribute( this.rainArray, 3 ))
 
         this.rainMat = new THREE.PointsMaterial({
+            map: this.resources.items.rainTexture,
             color: this.params.rainDropColor,
             size: this.params.rainDropSize,
-            sizeAttenuation: true
+            sizeAttenuation: true,
+            transparent: true,
+            
         })
 
         this.rain = new THREE.Points(this.rainGeo, this.rainMat)
@@ -60,7 +60,7 @@ export default class Particles
 
     update()
     {
-        if(this.params.rainEnabled === true)
+        if(this.params.rainEnabled === true && this.experience.worldLoaded === true)
         {
             this.rainAnimPositions = this.rain.geometry.attributes.position.array
             for( let i = 0; i < this.params.rainDropCount * 3; i+=3 )
@@ -86,6 +86,13 @@ export default class Particles
                 this.rain.geometry.attributes.position.needsUpdate = true
             }
 
+            // Update particle size when looking up
+            this.camX = this.experience.firstPerson.pointerLockControls.eulerX
+            if(this.camX > 0 && this.camX < Math.PI * 0.5)
+            {
+                this.rain.material.size = this.params.rainDropSize - (this.params.rainDropSize * ( this.camX / (Math.PI * 0.7)))
+            }
+
             this.rain.position.x = this.camera.position.x - Math.pow(this.params.windX, 2) * 2
             this.rain.position.z = this.camera.position.z - Math.pow(this.params.windZ, 2) * 2
         }
@@ -93,59 +100,62 @@ export default class Particles
 
     setDebug()
     {
-        this.debugFolder = this.debug.gui.addFolder('Particles')
-        this.debugFolder.add(this.params, 'rainEnabled').onChange(() =>
+        if(this.debug.active)
         {
-            if(this.params.rainEnabled === true)
+            this.debugFolder = this.debug.gui.addFolder('Particles')
+            this.debugFolder.add(this.params, 'rainEnabled').onChange(() =>
             {
-                this.setRain()
-            }
-            else
+                if(this.params.rainEnabled === true)
+                {
+                    this.setRain()
+                }
+                else
+                {
+                    this.rain.geometry.dispose()
+                    this.rain.material.dispose()
+                    this.scene.remove(this.rain)
+                }
+            })
+            this.debugFolder.add(this.params, 'rainDropCount').onChange(() =>
             {
-                this.rain.geometry.dispose()
-                this.rain.material.dispose()
-                this.scene.remove(this.rain)
-            }
-        })
-        this.debugFolder.add(this.params, 'rainDropCount').onChange(() =>
-        {
-            if(this.params.rainEnabled)
+                if(this.params.rainEnabled)
+                {
+                    this.rain.geometry.dispose()
+                    this.rain.material.dispose()
+                    this.scene.remove(this.rain)
+                    this.setRain()
+                }
+            })
+            this.debugFolder.add(this.params, 'rainDropSpeed', 0.001, 0.5)
+            this.debugFolder.addColor(this.params, 'rainDropColor').onChange(() =>
             {
-                this.rain.geometry.dispose()
-                this.rain.material.dispose()
-                this.scene.remove(this.rain)
-                this.setRain()
-            }
-        })
-        this.debugFolder.add(this.params, 'rainDropSpeed', 0.001, 0.5)
-        this.debugFolder.addColor(this.params, 'rainDropColor').onChange(() =>
-        {
-            if(this.params.rainEnabled)
+                if(this.params.rainEnabled)
+                {
+                    this.rain.material.color.set(this.params.rainDropColor)
+                }
+            })
+            this.debugFolder.add(this.params, 'rainDropSize', 0.01, 0.5).onChange(() =>
             {
-                this.rain.material.color.set(this.params.rainDropColor)
-            }
-        })
-        this.debugFolder.add(this.params, 'rainDropSize', 0.01, 0.5).onChange(() =>
-        {
-            if(this.params.rainEnabled)
+                if(this.params.rainEnabled)
+                {
+                    this.rain.material.size = this.params.rainDropSize
+                }
+            })
+            this.debugFolder.add(this.params, 'rainSimDistance').onChange(() =>
             {
-                this.rain.material.size = this.params.rainDropSize
-            }
-        })
-        this.debugFolder.add(this.params, 'rainSimDistance').onChange(() =>
-        {
-            if(this.params.rainEnabled)
-            {
-                this.rain.geometry.dispose()
-                this.rain.material.dispose()
-                this.scene.remove(this.rain)
-                this.setRain()
-            }
-        })
-        this.debugFolder.add(this.params, 'rainHeightSpawn', 0, 100)
-        this.debugFolder.add(this.params, 'rainHeightDeath', -100, 0)
-        this.debugFolder.add(this.params, 'windX', -0.2, 0.2)
-        this.debugFolder.add(this.params, 'windZ', -0.2, 0.2)
-        this.debugFolder.close()
+                if(this.params.rainEnabled)
+                {
+                    this.rain.geometry.dispose()
+                    this.rain.material.dispose()
+                    this.scene.remove(this.rain)
+                    this.setRain()
+                }
+            })
+            this.debugFolder.add(this.params, 'rainHeightSpawn', 0, 100)
+            this.debugFolder.add(this.params, 'rainHeightDeath', -100, 0)
+            this.debugFolder.add(this.params, 'windX', -0.2, 0.2)
+            this.debugFolder.add(this.params, 'windZ', -0.2, 0.2)
+            this.debugFolder.close()     
+        }
     }
 }

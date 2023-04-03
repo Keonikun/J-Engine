@@ -14,49 +14,49 @@ export default class FirstPerson
         this.renderer = this.experience.renderer.instance
         this.debug = this.experience.debug
 
-        // arrow controls html listeners
-        this.forwardButton = document.querySelector('.forwardControl')
-        this.backwardButton = document.querySelector('.backwardControl')
-        this.leftButton = document.querySelector('.leftControl')
-        this.rightButton = document.querySelector('.rightControl')
-
-        this.forwardArrow = false
-        this.backwardArrow = false
-        this.leftArrow = false
-        this.rightArrow = false
-
-        // speed is a placeholder, actual speed is controlled by playerSpeed and playerSprintSpeed
-        this.player = { speed: 0, playerHeight: 1.6, playerSpeed: 0.02, sprintFactor: 1.5, walking: false, sprintingEnabled: true }
-        this.playerWalkingCount = 0
-
-        if(this.debug.active)
-        {
-            this.debugFolder = this.debug.gui.addFolder( 'Player Controls' )
-            this.debugFolder.add(this.player, 'playerSpeed', 0.001, 0.1)
-            this.debugFolder.add(this.player, 'playerHeight', 0.1, 4)
-            this.debugFolder.add(this.player, 'sprintingEnabled')
-            this.debugFolder.add(this.player, 'sprintFactor', 1, 5)
-            this.debugFolder.close()
+        this.params = { 
+            playerHeight: 1.6, 
+            playerSpeed: 0.02, 
+            sprintFactor: 1.5, 
+            walking: false, 
+            sprintingEnabled: true,
+            collisionDistance: 0.5
         }
-        
-        this.cameraDirection = new THREE.Vector3()
-
-        this.collisionDistance = 0.5
-
-        this.collisionMin = new THREE.Vector3(-1000,-1000,-1000)
-        this.collisionMax = new THREE.Vector3(1000,1000,1000)
 
         this.resources.on('ready', () =>
         {    
             this.models = this.experience.world.models
         })
 
-        this.setRayCaster()
+        this.setup()
+        this.setCollisionRayCaster()
         this.setKeyListener()
         this.setPointerLockControls()
+        this.setDebug()
     }
 
-    setRayCaster()
+    setup()
+    {
+        this.velocity = 0
+        this.playerWalkingCount = 0
+
+        this.cameraDirection = new THREE.Vector3()
+        this.collisionMin = new THREE.Vector3(-1000,-1000,-1000)
+        this.collisionMax = new THREE.Vector3(1000,1000,1000)
+
+        this.forwardArrow = false
+        this.backwardArrow = false
+        this.leftArrow = false
+        this.rightArrow = false
+
+        // arrow controls html listeners
+        this.forwardButton = document.querySelector('.forwardControl')
+        this.backwardButton = document.querySelector('.backwardControl')
+        this.leftButton = document.querySelector('.leftControl')
+        this.rightButton = document.querySelector('.rightControl')
+    }
+
+    setCollisionRayCaster()
     {
         this.detectFloor = new THREE.Raycaster()
         this.floorDirection = new THREE.Vector3( this.camera.getWorldPosition.x, -1, this.camera.getWorldPosition.z )
@@ -158,6 +158,9 @@ export default class FirstPerson
                         })
                     })
                 }
+                // If the player is already using first person controls and clicks,
+                // trigger a raycast from the camera to check if the object the
+                // player has clicked on is an interactable element.
                 else if(this.pointerLockControls.isLocked === true)
                 {
                     this.raycastFromCamera()
@@ -170,13 +173,17 @@ export default class FirstPerson
     raycastFromCamera()
     {
         this.camRay = new THREE.Raycaster()
-        this.camRayCoords = new THREE.Vector2(0,0)
+        this.camRayCoords = new THREE.Vector2()
         this.camRay.setFromCamera(this.camRayCoords, this.camera)
         this.camRayIntersect = this.camRay.intersectObjects(this.scene.children, true)
-        // if(this.camRayIntersect[0] != null)
-        // {
-        //     this.trigger('interaction')
-        // }   
+        console.log(this.camRayIntersect[0])
+        if(this.camRayIntersect[0] != null)
+        {
+            if(this.params.locationHelper === true)
+            {
+                this.locationHelper.position.set()
+            }
+        }   
     }
 
     update()
@@ -190,46 +197,46 @@ export default class FirstPerson
             //Forward
             if(this.keyboard[87])
             {
-                this.camera.position.x -= -Math.sin(this.yAngle) * this.player.speed
-                this.camera.position.z += Math.cos(this.yAngle) * this.player.speed
+                this.camera.position.x -= -Math.sin(this.yAngle) * this.velocity
+                this.camera.position.z += Math.cos(this.yAngle) * this.velocity
             }
             //Backward
             if(this.keyboard[83])
             {
-                this.camera.position.x += -Math.sin(this.yAngle) * this.player.speed
-                this.camera.position.z -= Math.cos(this.yAngle) * this.player.speed
+                this.camera.position.x += -Math.sin(this.yAngle) * this.velocity
+                this.camera.position.z -= Math.cos(this.yAngle) * this.velocity
             }
             //Left
             if(this.keyboard[65])
             {
-                this.camera.position.x -= Math.sin(this.yAngle - Math.PI/2) * this.player.speed
-                this.camera.position.z -= Math.cos(this.yAngle - Math.PI/2) * this.player.speed
+                this.camera.position.x -= Math.sin(this.yAngle - Math.PI/2) * this.velocity
+                this.camera.position.z -= Math.cos(this.yAngle - Math.PI/2) * this.velocity
             }
             //Right
             if(this.keyboard[68])
             {
-                this.camera.position.x -= -Math.sin(this.yAngle - Math.PI/2) * this.player.speed
-                this.camera.position.z += Math.cos(this.yAngle - Math.PI/2) * this.player.speed
+                this.camera.position.x -= -Math.sin(this.yAngle - Math.PI/2) * this.velocity
+                this.camera.position.z += Math.cos(this.yAngle - Math.PI/2) * this.velocity
             }
             //Run
             if(this.keyboard[16])
             {
-                if(this.player.sprintingEnabled === true)
+                if(this.params.sprintingEnabled === true)
                 {
-                    this.player.speed = this.player.playerSpeed * this.player.sprintFactor
+                    this.velocity = this.params.playerSpeed * this.params.sprintFactor
                 }
             }
             else
             {
-                this.player.speed = this.player.playerSpeed
+                this.velocity = this.params.playerSpeed
             }
             if(this.keyboard[87] || this.keyboard[83] || this.keyboard[65] || this.keyboard[68])
             {
-                this.player.walking = true
+                this.params.walking = true
             }
             else
             {
-                this.player.walking = false
+                this.params.walking = false
             }
         }
 
@@ -246,8 +253,8 @@ export default class FirstPerson
             //Forward
             if(this.keyboard[38] || this.forwardArrow)
             {   
-                this.camera.position.x -= -Math.sin(this.yAngle) * this.player.speed
-                this.camera.position.z += Math.cos(this.yAngle) * this.player.speed
+                this.camera.position.x -= -Math.sin(this.yAngle) * this.velocity
+                this.camera.position.z += Math.cos(this.yAngle) * this.velocity
                 // this.forwardButton.classList.add('active')
             }
             else
@@ -257,8 +264,8 @@ export default class FirstPerson
             //Backward
             if(this.keyboard[40] || this.backwardArrow)
             {
-                this.camera.position.x += -Math.sin(this.yAngle) * this.player.speed
-                this.camera.position.z -= Math.cos(this.yAngle) * this.player.speed
+                this.camera.position.x += -Math.sin(this.yAngle) * this.velocity
+                this.camera.position.z -= Math.cos(this.yAngle) * this.velocity
                 // this.backwardButton.classList.add('active')
             }
             else
@@ -294,19 +301,19 @@ export default class FirstPerson
             //Run
             if(this.keyboard[16])
             {
-                // this.player.speed = this.player.playerSprintSpeed
+                // this.velocity = this.params.playerSprintSpeed
             }
             else
             {
-                this.player.speed = this.player.playerSpeed
+                this.velocity = this.params.playerSpeed
             }
             if(this.keyboard[38] || this.keyboard[40] || this.keyboard[37] || this.keyboard[39])
             {
-                this.player.walking = true
+                this.params.walking = true
             }
             else
             {
-                this.player.walking = false
+                this.params.walking = false
             }
         }
 
@@ -318,11 +325,11 @@ export default class FirstPerson
             // Keep the player on the ground / primitive gravity
             if(this.floorDetection[0] != null)
             {
-                if(this.floorDetection[0].distance <= (this.player.playerHeight + 0.1))
+                if(this.floorDetection[0].distance <= (this.params.playerHeight + 0.1))
                 {
-                    this.camera.position.y = this.floorDetection[0].point.y + this.player.playerHeight
+                    this.camera.position.y = this.floorDetection[0].point.y + this.params.playerHeight
                 }
-                else if(this.floorDetection[0].distance > (this.player.playerHeight + 0.1))
+                else if(this.floorDetection[0].distance > (this.params.playerHeight + 0.1))
                 {
                     this.camera.position.y -= 0.1
                 }
@@ -398,6 +405,19 @@ export default class FirstPerson
             
             // clamping prevents the camera from moving outside of bounding box
             this.camera.position.clamp(this.collisionMin, this.collisionMax)
+        }
+    }
+
+    setDebug()
+    {
+        if(this.debug.active)
+        {
+            this.debugFolder = this.debug.FPDebugFolder
+            this.debugFolder.add(this.params, 'playerSpeed', 0.001, 0.1)
+            this.debugFolder.add(this.params, 'playerHeight', 0.1, 4)
+            this.debugFolder.add(this.params, 'sprintingEnabled')
+            this.debugFolder.add(this.params, 'sprintFactor', 1, 5)
+            this.debugFolder.close()
         }
     }
 }
