@@ -68,7 +68,6 @@ export default class Renderer
         {
             VignetteShader.uniforms.darkness.value = 1.2
             this.composer.addPass(new ShaderPass( VignetteShader ))
-            console.log(this.composer)
         }
     }
 

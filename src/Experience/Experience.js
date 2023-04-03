@@ -27,9 +27,9 @@ export default class Experience
         this.camera = new Camera(this)
         this.renderer = new Renderer(this)
         this.world = new World(this)
-        this.firstPerson = new FirstPerson(this)
         this.textAdventure = new TextAdventure(this)
         this.layoutControl = new LayoutControl(this)
+        this.firstPerson = new FirstPerson(this)
        
         this.worldLoaded = false
 

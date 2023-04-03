@@ -1,7 +1,7 @@
 import gsap from "gsap"
 import Typewriter from "typewriter-effect/dist/core";
 
-export default class TextEvents
+export default class TextAdventure
 {
     constructor(experience)
     {
@@ -13,6 +13,7 @@ export default class TextEvents
         // 1 = Score
         this.progressionState = [0, 0]
         this.choiceResult = null
+        this.typewriterWorking = false
         
         // currently, cursor does not work as intended. Leave as "" for now
         this.params = {
@@ -23,24 +24,6 @@ export default class TextEvents
             arrowControls: false
         }
 
-        // Load new game
-        this.experience.world.on('ready', () =>
-        { 
-            document.querySelector('.loadingText').classList.add('hidden')
-            document.querySelector('.startGame').classList.remove('hidden')
-
-            document.querySelector('.startGame').addEventListener('click', () =>
-            {
-                document.querySelector('.titleScreen').classList.add('hidden')
-                gsap.delayedCall(0.5, () =>
-                {
-                    document.querySelector('.titleScreen').remove()
-                    this.progressToNextEvent(1)
-                })
-            })   
-        })
-
-        this.pinScrollToBottom()
         this.setDebug()
         this.createTypewriter()
     }
@@ -103,6 +86,12 @@ export default class TextEvents
                 this.typeEvent('singleChoice',1)
             }
         }
+    }
+
+    printString(string)
+    {
+        this.typewriter.typeString(string)
+        this.typeEvent()
     }
 
     choice(eventNumber)
@@ -206,6 +195,8 @@ export default class TextEvents
 
     typeEvent(eventType, event)
     {
+        this.typewriterWorking = true
+        this.experience.layoutControl.openNavIfClose()
         this.typewriter.typeString("<div class=stringCompleted style='width:0;height:0;position:absolute'></div>")
         this.typewriter.start()
         this.stringInterval = setInterval(() =>
@@ -231,6 +222,7 @@ export default class TextEvents
                     // do nothing
                 }
                 clearInterval(this.stringInterval)
+                this.typewriterWorking = false
                 this.stringCompleted.remove()
                 this.stringCompleted = null
             }
@@ -240,20 +232,6 @@ export default class TextEvents
             }
         }, 500)
         
-    }
-
-    pinScrollToBottom()
-    {
-        this.textBoxHeight = 0
-        setInterval(() =>
-        {
-            if(this.textBoxHeight != this.textBox.scrollHeight)
-            {
-                this.textBox.scrollTo(0,this.textBox.scrollHeight)
-            }
-            this.textBoxHeight = this.textBox.scrollHeight
-            
-        }, 100)
     }
 
     setDebug()

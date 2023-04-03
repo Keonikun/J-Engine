@@ -12,6 +12,8 @@ export default class FirstPerson
         this.resources = this.experience.resources
         this.models = null
         this.renderer = this.experience.renderer.instance
+        this.textAdventure = this.experience.textAdventure
+        this.layoutControl = this.experience.layoutControl
         this.debug = this.experience.debug
 
         this.params = { 
@@ -20,7 +22,8 @@ export default class FirstPerson
             sprintFactor: 1.5, 
             walking: false, 
             sprintingEnabled: true,
-            collisionDistance: 0.5
+            collisionDistance: 0.5,
+            locationHelper: false
         }
 
         this.resources.on('ready', () =>
@@ -39,6 +42,17 @@ export default class FirstPerson
     {
         this.velocity = 0
         this.playerWalkingCount = 0
+        this.playerControlsEnabled = false
+
+        this.locationHelperGeo = new THREE.BoxGeometry(0.1,0.1,0.1)
+        this.locationHelperMat = new THREE.MeshBasicMaterial({color: '#ff0000'})
+        this.locationHelper = new THREE.Mesh(this.locationHelperGeo,this.locationHelperMat)
+        this.locationHelper.position.set(0,0,0)
+
+        if(this.params.locationHelper === true)
+        {
+            this.scene.add(this.locationHelper)
+        }
 
         this.cameraDirection = new THREE.Vector3()
         this.collisionMin = new THREE.Vector3(-1000,-1000,-1000)
@@ -139,6 +153,9 @@ export default class FirstPerson
                 if(this.pointerLockControls.isLocked === false)
                 {
                     this.pointerLockControls.lock()
+                    this.playerControlsEnabled = true
+
+                    // Tell user how to exit pointer lock
                     if(this.pointerMessageActive === false)
                     {
                         this.pointerMessageActive = true
@@ -148,6 +165,10 @@ export default class FirstPerson
                         document.querySelector('.experienceContainer').appendChild(this.pointerLockNotification)
                         this.pointerLockNotification.classList.remove("hidden")
                     }
+                    
+                    // Hide textbox when webgl is focused
+                    this.layoutControl.setNavBox('hidden')
+                    
                     gsap.delayedCall(1, () =>
                     {
                         this.pointerLockNotification.classList.add("hidden")
@@ -176,235 +197,241 @@ export default class FirstPerson
         this.camRayCoords = new THREE.Vector2()
         this.camRay.setFromCamera(this.camRayCoords, this.camera)
         this.camRayIntersect = this.camRay.intersectObjects(this.scene.children, true)
-        console.log(this.camRayIntersect[0])
         if(this.camRayIntersect[0] != null)
         {
             if(this.params.locationHelper === true)
             {
-                this.locationHelper.position.set()
+                this.locationHelper.position.set(this.camRayIntersect[0].point.x, this.camRayIntersect[0].point.y, this.camRayIntersect[0].point.z)
+                this.locationHelperMessage = "<p>X: " + String(this.camRayIntersect[0].point.x) + ",<br>Y: " + String(this.camRayIntersect[0].point.y) + ",<br> Z: " + String(this.camRayIntersect[0].point.z) + "</p>"
+                this.textAdventure.printString(this.locationHelperMessage)
             }
         }   
     }
 
     update()
     {
-        //WASD Controls 
-        //Assumes you have a mouse as well
-        if(this.experience.world.FPControls === true)
+        if(this.playerControlsEnabled === true)
         {
-            this.vector = this.camera.getWorldDirection(this.cameraDirection)
-            this.yAngle = Math.atan2(this.vector.x, this.vector.z)
-            //Forward
-            if(this.keyboard[87])
+            //WASD Controls 
+            //Assumes you have a mouse as well
+            if(this.experience.world.FPControls === true)
             {
-                this.camera.position.x -= -Math.sin(this.yAngle) * this.velocity
-                this.camera.position.z += Math.cos(this.yAngle) * this.velocity
-            }
-            //Backward
-            if(this.keyboard[83])
-            {
-                this.camera.position.x += -Math.sin(this.yAngle) * this.velocity
-                this.camera.position.z -= Math.cos(this.yAngle) * this.velocity
-            }
-            //Left
-            if(this.keyboard[65])
-            {
-                this.camera.position.x -= Math.sin(this.yAngle - Math.PI/2) * this.velocity
-                this.camera.position.z -= Math.cos(this.yAngle - Math.PI/2) * this.velocity
-            }
-            //Right
-            if(this.keyboard[68])
-            {
-                this.camera.position.x -= -Math.sin(this.yAngle - Math.PI/2) * this.velocity
-                this.camera.position.z += Math.cos(this.yAngle - Math.PI/2) * this.velocity
-            }
-            //Run
-            if(this.keyboard[16])
-            {
-                if(this.params.sprintingEnabled === true)
+                this.vector = this.camera.getWorldDirection(this.cameraDirection)
+                this.yAngle = Math.atan2(this.vector.x, this.vector.z)
+                //Forward
+                if(this.keyboard[87])
                 {
-                    this.velocity = this.params.playerSpeed * this.params.sprintFactor
+                    this.camera.position.x -= -Math.sin(this.yAngle) * this.velocity
+                    this.camera.position.z += Math.cos(this.yAngle) * this.velocity
+                }
+                //Backward
+                if(this.keyboard[83])
+                {
+                    this.camera.position.x += -Math.sin(this.yAngle) * this.velocity
+                    this.camera.position.z -= Math.cos(this.yAngle) * this.velocity
+                }
+                //Left
+                if(this.keyboard[65])
+                {
+                    this.camera.position.x -= Math.sin(this.yAngle - Math.PI/2) * this.velocity
+                    this.camera.position.z -= Math.cos(this.yAngle - Math.PI/2) * this.velocity
+                }
+                //Right
+                if(this.keyboard[68])
+                {
+                    this.camera.position.x -= -Math.sin(this.yAngle - Math.PI/2) * this.velocity
+                    this.camera.position.z += Math.cos(this.yAngle - Math.PI/2) * this.velocity
+                }
+                //Run
+                if(this.keyboard[16])
+                {
+                    if(this.params.sprintingEnabled === true)
+                    {
+                        this.velocity = this.params.playerSpeed * this.params.sprintFactor
+                    }
+                }
+                else
+                {
+                    this.velocity = this.params.playerSpeed
+                }
+                if(this.keyboard[87] || this.keyboard[83] || this.keyboard[65] || this.keyboard[68])
+                {
+                    this.params.walking = true
+                }
+                else
+                {
+                    this.params.walking = false
                 }
             }
-            else
-            {
-                this.velocity = this.params.playerSpeed
-            }
-            if(this.keyboard[87] || this.keyboard[83] || this.keyboard[65] || this.keyboard[68])
-            {
-                this.params.walking = true
-            }
-            else
-            {
-                this.params.walking = false
-            }
-        }
 
-        if(this.keyboard[81])
-        {
-            this.pointerLockControls.unlock()
-        }
+            if(this.keyboard[81])
+            {
+                this.playerControlsEnabled = false
+                this.pointerLockControls.unlock()
+                this.layoutControl.setNavBox('default')
+            }
 
-        //Arrow Key Controls
-        if(this.experience.world.FPArrows === true)
-        {
-            this.vector = this.camera.getWorldDirection(this.cameraDirection)
-            this.yAngle = Math.atan2(this.vector.x, this.vector.z)
-            //Forward
-            if(this.keyboard[38] || this.forwardArrow)
-            {   
-                this.camera.position.x -= -Math.sin(this.yAngle) * this.velocity
-                this.camera.position.z += Math.cos(this.yAngle) * this.velocity
-                // this.forwardButton.classList.add('active')
-            }
-            else
+            //Arrow Key Controls
+            if(this.experience.world.FPArrows === true)
             {
-                // this.forwardButton.classList.remove('active')
-            }
-            //Backward
-            if(this.keyboard[40] || this.backwardArrow)
-            {
-                this.camera.position.x += -Math.sin(this.yAngle) * this.velocity
-                this.camera.position.z -= Math.cos(this.yAngle) * this.velocity
-                // this.backwardButton.classList.add('active')
-            }
-            else
-            {
-                // this.backwardButton.classList.remove('active')
-            }
-            //Left
-            if(this.keyboard[37] || this.leftArrow)
-            {
-                this.camera.rotation.x = 0
-                this.camera.rotation.z = 0
-                this.camera.rotation.y += 0.01
-                // this.leftButton.classList.add('active')
-
-            }
-            else
-            {
-                // this.leftButton.classList.remove('active')
-            }
-            //Right
-            if(this.keyboard[39] || this.rightArrow)
-            {
-                this.camera.rotation.x = 0
-                this.camera.rotation.z = 0
-                this.camera.rotation.y -= 0.01
-                // this.rightButton.classList.add('active')
-
-            }
-            else
-            {
-                // this.rightButton.classList.remove('active')
-            }
-            //Run
-            if(this.keyboard[16])
-            {
-                // this.velocity = this.params.playerSprintSpeed
-            }
-            else
-            {
-                this.velocity = this.params.playerSpeed
-            }
-            if(this.keyboard[38] || this.keyboard[40] || this.keyboard[37] || this.keyboard[39])
-            {
-                this.params.walking = true
-            }
-            else
-            {
-                this.params.walking = false
-            }
-        }
-
-        if(this.experience.world.FPCollisions === true)
-        {
-            // Raycast in five directions: North, west, south, east, and below the player
-            this.collisionDetection()
-            
-            // Keep the player on the ground / primitive gravity
-            if(this.floorDetection[0] != null)
-            {
-                if(this.floorDetection[0].distance <= (this.params.playerHeight + 0.1))
-                {
-                    this.camera.position.y = this.floorDetection[0].point.y + this.params.playerHeight
+                this.vector = this.camera.getWorldDirection(this.cameraDirection)
+                this.yAngle = Math.atan2(this.vector.x, this.vector.z)
+                //Forward
+                if(this.keyboard[38] || this.forwardArrow)
+                {   
+                    this.camera.position.x -= -Math.sin(this.yAngle) * this.velocity
+                    this.camera.position.z += Math.cos(this.yAngle) * this.velocity
+                    // this.forwardButton.classList.add('active')
                 }
-                else if(this.floorDetection[0].distance > (this.params.playerHeight + 0.1))
+                else
                 {
-                    this.camera.position.y -= 0.1
+                    // this.forwardButton.classList.remove('active')
+                }
+                //Backward
+                if(this.keyboard[40] || this.backwardArrow)
+                {
+                    this.camera.position.x += -Math.sin(this.yAngle) * this.velocity
+                    this.camera.position.z -= Math.cos(this.yAngle) * this.velocity
+                    // this.backwardButton.classList.add('active')
+                }
+                else
+                {
+                    // this.backwardButton.classList.remove('active')
+                }
+                //Left
+                if(this.keyboard[37] || this.leftArrow)
+                {
+                    this.camera.rotation.x = 0
+                    this.camera.rotation.z = 0
+                    this.camera.rotation.y += 0.01
+                    // this.leftButton.classList.add('active')
+
+                }
+                else
+                {
+                    // this.leftButton.classList.remove('active')
+                }
+                //Right
+                if(this.keyboard[39] || this.rightArrow)
+                {
+                    this.camera.rotation.x = 0
+                    this.camera.rotation.z = 0
+                    this.camera.rotation.y -= 0.01
+                    // this.rightButton.classList.add('active')
+
+                }
+                else
+                {
+                    // this.rightButton.classList.remove('active')
+                }
+                //Run
+                if(this.keyboard[16])
+                {
+                    // this.velocity = this.params.playerSprintSpeed
+                }
+                else
+                {
+                    this.velocity = this.params.playerSpeed
+                }
+                if(this.keyboard[38] || this.keyboard[40] || this.keyboard[37] || this.keyboard[39])
+                {
+                    this.params.walking = true
+                }
+                else
+                {
+                    this.params.walking = false
                 }
             }
-            
-            // cardinal direction collisions
-            // How this works: There is a bounding box which is set to a high value.
-            // This box gets constrained if a raycaster in this.collisionDetection 
-            // detects a geometry at a certain distance.
-            if(this.northDetection[0] != null)
+
+            if(this.experience.world.FPCollisions === true)
             {
-                if(this.northDetection[0].distance <= this.collisionDistance)
+                // Raycast in five directions: North, west, south, east, and below the player
+                this.collisionDetection()
+                
+                // Keep the player on the ground / primitive gravity
+                if(this.floorDetection[0] != null)
                 {
-                    this.collisionMax.z = this.northDetection[0].point.z - this.collisionDistance 
+                    if(this.floorDetection[0].distance <= (this.params.playerHeight + 0.1))
+                    {
+                        this.camera.position.y = this.floorDetection[0].point.y + this.params.playerHeight
+                    }
+                    else if(this.floorDetection[0].distance > (this.params.playerHeight + 0.1))
+                    {
+                        this.camera.position.y -= 0.1
+                    }
+                }
+                
+                // cardinal direction collisions
+                // How this works: There is a bounding box which is set to a high value.
+                // This box gets constrained if a raycaster in this.collisionDetection 
+                // detects a geometry at a certain distance.
+                if(this.northDetection[0] != null)
+                {
+                    if(this.northDetection[0].distance <= this.params.collisionDistance)
+                    {
+                        this.collisionMax.z = this.northDetection[0].point.z - this.params.collisionDistance 
+                    }
+                    else
+                    {
+                        this.collisionMax.z = 1000
+                    }
                 }
                 else
                 {
                     this.collisionMax.z = 1000
                 }
-            }
-            else
-            {
-                this.collisionMax.z = 1000
-            }
 
-            if(this.eastDetection[0] != null)
-            {
-                if(this.eastDetection[0].distance <= this.collisionDistance)
+                if(this.eastDetection[0] != null)
                 {
-                    this.collisionMax.x = this.eastDetection[0].point.x - this.collisionDistance
+                    if(this.eastDetection[0].distance <= this.params.collisionDistance)
+                    {
+                        this.collisionMax.x = this.eastDetection[0].point.x - this.params.collisionDistance
+                    }
+                    else
+                    {
+                        this.collisionMax.x = 1000
+                    }
                 }
                 else
                 {
                     this.collisionMax.x = 1000
                 }
-            }
-            else
-            {
-                this.collisionMax.x = 1000
-            }
 
-            if(this.southDetection[0] != null)
-            {
-                if(this.southDetection[0].distance <= this.collisionDistance)
+                if(this.southDetection[0] != null)
                 {
-                    this.collisionMin.z = this.southDetection[0].point.z + this.collisionDistance 
+                    if(this.southDetection[0].distance <= this.params.collisionDistance)
+                    {
+                        this.collisionMin.z = this.southDetection[0].point.z + this.params.collisionDistance 
+                    }
+                    else
+                    {
+                        this.collisionMin.z = -1000
+                    }
                 }
                 else
                 {
                     this.collisionMin.z = -1000
                 }
-            }
-            else
-            {
-                this.collisionMin.z = -1000
-            }
-            
-            if(this.westDetection[0] != null)
-            {
-                if(this.westDetection[0].distance <= this.collisionDistance)
+                
+                if(this.westDetection[0] != null)
                 {
-                    this.collisionMin.x = this.westDetection[0].point.x + this.collisionDistance
+                    if(this.westDetection[0].distance <= this.params.collisionDistance)
+                    {
+                        this.collisionMin.x = this.westDetection[0].point.x + this.params.collisionDistance
+                    }
+                    else
+                    {
+                        this.collisionMin.x = -1000
+                    }
                 }
                 else
                 {
                     this.collisionMin.x = -1000
                 }
+                
+                // clamping prevents the camera from moving outside of bounding box
+                this.camera.position.clamp(this.collisionMin, this.collisionMax)
             }
-            else
-            {
-                this.collisionMin.x = -1000
-            }
-            
-            // clamping prevents the camera from moving outside of bounding box
-            this.camera.position.clamp(this.collisionMin, this.collisionMax)
         }
     }
 
@@ -417,6 +444,17 @@ export default class FirstPerson
             this.debugFolder.add(this.params, 'playerHeight', 0.1, 4)
             this.debugFolder.add(this.params, 'sprintingEnabled')
             this.debugFolder.add(this.params, 'sprintFactor', 1, 5)
+            this.debug.debugFolder.add(this.params, 'locationHelper').onChange(() =>
+            {
+                if(this.params.locationHelper === true)
+                {
+                    this.scene.add(this.locationHelper)
+                }
+                else
+                {
+                    this.scene.remove(this.locationHelper)
+                }
+            })
             this.debugFolder.close()
         }
     }

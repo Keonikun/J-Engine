@@ -1,21 +1,44 @@
+import { gsap } from "gsap"
+
 export default class Layout
 {
     constructor(experience)
     {
         this.experience = experience
+        this.textAdventure = this.experience.textAdventure
         this.debug = this.experience.debug
+        this.waitingToCloseNav = false
 
         this.params = {
             windowMode: 'fullscreen',
-            navBoxSetting: 'default',
+            navBoxSetting: 'fullscreen',
             colorProfile: 'grey'
         }
 
         // To do: Color profiles
 
+        // Load new game
+        this.experience.world.on('ready', () =>
+        { 
+            document.querySelector('.loadingText').classList.add('hidden')
+            document.querySelector('.startGame').classList.remove('hidden')
+
+            document.querySelector('.startGame').addEventListener('click', () =>
+            {
+                document.querySelector('.titleScreen').classList.add('hidden')
+                gsap.delayedCall(0.5, () =>
+                {
+                    this.setNavBox('default')
+                    document.querySelector('.titleScreen').remove()
+                    this.textAdventure.progressToNextEvent(1)
+                })
+            })   
+        })
+
         this.setDomElements()
         this.setExperienceContainer()
         this.setNavBox()
+        this.pinScrollToBottom()
         this.setDebug()
     }
 
@@ -25,10 +48,23 @@ export default class Layout
         this.navBox = document.querySelector('.navBox')
         this.textBox = document.querySelector('.textBox')
         this.arrowControls = document.querySelector('.arrowControls')
+        this.folderTabs = document.querySelector('.folderTabs')
+
+        this.folderTabs.addEventListener('click', () =>
+        {
+            if(this.params.navBoxSetting === 'hidden')
+            {
+                this.setNavBox('default')
+            }
+        })
     }
 
-    setExperienceContainer()
+    setExperienceContainer(parameter)
     {
+        if(parameter)
+        {
+            this.params.windowMode = parameter
+        }
         if(this.params.windowMode === 'fullscreen')
         {
             this.experienceContainer.classList.remove('fullSquare')
@@ -46,8 +82,12 @@ export default class Layout
         }
     }
 
-    setNavBox()
+    setNavBox(parameter)
     {
+        if(parameter)
+        {
+            this.params.navBoxSetting = parameter
+        }
         if(this.params.navBoxSetting === 'default')
         {
             this.experienceContainer.classList.add('navBoxDefault')
@@ -55,14 +95,74 @@ export default class Layout
         }
         if(this.params.navBoxSetting === 'hidden')
         {
-            this.experienceContainer.classList.remove('navBoxDefault')
-            this.experienceContainer.classList.remove('navBoxFull')
+            if(this.textAdventure.typewriterWorking === true)
+            {
+                this.waitToCloseNav()
+            }
+            else
+            {
+                this.experienceContainer.classList.remove('navBoxDefault')
+                this.experienceContainer.classList.remove('navBoxFull')
+            }
         }
         if(this.params.navBoxSetting === 'fullscreen')
         {
             this.experienceContainer.classList.remove('navBoxDefault')
             this.experienceContainer.classList.add('navBoxFull')
         }
+    }
+
+    waitToCloseNav()
+    {
+        if(this.waitingToCloseNav === false)
+        {
+            this.waitingToCloseNav = true
+            this.params.navBoxSetting = 'hidden'
+            this.waitToCloseNavInterval = setInterval(() =>
+            {
+                if(this.textAdventure.typewriterWorking === false)
+                {
+                    clearInterval(this.waitToCloseNavInterval)
+                    gsap.delayedCall(3,() =>
+                    {
+                        if(this.params.navBoxSetting === 'hidden' && this.textAdventure.typewriterWorking === false)
+                        {
+                            this.experienceContainer.classList.remove('navBoxDefault')
+                            this.experienceContainer.classList.remove('navBoxFull')
+                            this.waitingToCloseNav = false
+                        }
+                        else
+                        {
+                            this.waitingToCloseNav = false
+                            this.waitToCloseNav()
+                        }
+                    })  
+                }
+            }, 100)
+        }
+    }
+
+    openNavIfClose()
+    {
+        if(this.params.navBoxSetting === 'hidden')
+        {
+            this.setNavBox('default')
+            this.waitToCloseNav()
+        }
+    }
+
+    pinScrollToBottom()
+    {
+        this.textBoxHeight = 0
+        setInterval(() =>
+        {
+            if(this.textBoxHeight != this.textBox.scrollHeight)
+            {
+                this.textBox.scrollTo(0,this.textBox.scrollHeight)
+            }
+            this.textBoxHeight = this.textBox.scrollHeight
+            
+        }, 100)
     }
 
     setDebug()
