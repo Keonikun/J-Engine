@@ -26,7 +26,7 @@ export default class Camera{
 
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.FPDebugFolder
+            this.debugFolder = this.debug.playerDebugFolder
             this.debugFolder.add(this.params, 'resetPosition')
             this.debugFolder.add(this.params, 'posX').onChange(() =>
             {
@@ -40,17 +40,17 @@ export default class Camera{
             {
                 this.instance.position.z = this.params.posZ
             })
-            this.debugFolder.add(this.params, 'fov', 10, 100).onChange(() =>
+            this.debug.renderDebugFolder.add(this.params, 'fov', 10, 100).onChange(() =>
             {
                 this.instance.fov = this.params.fov
                 this.instance.updateProjectionMatrix()
             })
-            this.debugFolder.add(this.params, 'clipNear', 0.01, 10).onChange(() =>
+            this.debug.renderDebugFolder.add(this.params, 'clipNear', 0.01, 10).onChange(() =>
             {
                 this.instance.near = this.params.clipNear
                 this.instance.updateProjectionMatrix()
             })
-            this.debugFolder.add(this.params, 'clipFar', 10, 1000).onChange(() =>
+            this.debug.renderDebugFolder.add(this.params, 'clipFar', 10, 1000).onChange(() =>
             {
                 this.instance.far = this.params.clipFar
                 this.instance.updateProjectionMatrix()

@@ -2,7 +2,7 @@ import EventEmitter from "./EventEmitter";
 
 export default class Time extends EventEmitter
 {
-    constructor()
+    constructor(experience)
     {
         super()
 
@@ -11,6 +11,25 @@ export default class Time extends EventEmitter
         this.current = this.start
         this.elapsed = 0
         this.delta = 16
+        this.debug = experience.debug
+        this.fpsMonitor = 0
+        this.currentFps = 0
+        this.secondCounter = this.current + 1000
+        
+        this.params = {
+            fps: 45
+        }
+
+        this.fpsInterval = 1000 / this.params.fps
+
+        if(this.debug.active)
+        {
+            this.debug.renderDebugFolder.add(this.params, 'fps', 10, 60).onChange(() =>
+            {
+                this.fpsInterval = 1000 / this.params.fps
+            })
+        }
+
 
         window.requestAnimationFrame(() =>
         {
@@ -25,11 +44,23 @@ export default class Time extends EventEmitter
         this.current = currentTime
         this.elapsed = this.current - this.start
 
-        this.trigger('tick')
-
         window.requestAnimationFrame(() => 
         {
             this.tick()
         })
+       
+        if(this.elapsed > this.fpsInterval)
+        {
+            this.start = this.current - ( this.elapsed % this.fpsInterval )
+            this.fpsMonitor ++
+            this.trigger('tick')
+        }
+
+        if(this.current > this.secondCounter)
+        {
+            this.secondCounter = this.current + 1000
+            this.currentFps = this.fpsMonitor
+            this.fpsMonitor = 0
+        }
     }
 }

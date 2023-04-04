@@ -212,6 +212,8 @@ body
     position: absolute;
     top: 0;
     left: 0;
+    bottom: 0;
+    right: 0;
     outline: none;
     visibility: visible;
 }
@@ -221,12 +223,18 @@ body
     visibility: hidden;
 }
 
+.experienceContainer.square .webgl
+{
+    height: 700px;
+    width: 700px;
+}
+
 /*------------Navigation Box------------*/
 
 .navBox
 {
     position: absolute;
-    background-color: rgb(226, 221, 149);
+    background-color: rgb(223, 221, 198);
     width: 100%;
     height: 0%;
     bottom: 0;
@@ -304,7 +312,7 @@ body
     position: absolute;
     width: 15%;
     height: 100%;
-    border-bottom: 26px solid rgb(226, 221, 149);
+    border-bottom: 26px solid rgb(223, 221, 198);
     border-left: 25px solid transparent;
     border-right: 25px solid transparent;
     transform: translate(0,5px);
@@ -319,7 +327,7 @@ body
 {
     z-index: 7;
     left: 18%;
-    border-bottom: 26px solid rgb(128, 125, 88);
+    border-bottom: 26px solid rgb(110, 109, 90);
 }
 
 .textBox
@@ -333,10 +341,15 @@ body
     right: 0;
     display: block;
     overflow: auto;
-    background-color: rgb(68, 67, 47);
+    background-color: rgb(43, 42, 28);
     transition: 1s;
     /* display: flex;
     flex-direction: column-reverse; */
+}
+
+.experienceContainer.navBoxDefault .textBox
+{
+    right: 70px;
 }
 
 .textBox p
@@ -373,6 +386,66 @@ body
     border-radius: 20px;
     border: 5px solid transparent;
     background-clip: content-box ;
+}
+
+.volume
+{
+    position: absolute;
+    bottom: 70px;
+    right: -100px;
+    width: 40px;
+    height: 65%;
+    opacity: 0;
+    transition: 1s;
+    background-color: rgb(68, 67, 47);
+}
+
+.volume img
+{
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    bottom: 0;
+}
+
+.volume img:hover
+{
+    filter: brightness(0);
+    cursor: pointer;
+}
+
+.volumeControl
+{
+    position: absolute ;
+}
+
+.experienceContainer.navBoxDefault .volume
+{
+    opacity: 1;
+    right: 20px;
+}
+
+.fullscreen
+{
+    position: absolute;
+    bottom: 20px;
+    right: -100px;
+    width: 40px;
+    height: 40px;
+    opacity: 0;
+    transition: 1s;
+}
+
+.fullscreen:hover
+{
+    filter: brightness(0);
+    cursor: pointer;
+}
+
+.experienceContainer.navBoxDefault .fullscreen
+{
+    opacity: 1;
+    right: 20px;
 }
 
 .score

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { PointerLockControls } from './Utils/PointerLockControls.js'
+import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh'
 import gsap from 'gsap'
 
 export default class FirstPerson
@@ -10,25 +11,34 @@ export default class FirstPerson
         this.scene = this.experience.scene
         this.camera = this.experience.camera.instance
         this.resources = this.experience.resources
+        this.time = this.experience.time
         this.models = null
-        this.renderer = this.experience.renderer.instance
+        this.renderer = this.experience.renderer
         this.textAdventure = this.experience.textAdventure
         this.layoutControl = this.experience.layoutControl
         this.debug = this.experience.debug
 
+        // use optimized raycaster
+        THREE.Mesh.prototype.raycast = acceleratedRaycast
+
         this.params = { 
             playerHeight: 1.6, 
-            playerSpeed: 0.02, 
+            playerSpeed: 0.04, 
             sprintFactor: 1.5, 
+            gravity: 0.08,
             walking: false, 
             sprintingEnabled: true,
             collisionDistance: 0.5,
             locationHelper: false
         }
 
+
         this.resources.on('ready', () =>
         {    
             this.models = this.experience.world.models
+            this.models.physMesh.scene.children[0].children.forEach(element => {
+                element.geometry.boundsTree = new MeshBVH( element.geometry )
+            });
         })
 
         this.setup()
@@ -41,8 +51,13 @@ export default class FirstPerson
     setup()
     {
         this.velocity = 0
+        this.fpsGravity = 0
         this.playerWalkingCount = 0
         this.playerControlsEnabled = false
+
+        this.camRay = new THREE.Raycaster()
+        this.camRay.firstHitOnly = true
+        this.camRayCoords = new THREE.Vector2()
 
         this.locationHelperGeo = new THREE.BoxGeometry(0.1,0.1,0.1)
         this.locationHelperMat = new THREE.MeshBasicMaterial({color: '#ff0000'})
@@ -73,14 +88,19 @@ export default class FirstPerson
     setCollisionRayCaster()
     {
         this.detectFloor = new THREE.Raycaster()
+        this.detectFloor.firstHitOnly = true
         this.floorDirection = new THREE.Vector3( this.camera.getWorldPosition.x, -1, this.camera.getWorldPosition.z )
         this.detectNorth = new THREE.Raycaster()
+        this.detectNorth.firstHitOnly = true
         this.northDirection = new THREE.Vector3(this.camera.getWorldPosition.x,this.camera.getWorldPosition.y,1)
         this.detectEast = new THREE.Raycaster()
+        this.detectEast.firstHitOnly = true
         this.eastDirection = new THREE.Vector3(1,this.camera.getWorldPosition.y,this.camera.getWorldPosition.z)
         this.detectSouth = new THREE.Raycaster()
+        this.detectSouth.firstHitOnly = true
         this.southDirection = new THREE.Vector3(this.camera.getWorldPosition.x,this.camera.getWorldPosition.y,-1)
         this.detectWest = new THREE.Raycaster()
+        this.detectWest.firstHitOnly = true
         this.westDirection = new THREE.Vector3(-1,this.camera.getWorldPosition.y,this.camera.getWorldPosition.z)  
     }
 
@@ -103,11 +123,11 @@ export default class FirstPerson
         this.detectSouth.set(this.cameraPositionMod, this.southDirectionMod)
         this.detectWest.set(this.cameraPositionMod, this.westDirectionMod)
 
-        this.floorDetection = this.detectFloor.intersectObjects(this.models.physMesh.scene.children, true)
-        this.northDetection = this.detectNorth.intersectObjects(this.models.physMesh.scene.children, true)
-        this.eastDetection = this.detectEast.intersectObjects(this.models.physMesh.scene.children, true)
-        this.southDetection = this.detectSouth.intersectObjects(this.models.physMesh.scene.children, true)
-        this.westDetection = this.detectWest.intersectObjects(this.models.physMesh.scene.children, true)
+        this.floorDetection = this.detectFloor.intersectObject(this.models.physMesh.scene)
+        this.northDetection = this.detectNorth.intersectObject(this.models.physMesh.scene)
+        this.eastDetection = this.detectEast.intersectObject(this.models.physMesh.scene)
+        this.southDetection = this.detectSouth.intersectObject(this.models.physMesh.scene)
+        this.westDetection = this.detectWest.intersectObject(this.models.physMesh.scene)
     }
 
     setKeyListener()
@@ -144,7 +164,7 @@ export default class FirstPerson
 
     setPointerLockControls()
     {    
-        this.pointerLockControls = new PointerLockControls(this.camera, this.renderer.domElement, this.experience)
+        this.pointerLockControls = new PointerLockControls(this.camera, this.renderer.instance.domElement, this.experience)
         this.pointerMessageActive = false
         document.querySelector('canvas.webgl').addEventListener('click', () =>
         {
@@ -193,10 +213,10 @@ export default class FirstPerson
     // Interact with objects IN PROGRESS
     raycastFromCamera()
     {
-        this.camRay = new THREE.Raycaster()
-        this.camRayCoords = new THREE.Vector2()
         this.camRay.setFromCamera(this.camRayCoords, this.camera)
-        this.camRayIntersect = this.camRay.intersectObjects(this.scene.children, true)
+        this.camRayIntersect = this.camRay.intersectObject(this.models.physMesh.scene)
+        console.log(this.camRayIntersect)
+        
         if(this.camRayIntersect[0] != null)
         {
             if(this.params.locationHelper === true)
@@ -210,6 +230,10 @@ export default class FirstPerson
 
     update()
     {
+        // update velocity and gravity
+        this.fpsVelocity = this.velocity / this.time.currentFps * 60
+        this.fpsGravity = this.params.gravity / this.time.currentFps * 60
+
         if(this.playerControlsEnabled === true)
         {
             //WASD Controls 
@@ -221,26 +245,26 @@ export default class FirstPerson
                 //Forward
                 if(this.keyboard[87])
                 {
-                    this.camera.position.x -= -Math.sin(this.yAngle) * this.velocity
-                    this.camera.position.z += Math.cos(this.yAngle) * this.velocity
+                    this.camera.position.x -= -Math.sin(this.yAngle) * this.fpsVelocity
+                    this.camera.position.z += Math.cos(this.yAngle) * this.fpsVelocity
                 }
                 //Backward
                 if(this.keyboard[83])
                 {
-                    this.camera.position.x += -Math.sin(this.yAngle) * this.velocity
-                    this.camera.position.z -= Math.cos(this.yAngle) * this.velocity
+                    this.camera.position.x += -Math.sin(this.yAngle) * this.fpsVelocity
+                    this.camera.position.z -= Math.cos(this.yAngle) * this.fpsVelocity
                 }
                 //Left
                 if(this.keyboard[65])
                 {
-                    this.camera.position.x -= Math.sin(this.yAngle - Math.PI/2) * this.velocity
-                    this.camera.position.z -= Math.cos(this.yAngle - Math.PI/2) * this.velocity
+                    this.camera.position.x -= Math.sin(this.yAngle - Math.PI/2) * this.fpsVelocity
+                    this.camera.position.z -= Math.cos(this.yAngle - Math.PI/2) * this.fpsVelocity
                 }
                 //Right
                 if(this.keyboard[68])
                 {
-                    this.camera.position.x -= -Math.sin(this.yAngle - Math.PI/2) * this.velocity
-                    this.camera.position.z += Math.cos(this.yAngle - Math.PI/2) * this.velocity
+                    this.camera.position.x -= -Math.sin(this.yAngle - Math.PI/2) * this.fpsVelocity
+                    this.camera.position.z += Math.cos(this.yAngle - Math.PI/2) * this.fpsVelocity
                 }
                 //Run
                 if(this.keyboard[16])
@@ -357,7 +381,7 @@ export default class FirstPerson
                     }
                     else if(this.floorDetection[0].distance > (this.params.playerHeight + 0.1))
                     {
-                        this.camera.position.y -= 0.1
+                        this.camera.position.y -= (this.params.gravity / this.time.currentFps * 60)
                     }
                 }
                 
@@ -439,7 +463,7 @@ export default class FirstPerson
     {
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.FPDebugFolder
+            this.debugFolder = this.debug.playerDebugFolder
             this.debugFolder.add(this.params, 'playerSpeed', 0.001, 0.1)
             this.debugFolder.add(this.params, 'playerHeight', 0.1, 4)
             this.debugFolder.add(this.params, 'sprintingEnabled')

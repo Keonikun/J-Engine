@@ -31,13 +31,13 @@ class PointerLockControls extends EventDispatcher {
 		this.eulerX = 0
 
 		this.params = {
-			pointerSpeed: 1.0
+			mouseSens: 1.0
 		}
 
 		if(this.debug.active)
 		{
-			this.debugFolder = this.debug.gui.addFolder('Mouse Sensitivity')
-			this.debugFolder.add(this.params, 'pointerSpeed', 0.01, 2)
+			this.debugFolder = this.debug.playerDebugFolder
+			this.debugFolder.add(this.params, 'mouseSens', 0.01, 2)
 			this.debugFolder.close()
 		}
 
@@ -52,8 +52,8 @@ class PointerLockControls extends EventDispatcher {
 
 			_euler.setFromQuaternion( camera.quaternion );
 
-			_euler.y -= movementX * 0.002 * scope.params.pointerSpeed;
-			_euler.x -= movementY * 0.002 * scope.params.pointerSpeed;
+			_euler.y -= movementX * 0.002 * scope.params.mouseSens;
+			_euler.x -= movementY * 0.002 * scope.params.mouseSens;
 
 			_euler.x = Math.max( _PI_2 - scope.maxPolarAngle, Math.min( _PI_2 - scope.minPolarAngle, _euler.x ) );
 

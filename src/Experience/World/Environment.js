@@ -12,7 +12,7 @@ export default class Environment
         this.params = {
             backgroundAndFogCol: '#5c5c5c',
             backgroundCol: '#5c5c5c',
-            ambientLightInt: 1,
+            ambientLightInt: 0.5,
             ambientLightCol: '#ffffff',
             dirLightInt: 0.8,
             dirLightCol: '#ffffff',

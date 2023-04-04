@@ -11,7 +11,7 @@ export default class Particles
         this.debug = this.experience.debug
 
         this.params = {
-            rainEnabled: true,
+            rainEnabled: false,
             rainDropCount: 2000,
             rainDropSpeed: 0.16,
             rainDropColor: '#3a3489',
@@ -134,7 +134,7 @@ export default class Particles
                     this.rain.material.color.set(this.params.rainDropColor)
                 }
             })
-            this.debugFolder.add(this.params, 'rainDropSize', 0.01, 0.5).onChange(() =>
+            this.debugFolder.add(this.params, 'rainDropSize', 0.01, 4).onChange(() =>
             {
                 if(this.params.rainEnabled)
                 {

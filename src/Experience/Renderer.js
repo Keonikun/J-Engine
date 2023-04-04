@@ -4,8 +4,9 @@ import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js'
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import {FilmPass} from 'three/examples/jsm/postprocessing/FilmPass.js'
+import {OutlinePass} from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import {GammaCorrectionShader} from 'three/examples/jsm/shaders/GammaCorrectionShader.js'
-import {VignetteShader} from 'three/examples/jsm/shaders/VignetteShader'
+import {VignetteShader} from 'three/examples/jsm/shaders/VignetteShader.js'
 
 export default class Renderer
 {
@@ -19,10 +20,10 @@ export default class Renderer
         this.debug = this.experience.debug
 
         this.params = { 
-            antialias: false,
-            pixelRatio: 0.3,
+            pixelRatio: 0.2,
             postprocessing: true,
             bloom: true,
+            outline: true,
             gammaCorrection: true,
             filmic: true,
             vignette: true
@@ -37,8 +38,9 @@ export default class Renderer
     {
         this.instance = new THREE.WebGLRenderer({
             canvas: this.canvas,
-            antialias: this.params.antialias,
-            // powerPreference: "default"
+            antialias: false,
+            powerPreference: "low-power",
+            precision: "lowp"
         })
         this.instance.outputEncoding = THREE.sRGBEncoding
         this.instance.physicallyCorrectLights = true
@@ -51,14 +53,26 @@ export default class Renderer
     {
         this.composer = new EffectComposer(this.instance)
         this.composer.addPass(new RenderPass(this.scene, this.camera.instance))
+        this.composer.powerPreference = "low-power"
+        console.log(this.composer)
 
         if(this.params.bloom === true && this.params.postprocessing === true)
         {
-            this.composer.addPass(new UnrealBloomPass({ x: 256, y: 256 }, 1.0, -1, 0.7 ))
+            this.composer.addPass(new UnrealBloomPass({ x: 64, y: 64 }, 1.0, -1, 0.7 ))
         }
         if(this.params.filmic === true && this.params.postprocessing === true)
         {
-            this.composer.addPass(new FilmPass( 0.2, 1, 648, false ))
+            this.composer.addPass(new FilmPass( 0.4, 0.2, 648, false ))
+        }
+        if(this.params.outline === true && this.params.postprocessing === true)
+        {
+            console.log(this.sizes.width)
+            this.outlinePass = new OutlinePass(new THREE.Vector2( this.sizes.width, this.sizes.height ), this.scene, this.camera.instance )
+            this.outlinePass.visibleEdgeColor.set('#ffffff')
+            this.outlinePass.hiddenEdgeColor.set('#190a05')
+            this.outlinePass.edgeThickness = 1.0
+            this.outlinePass.edgeStrength = 3.0
+            this.composer.addPass(this.outlinePass)
         }
         if(this.params.gammaCorrection === true && this.params.postprocessing === true)
         {
@@ -71,10 +85,24 @@ export default class Renderer
         }
     }
 
+    outline(selected)
+    {
+        if(selected === 'off')
+        {
+            this.outlinePass.selectedObjects = []
+        }
+        else
+        {
+            this.outlinePass.selectedObjects = selected
+        }
+    }
+
     resize()
     {
         this.instance.setSize(this.sizes.width, this.sizes.height)
         this.instance.setPixelRatio(this.sizes.pixelRatio * this.params.pixelRatio)
+        this.composer.setSize(this.sizes.width, this.sizes.height)
+        this.composer.setPixelRatio(this.sizes.pixelRatio * this.params.pixelRatio)
     }
 
     update()
@@ -93,15 +121,12 @@ export default class Renderer
     {
         if(this.debug.active)
         {
-
-            this.debugFolder = this.debug.gui.addFolder( 'Renderer' )
-            this.debugFolder.add( this.params, 'pixelRatio', 0.05, 1 ).onChange(() =>
+            this.debug.renderDebugFolder.add( this.params, 'pixelRatio', 0.05, 1 ).onChange(() =>
             {
                 this.instance.setPixelRatio(this.params.pixelRatio)
+                this.composer.setPixelRatio(this.params.pixelRatio)
             })
-            this.debugFolder.add( this.params, 'postprocessing')
-
-            this.debugFolder.close()
+            this.debug.renderDebugFolder.add( this.params, 'postprocessing')
         }
     }
 }

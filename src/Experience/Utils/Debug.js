@@ -18,6 +18,7 @@ export default class Debug
             if(this.params.fpsMonitor === true)
             {
                 this.stats.setMode(0)
+                console.log(this.stats)
             }
             else
             {
@@ -27,7 +28,7 @@ export default class Debug
             this.gui = new GUI()
             this.gui.close()
 
-            this.debugFolder = this.gui.addFolder('Debug Tools')
+            this.debugFolder = this.gui.addFolder('Dev Tools')
             this.debugFolder.add(this.params, 'fpsMonitor').onChange(() =>
             {
                 if(this.params.fpsMonitor === true)
@@ -40,8 +41,8 @@ export default class Debug
                 }
             })
             this.debugFolder.close()
-            this.FPDebugFolder = this.gui.addFolder( 'Player' )
-            this.FPDebugFolder.close()
+            this.playerDebugFolder = this.gui.addFolder( 'Player' ).close()
+            this.renderDebugFolder = this.gui.addFolder( 'Render Settings' ).close()        
         }
     }
 

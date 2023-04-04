@@ -24,6 +24,7 @@
     "stats.js": "^0.17.0",
     "style-loader": "^3.3.1",
     "three": "^0.134.0",
+    "three-mesh-bvh": "^0.5.23",
     "three-plain-animator": "^1.0.6",
     "typewriter-effect": "^2.19.0",
     "webpack": "^5.60.0",

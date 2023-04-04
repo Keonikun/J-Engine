@@ -17,11 +17,6 @@ export default [
         path: 'textures/static/rain.png'
     },
     // texture animations
-    {
-        name: 'winterAnimation',
-        type: 'texture',
-        path: 'textures/animations/winterAnimation.png'
-    },
     // skybox
     {
         name: 'stormydaysEnvMap',
@@ -42,16 +37,16 @@ export default [
     {
         name: 'trainCrossing',
         type: 'audio',
-        path: 'audio/trainCrossing.ogg'
+        path: '/audio/trainCrossing.ogg'
     },
     {
         name: 'windowRain',
         type: 'audio',
-        path: 'audio/windowRain.ogg'
+        path: '/audio/windowRain.ogg'
     },
     {
         name: 'rain',
         type: 'audio',
-        path: 'audio/rain.ogg'
+        path: '/audio/rain.ogg'
     },
 ]

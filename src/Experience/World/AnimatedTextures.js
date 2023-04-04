@@ -10,9 +10,9 @@ export default class AnimatedPlains
         this.resources = this.experience.resources
 
         // Setup
-        this.winterAnimationTexture = this.resources.items.winterAnimation
 
-        this.setWinterAnimationModel()
+
+        // this.setWinterAnimationModel()
     }
 
     setWinterAnimationModel()
@@ -28,6 +28,5 @@ export default class AnimatedPlains
 
     update()
     {
-        this.winterAnimation.animate()
     }
 }

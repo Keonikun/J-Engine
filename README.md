@@ -34,12 +34,18 @@
 - Interactive objects
 - NPC system
 
+## Preview
+
+https://juliendarling-funk.com/Engine/index.html
+
 ## Installation
 
 1. Click 'Code', then download zip or open with Github Desktop.
 2. Unzip file and open folder with IDE (code editor): https://code.visualstudio.com/
-3. In the IDE terminal, install project dependencies by typing 'npm install'
-4. To run the project locally, type 'npm run dev'
+3. In the IDE terminal
+4. ```'npm install'```
+5. To run the project locally
+6. ```'npm run dev'```
 
 ## Sources
 

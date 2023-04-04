@@ -6,6 +6,8 @@ export default class Layout
     {
         this.experience = experience
         this.textAdventure = this.experience.textAdventure
+        this.camera = this.experience.camera
+        this.renderer = this.experience.renderer
         this.debug = this.experience.debug
         this.waitingToCloseNav = false
 
@@ -20,6 +22,7 @@ export default class Layout
         // Load new game
         this.experience.world.on('ready', () =>
         { 
+            this.firstPerson = this.experience.firstPerson
             document.querySelector('.loadingText').classList.add('hidden')
             document.querySelector('.startGame').classList.remove('hidden')
 
@@ -69,16 +72,22 @@ export default class Layout
         {
             this.experienceContainer.classList.remove('fullSquare')
             this.experienceContainer.classList.remove('square')
+            this.camera.resize()
+            this.renderer.resize()
         }
         else if(this.params.windowMode === 'fullSquare')
         {
             this.experienceContainer.classList.add('fullSquare')
             this.experienceContainer.classList.remove('square')
+            this.camera.resize()
+            this.renderer.resize()
         }
         else if(this.params.windowMode === 'square')
         {
             this.experienceContainer.classList.add('square')
             this.experienceContainer.classList.remove('fullSquare')
+            this.camera.resize()
+            this.renderer.resize()
         }
     }
 
@@ -125,7 +134,11 @@ export default class Layout
                     clearInterval(this.waitToCloseNavInterval)
                     gsap.delayedCall(3,() =>
                     {
-                        if(this.params.navBoxSetting === 'hidden' && this.textAdventure.typewriterWorking === false)
+                        if(this.firstPerson.pointerLockControls.isLocked === false)
+                        {
+                            this.waitingToCloseNav = false
+                        }
+                        else if(this.params.navBoxSetting === 'hidden' && this.textAdventure.typewriterWorking === false)
                         {
                             this.experienceContainer.classList.remove('navBoxDefault')
                             this.experienceContainer.classList.remove('navBoxFull')
