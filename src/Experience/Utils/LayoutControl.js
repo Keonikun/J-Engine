@@ -17,6 +17,8 @@ export default class Layout
             colorProfile: 'grey'
         }
 
+        this.fullscreenEnabled = false
+
         // To do: Color profiles
 
         // Load new game
@@ -52,12 +54,42 @@ export default class Layout
         this.textBox = document.querySelector('.textBox')
         this.arrowControls = document.querySelector('.arrowControls')
         this.folderTabs = document.querySelector('.folderTabs')
+        this.fullscreen = document.querySelector('.fullscreen')
 
         this.folderTabs.addEventListener('click', () =>
         {
             if(this.params.navBoxSetting === 'hidden')
             {
                 this.setNavBox('default')
+            }
+        })
+
+        this.fullscreen.addEventListener('click', () =>
+        {
+            console.log(this.fullscreenEnabled)
+            if(this.fullscreenEnabled === false)
+            {
+                this.fullscreenEnabled = true
+
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+                    document.documentElement.msRequestFullscreen();
+                }
+            }
+            else if(this.fullscreenEnabled === true)
+            {
+                this.fullscreenEnabled = false
+
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
             }
         })
     }

@@ -4,6 +4,7 @@ import AnimatedTextures from './AnimatedTextures.js'
 import EventEmitter from '../Utils/EventEmitter.js'
 import Particles from './Particles.js'
 import Audio from './Audio.js'
+import InteractiveObjects from './InteractiveObjects.js'
 
 export default class World extends EventEmitter
 {
@@ -25,6 +26,7 @@ export default class World extends EventEmitter
             // Setup
             this.models = new Models(this.experience)
             this.animatedTextures = new AnimatedTextures(this.experience)
+            this.interactiveObjects = new InteractiveObjects(this.experience)
             this.audio = new Audio(this.experience)
             this.environemnt = new Environment(this.experience)  
             this.particles = new Particles(this.experience)

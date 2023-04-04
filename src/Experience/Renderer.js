@@ -29,6 +29,9 @@ export default class Renderer
             vignette: true
         }
 
+        this.highlightedObject = null
+        this.objectsToOutline = []
+
         this.setInstance()
         this.setComposer()
         this.setDebug()
@@ -54,7 +57,6 @@ export default class Renderer
         this.composer = new EffectComposer(this.instance)
         this.composer.addPass(new RenderPass(this.scene, this.camera.instance))
         this.composer.powerPreference = "low-power"
-        console.log(this.composer)
 
         if(this.params.bloom === true && this.params.postprocessing === true)
         {
@@ -62,16 +64,15 @@ export default class Renderer
         }
         if(this.params.filmic === true && this.params.postprocessing === true)
         {
-            this.composer.addPass(new FilmPass( 0.4, 0.2, 648, false ))
+            this.composer.addPass(new FilmPass( 0.3, 0.2, 648, false ))
         }
         if(this.params.outline === true && this.params.postprocessing === true)
         {
-            console.log(this.sizes.width)
             this.outlinePass = new OutlinePass(new THREE.Vector2( this.sizes.width, this.sizes.height ), this.scene, this.camera.instance )
             this.outlinePass.visibleEdgeColor.set('#ffffff')
             this.outlinePass.hiddenEdgeColor.set('#190a05')
-            this.outlinePass.edgeThickness = 1.0
-            this.outlinePass.edgeStrength = 3.0
+            this.outlinePass.edgeThickness = 0.01
+            this.outlinePass.edgeStrength = 1.5
             this.composer.addPass(this.outlinePass)
         }
         if(this.params.gammaCorrection === true && this.params.postprocessing === true)
@@ -85,16 +86,21 @@ export default class Renderer
         }
     }
 
-    outline(selected)
+    outline(object)
     {
-        if(selected === 'off')
+        if(object != this.highlightedObject)
         {
-            this.outlinePass.selectedObjects = []
+            this.objectsToOutline = []
+            this.highlightedObject = object
+            this.objectsToOutline.push(object)
+            this.outlinePass.selectedObjects = this.objectsToOutline
         }
-        else
-        {
-            this.outlinePass.selectedObjects = selected
-        }
+    }
+
+    clearOutline()
+    {
+        this.outlinePass.selectedObjects = []
+        this.highlightedObject = null
     }
 
     resize()

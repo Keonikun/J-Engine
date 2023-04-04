@@ -29,7 +29,8 @@ export default class FirstPerson
             walking: false, 
             sprintingEnabled: true,
             collisionDistance: 0.5,
-            locationHelper: false
+            locationHelper: false,
+            interactionDistance: 3.3
         }
 
 
@@ -39,6 +40,7 @@ export default class FirstPerson
             this.models.physMesh.scene.children[0].children.forEach(element => {
                 element.geometry.boundsTree = new MeshBVH( element.geometry )
             });
+            this.interactiveObjects = this.experience.world.interactiveObjects
         })
 
         this.setup()
@@ -204,19 +206,33 @@ export default class FirstPerson
                 // player has clicked on is an interactable element.
                 else if(this.pointerLockControls.isLocked === true)
                 {
-                    this.raycastFromCamera()
+                    this.interaction()
                 }
             }
         }, false)
     }
 
-    // Interact with objects IN PROGRESS
+    // Constant Raycost from camera
     raycastFromCamera()
     {
         this.camRay.setFromCamera(this.camRayCoords, this.camera)
         this.camRayIntersect = this.camRay.intersectObject(this.models.physMesh.scene)
-        console.log(this.camRayIntersect)
-        
+    
+        if(this.camRayIntersect[0] != null)
+        {
+            if(this.camRayIntersect[0].object.interactive === true && this.camRayIntersect[0].distance < this.params.interactionDistance)
+            {
+                this.renderer.outline(this.camRayIntersect[0].object)
+            }
+            else
+            {
+                this.renderer.clearOutline()
+            }
+        }
+    }
+
+    interaction()
+    {
         if(this.camRayIntersect[0] != null)
         {
             if(this.params.locationHelper === true)
@@ -225,17 +241,21 @@ export default class FirstPerson
                 this.locationHelperMessage = "<p>X: " + String(this.camRayIntersect[0].point.x) + ",<br>Y: " + String(this.camRayIntersect[0].point.y) + ",<br> Z: " + String(this.camRayIntersect[0].point.z) + "</p>"
                 this.textAdventure.printString(this.locationHelperMessage)
             }
+            if(this.camRayIntersect[0].object.interactive === true)
+            {
+                this.interactiveObjects.trigger(this.camRayIntersect[0].object)
+            }
         }   
     }
 
     update()
     {
-        // update velocity and gravity
-        this.fpsVelocity = this.velocity / this.time.currentFps * 60
-        this.fpsGravity = this.params.gravity / this.time.currentFps * 60
-
         if(this.playerControlsEnabled === true)
         {
+            this.raycastFromCamera()
+            // update velocity and gravity
+            this.fpsVelocity = this.velocity / this.time.currentFps * 60
+            this.fpsGravity = this.params.gravity / this.time.currentFps * 60
             //WASD Controls 
             //Assumes you have a mouse as well
             if(this.experience.world.FPControls === true)

@@ -11,9 +11,9 @@ export default class Particles
         this.debug = this.experience.debug
 
         this.params = {
-            rainEnabled: false,
+            rainEnabled: true,
             rainDropCount: 2000,
-            rainDropSpeed: 0.16,
+            rainDropSpeed: 0.5,
             rainDropColor: '#3a3489',
             rainDropSize: 0.8,
             rainSimDistance: 20,

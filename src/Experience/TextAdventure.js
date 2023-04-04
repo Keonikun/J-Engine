@@ -75,16 +75,49 @@ export default class TextAdventure
                     window.location.reload()
                 })
                 this.typewriter.typeString("<p>You chose the first choice!</p>")
-                this.typewriter.typeString("<a class='choice1' href='#'  style='color:cornsilk'>Repeat Text</a>")
+                this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>Repeat Text</a>")
                 this.typeEvent('singleChoice',1)
 
             }
             if(choiceResult === 2)
             {
                 this.typewriter.typeString("<p>You chose the second choice!</p>")
-                this.typewriter.typeString("<a class='choice1' href='#'  style='color:cornsilk'>Repeat Text</a>")
+                this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>Repeat Text</a>")
                 this.typeEvent('singleChoice',1)
             }
+        }
+
+        if(eventNumber === 3)
+        {
+            this.typewriter.typeString("<br><p>Oh, hello there.</p>")
+            this.textDelay()
+            this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>What are you doing?</a><br>")
+            this.typewriter.typeString("<a class='choice2' style='color:cornsilk'>Where am I?</a>")
+            this.typeEvent('choice',4)   
+        }
+
+        if(eventNumber === 4)
+        {
+            if(choiceResult === 1)
+            {
+                this.typewriter.typeString("<p>I'm waiting for the train to pass. Looks like I'll be here for a while.</p>")
+                this.typeEvent()
+
+            }
+            if(choiceResult === 2)
+            {
+                this.typewriter.typeString("<p>You are in front of your computer.</p>")
+                this.textDelay()
+                this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>......Thanks?</a>")
+
+                this.typeEvent('singleChoice', 5)
+            }
+        }
+
+        if(eventNumber === 5)
+        {
+            this.typewriter.typeString("<p>No problem, if you want to ask me anything else, don't, because I only have two dialogue options.</p>")
+            this.typeEvent()
         }
     }
 
@@ -104,7 +137,6 @@ export default class TextAdventure
             document.querySelector('.choice1').remove()
             document.querySelector('.choice2').removeEventListener('click',() => {})
             document.querySelector('.choice2').remove()
-            document.querySelector('.textLineBreak').remove()
         })
         document.querySelector('.choice2').addEventListener('click', () =>
         {
@@ -114,7 +146,6 @@ export default class TextAdventure
             document.querySelector('.choice1').remove()
             document.querySelector('.choice2').removeEventListener('click',() => {})
             document.querySelector('.choice2').remove()
-            document.querySelector('.textLineBreak').remove()
         })
     }
 
@@ -129,9 +160,25 @@ export default class TextAdventure
         })
     }
 
+    triggerEvent(eventNumber)
+    {
+        if(document.querySelector('.choice1'))
+        {
+            document.querySelector('.choice1').removeEventListener('click',() => {})
+            document.querySelector('.choice1').remove()
+        }
+        if(document.querySelector('.choice2'))
+        {
+            document.querySelector('.choice2').removeEventListener('click',() => {})
+            document.querySelector('.choice2').remove()
+        }
+        
+        this.progressToNextEvent(eventNumber)
+    }
+
     progressToNextEvent(eventNumber)
     {
-        gsap.delayedCall(1, () =>
+        gsap.delayedCall(0.4, () =>
         {
             this.progressionState[0] = eventNumber
             this.event(this.progressionState[0],this.choiceResult)
