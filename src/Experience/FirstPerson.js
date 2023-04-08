@@ -30,7 +30,13 @@ export default class FirstPerson
             sprintingEnabled: true,
             collisionDistance: 0.5,
             locationHelper: false,
-            interactionDistance: 3.3
+            interactionDistance: 3.3,
+            spawnPoint: {x: 65, y: 2.4, z: -25.5},
+            locations: 'spawn',
+            resetPosition: () =>
+            {
+                this.resetPosition()
+            }
         }
 
 
@@ -44,6 +50,7 @@ export default class FirstPerson
         })
 
         this.setup()
+        this.setPosition(this.params.spawnPoint.x,this.params.spawnPoint.y, this.params.spawnPoint.z)
         this.setCollisionRayCaster()
         this.setKeyListener()
         this.setPointerLockControls()
@@ -85,6 +92,16 @@ export default class FirstPerson
         this.backwardButton = document.querySelector('.backwardControl')
         this.leftButton = document.querySelector('.leftControl')
         this.rightButton = document.querySelector('.rightControl')
+    }
+
+    setPosition(x,y,z)
+    {
+        this.camera.position.set(x,y + 1.6,z)
+    }
+
+    resetPosition()
+    {
+        this.camera.position.set(this.params.spawnPoint.x,this.params.spawnPoint.y + 1.6,this.params.spawnPoint.z)
     }
 
     setCollisionRayCaster()
@@ -491,7 +508,32 @@ export default class FirstPerson
         if(this.debug.active)
         {
             this.debugFolder = this.debug.playerDebugFolder
-            this.debugFolder.add(this.params, 'playerSpeed', 0.001, 0.1)
+            this.debugFolder.add(this.params, 'resetPosition')
+            this.debugFolder.add(this.params, 'locations', ['spawn', 'sewers', 'park', 'outlook', 'theatre']).onChange(() =>
+            {
+                if(this.params.locations === 'spawn')
+                {
+                    this.resetPosition()
+                }
+                if(this.params.locations === 'sewers')
+                {
+                    this.setPosition(27.5, -7.4, 6.7)
+                }
+                if(this.params.locations === 'outlook')
+                {
+                    this.setPosition(19, 9.3, -20)
+                }
+                if(this.params.locations === 'theatre')
+                {
+                    this.setPosition(56, 0.5, 40)
+                }
+                if(this.params.locations === 'park')
+                {
+                    this.setPosition(-43, -8, 42)
+                }
+            })
+            this.debugFolder.add(this.params, 'playerSpeed', 0.001, 1)
+            this.debugFolder.add(this.params, 'gravity', 0, 1)
             this.debugFolder.add(this.params, 'playerHeight', 0.1, 4)
             this.debugFolder.add(this.params, 'sprintingEnabled')
             this.debugFolder.add(this.params, 'sprintFactor', 1, 5)

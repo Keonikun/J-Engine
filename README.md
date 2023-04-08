@@ -11,28 +11,24 @@
 
 - First Person Controls
 - Collision detection
-- Resource Loader
-- Animated textures (three-plain-animator)
+- Open Doors
+- Speak with NPC's
 - Text dialogue with choice-based events
+- Animated textures (three-plain-animator)
 - Rain system (Particles)
 - Dev Mode (Debug)
-- Visual ambience
-- Skybox
+- Positional Audio
 
 ## In Development
 
 - CSS Renderer (html within 3d scene)
-- Positional audio with volume adjustment
-- Ambient audio
 - Footsteps system
 - Dynamic events
 - Skybox/fog mixing
 - Day/night cycle
-- Water shader
 - Weather system
-- Functioning doors
-- Interactive objects
-- NPC system
+- NPC AI
+- 
 
 ## Preview
 
@@ -47,6 +43,10 @@ https://juliendarling-funk.com/Engine/index.html
 5. To run the project locally
 6. ```'npm run dev'```
 
+The 3d models, audio, and textures used within this project are my own. You are free to use everything else within this tool for your own projects.
+
+If you are interested in using the engine and have questions, contact me at juliendf@me.com and I would be happy to give you a quick tutorial!
+
 ## Sources
 
 Based on Bruno Simon's code structured project.
@@ -60,3 +60,9 @@ https://github.com/MaciejWWojcik/three-plain-animator
 typewriterjs by tameemsafi
 
 https://github.com/tameemsafi/typewriterjs
+
+## Liscences
+
+GLTF Models and Textures Copyright Julien Darling-Funk 2023
+
+J-Engine Tool: MIT Liscence

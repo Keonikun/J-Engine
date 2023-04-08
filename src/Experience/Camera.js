@@ -14,14 +14,11 @@ export default class Camera{
 
         this.params = {
             posX: 0,
-            posY: 1.6,
+            posY: 0,
             posZ: 0,
             fov: 40,
             clipNear: 0.1,
             clipFar: 35,
-            resetPosition: () => {
-                this.instance.position.set(0, 1.6, 0)
-            }
         }
 
         this.setDebug()
@@ -34,7 +31,7 @@ export default class Camera{
     {
         this.instance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, this.params.clipNear, this.params.clipFar)
         this.instance.position.set(this.params.posX,this.params.posY,this.params.posZ)
-        this.instance.rotation.y = Math.PI
+        this.instance.rotation.y = Math.PI * 0.75
         this.scene.add(this.instance)
     }
 
@@ -63,7 +60,6 @@ export default class Camera{
         if(this.debug.active)
         {
             this.debugFolder = this.debug.playerDebugFolder
-            this.debugFolder.add(this.params, 'resetPosition')
             this.debugFolder.add(this.params, 'posX').onChange(() =>
             {
                 this.instance.position.x = this.params.posX
