@@ -28,7 +28,6 @@
 - Day/night cycle
 - Weather system
 - NPC AI
-- 
 
 ## Preview
 
@@ -48,10 +47,6 @@ The 3d models, audio, and textures used within this project are my own. You are 
 If you are interested in using the engine and have questions, contact me at juliendf@me.com and I would be happy to give you a quick tutorial!
 
 ## Sources
-
-Based on Bruno Simon's code structured project.
-
-https://github.com/brunosimon
 
 three-plain-animator by MaciejWWojcik
 
