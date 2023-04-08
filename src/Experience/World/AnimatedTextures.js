@@ -9,24 +9,29 @@ export default class AnimatedPlains
         this.scene = this.experience.scene
         this.resources = this.experience.resources
 
-        // Setup
+        //Setup
+        this.staticMesh = this.resources.items.staticMesh
+        this.waterAnimTexture = this.resources.items.waterAnim
 
-
-        // this.setWinterAnimationModel()
+        this.setAnimatedMaterials()
     }
 
-    setWinterAnimationModel()
+    setAnimatedMaterials()
     {
-        this.winterAnimation = new PlainAnimator(this.winterAnimationTexture, 6, 6, 10, 10)
-        this.winterAnimationGeo = new THREE.PlaneGeometry(2, 2)
-        this.winterAnimationMap = this.winterAnimation.init()
-        this.winterAnimationMat = new THREE.MeshBasicMaterial({map: this.winterAnimationMap, transparrent: true})
-        this.winterAnimationMesh = new THREE.Mesh(this.winterAnimationGeo, this.winterAnimationMat)
-        this.winterAnimationMesh.position.set(7.3,-1,3.5)
-        this.scene.add(this.winterAnimationMesh)
+        this.waterAnim = new PlainAnimator(this.waterAnimTexture, 8, 4, 32, 10)
+        this.waterAnimMap = this.waterAnim.init()
+        this.waterAnimMaterial = new THREE.MeshBasicMaterial({map: this.waterAnimMap, transparrent: true})
+        this.applyAnimatedMaterisl()
+    }
+
+    applyAnimatedMaterisl()
+    {
+        console.log(this.staticMesh)
+        this.staticMesh.scene.children[0].children[2].material = this.waterAnimMaterial
     }
 
     update()
     {
+        this.waterAnim.animate()
     }
 }

@@ -5,6 +5,7 @@ import EventEmitter from '../Utils/EventEmitter.js'
 import Particles from './Particles.js'
 import Audio from './Audio.js'
 import InteractiveObjects from './InteractiveObjects.js'
+import CssObjects from './CssObjects.js'
 
 export default class World extends EventEmitter
 {
@@ -15,6 +16,7 @@ export default class World extends EventEmitter
         this.experience = experience
         this.scene = this.experience.scene
         this.resources = this.experience.resources
+        // this.cssObjects = new CssObjects(this.experience)
 
         //Control Options
         this.FPControls= false
@@ -26,10 +28,10 @@ export default class World extends EventEmitter
             // Setup
             this.models = new Models(this.experience)
             this.animatedTextures = new AnimatedTextures(this.experience)
-            this.interactiveObjects = new InteractiveObjects(this.experience)
             this.audio = new Audio(this.experience)
             this.environemnt = new Environment(this.experience)  
             this.particles = new Particles(this.experience)
+            this.interactiveObjects = new InteractiveObjects(this.experience)
 
             // Enable desired controls
             this.FPCollisions = true
@@ -46,6 +48,7 @@ export default class World extends EventEmitter
             // Animations 
             this.animatedTextures.update()
             this.particles.update()
+            this.interactiveObjects.update()
         }
     }
 }

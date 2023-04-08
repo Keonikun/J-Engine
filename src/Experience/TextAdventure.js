@@ -14,6 +14,7 @@ export default class TextAdventure
         this.progressionState = [0, 0]
         this.choiceResult = null
         this.typewriterWorking = false
+        this.dialogueFocused = false
         
         // currently, cursor does not work as intended. Leave as "" for now
         this.params = {
@@ -35,12 +36,6 @@ export default class TextAdventure
         {
             if(this.debug.active)
             {
-                this.typewriter.typeString("<p>You are now in dev mode.</p>")
-                this.textDelay()
-                this.typewriter.typeString("<p>Click the dropdown menu on the top right to begin changing the world around you!</p>")
-                this.textDelay()
-                this.typewriter.typeString("<p>If you wish to exit dev mode, click the link below. <span style='color:crimson'>WARNING:</span> The changes you made will not be saved!</p>")
-                this.textDelay()
                 this.typewriter.typeString("<a class='choice1' href='#home' style='color:crimson'>Exit Dev Mode</a>")
                 // Begin the typing sequence with this.typeEvent() 
                 // First value is the event type: choice, singleChoice, progressToNext, or none
@@ -50,12 +45,6 @@ export default class TextAdventure
             else
             {
                 // Create typing sequence in the order you would like the text to appear.
-                this.typewriter.typeString("<p>Welcome to <span style='color:crimson'>J-Engine</span>: a web-based game engine created using THREE.js.</p>")
-                this.textDelay()
-                this.typewriter.typeString("<p>Use arrow keys or, alternatively, click on the scene above to use 'WASD' and mouse controls.</p>")
-                this.textDelay()
-                this.typewriter.typeString("<p>Click the link below to access dev mode:</p>")
-                this.textDelay()
                 this.typewriter.typeString("<a class='choice1' href='#debug' style='color:green'>Dev Mode</a>")
                 // Begin the typing sequence with this.typeEvent() 
                 // First value is the event type: choice, singleChoice, progressToNext, or none
@@ -92,7 +81,9 @@ export default class TextAdventure
             this.typewriter.typeString("<br><p>Oh, hello there.</p>")
             this.textDelay()
             this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>What are you doing?</a><br>")
-            this.typewriter.typeString("<a class='choice2' style='color:cornsilk'>Where am I?</a>")
+            this.typewriter.typeString("<a class='choice2' style='color:cornsilk'>Where am I?</a><br>")
+            this.typewriter.typeString("<a class='release' style='color:cornsilk'>Leave</a>")
+
             this.typeEvent('choice',4)   
         }
 
@@ -101,12 +92,13 @@ export default class TextAdventure
             if(choiceResult === 1)
             {
                 this.typewriter.typeString("<p>I'm waiting for the train to pass. Looks like I'll be here for a while.</p>")
-                this.typeEvent()
+                this.typewriter.typeString("<a class='release' style='color:cornsilk'>End Conversation</a>")
+                this.typeEvent('release')
 
             }
             if(choiceResult === 2)
             {
-                this.typewriter.typeString("<p>You are in front of your computer.</p>")
+                this.typewriter.typeString("<p>You are in front of your computer.</p><br>")
                 this.textDelay()
                 this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>......Thanks?</a>")
 
@@ -117,7 +109,8 @@ export default class TextAdventure
         if(eventNumber === 5)
         {
             this.typewriter.typeString("<p>No problem, if you want to ask me anything else, don't, because I only have two dialogue options.</p>")
-            this.typeEvent()
+            this.typewriter.typeString("<a class='release' style='color:cornsilk'>End Conversation</a>")
+            this.typeEvent('release')
         }
     }
 
@@ -137,6 +130,11 @@ export default class TextAdventure
             document.querySelector('.choice1').remove()
             document.querySelector('.choice2').removeEventListener('click',() => {})
             document.querySelector('.choice2').remove()
+            if(document.querySelector('.release'))
+            {
+                document.querySelector('.release').removeEventListener('click', ()=>{})
+                document.querySelector('.release').remove()
+            }
         })
         document.querySelector('.choice2').addEventListener('click', () =>
         {
@@ -146,7 +144,16 @@ export default class TextAdventure
             document.querySelector('.choice1').remove()
             document.querySelector('.choice2').removeEventListener('click',() => {})
             document.querySelector('.choice2').remove()
+            if(document.querySelector('.release'))
+            {
+                document.querySelector('.release').removeEventListener('click', ()=>{})
+                document.querySelector('.release').remove()
+            }    
         })
+        if(document.querySelector('.release'))
+        {
+            this.release()
+        }
     }
 
     singleChoice(eventNumber)
@@ -157,6 +164,28 @@ export default class TextAdventure
             this.progressToNextEvent(eventNumber)
             document.querySelector('.choice1').removeEventListener('click',() => {})
             document.querySelector('.choice1').remove()
+        })
+    }
+
+    progressToNextEvent(eventNumber)
+    {
+        gsap.delayedCall(0.4, () =>
+        {
+            this.progressionState[0] = eventNumber
+            this.event(this.progressionState[0],this.choiceResult)
+        })
+    }
+
+    release()
+    {
+        document.querySelector('.release').addEventListener('click', () =>
+        {
+            document.querySelector('.release').removeEventListener('click', ()=>{})
+            document.querySelector('.release').remove()
+            this.dialogueFocused = false
+            this.experience.firstPerson.lockPointer()
+            document.querySelector('.experienceContainer').classList.add('navBoxHidden')
+            document.querySelector('.experienceContainer').classList.remove('navBoxDefault')
         })
     }
 
@@ -174,15 +203,6 @@ export default class TextAdventure
         }
         
         this.progressToNextEvent(eventNumber)
-    }
-
-    progressToNextEvent(eventNumber)
-    {
-        gsap.delayedCall(0.4, () =>
-        {
-            this.progressionState[0] = eventNumber
-            this.event(this.progressionState[0],this.choiceResult)
-        })
     }
 
     changeScore(amountToAdd,clear)
@@ -264,9 +284,9 @@ export default class TextAdventure
                 {
                     this.progressToNextEvent(event)
                 }
-                if(eventType === 'none')
+                if(eventType === 'release')
                 {
-                    // do nothing
+                    this.release()
                 }
                 clearInterval(this.stringInterval)
                 this.typewriterWorking = false

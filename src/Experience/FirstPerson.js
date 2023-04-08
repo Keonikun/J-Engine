@@ -38,7 +38,7 @@ export default class FirstPerson
         {    
             this.models = this.experience.world.models
             this.models.physMesh.scene.children[0].children.forEach(element => {
-                element.geometry.boundsTree = new MeshBVH( element.geometry )
+                element.geometry.boundsTree = new MeshBVH( element.geometry, { maxDepth: 10, maxLeafTris: 10  } )
             });
             this.interactiveObjects = this.experience.world.interactiveObjects
         })
@@ -108,22 +108,11 @@ export default class FirstPerson
 
     collisionDetection()
     {
-        this.cameraPositionMod = this.camera.position
-        this.cameraPositionMod.y - 0.6
-        this.northDirectionMod = this.northDirection
-        this.northDirectionMod.y - 0.6
-        this.eastDirectionMod = this.eastDirection
-        this.eastDirectionMod.y - 0.6
-        this.southDirectionMod = this.southDirection
-        this.southDirectionMod.y - 0.6
-        this.westDirectionMod = this.westDirection
-        this.westDirectionMod.y - 0.6
-
-        this.detectFloor.set(this.cameraPositionMod, this.floorDirection)
-        this.detectNorth.set(this.cameraPositionMod, this.northDirectionMod)
-        this.detectEast.set(this.cameraPositionMod, this.eastDirectionMod)
-        this.detectSouth.set(this.cameraPositionMod, this.southDirectionMod)
-        this.detectWest.set(this.cameraPositionMod, this.westDirectionMod)
+        this.detectFloor.set(this.camera.position, this.floorDirection)
+        this.detectNorth.set(this.camera.position, this.northDirection)
+        this.detectEast.set(this.camera.position, this.eastDirection)
+        this.detectSouth.set(this.camera.position, this.southDirection)
+        this.detectWest.set(this.camera.position, this.westDirection)
 
         this.floorDetection = this.detectFloor.intersectObject(this.models.physMesh.scene)
         this.northDetection = this.detectNorth.intersectObject(this.models.physMesh.scene)
@@ -172,7 +161,7 @@ export default class FirstPerson
         {
             if(this.experience.world.FPControls === true)
             {
-                if(this.pointerLockControls.isLocked === false)
+                if(this.pointerLockControls.isLocked === false && this.textAdventure.dialogueFocused === false)
                 {
                     this.pointerLockControls.lock()
                     this.playerControlsEnabled = true
@@ -212,6 +201,16 @@ export default class FirstPerson
         }, false)
     }
 
+    lockPointer()
+    {
+        this.pointerLockControls.lock()
+    }
+
+    unlockPointer()
+    {
+        this.pointerLockControls.unlock()
+    }
+
     // Constant Raycost from camera
     raycastFromCamera()
     {
@@ -241,16 +240,24 @@ export default class FirstPerson
                 this.locationHelperMessage = "<p>X: " + String(this.camRayIntersect[0].point.x) + ",<br>Y: " + String(this.camRayIntersect[0].point.y) + ",<br> Z: " + String(this.camRayIntersect[0].point.z) + "</p>"
                 this.textAdventure.printString(this.locationHelperMessage)
             }
-            if(this.camRayIntersect[0].object.interactive === true)
+            if(this.camRayIntersect[0].distance < 4)
             {
-                this.interactiveObjects.trigger(this.camRayIntersect[0].object)
+                if(this.camRayIntersect[0].object.interactive === true)
+                {
+                    this.interactiveObjects.trigger(this.camRayIntersect[0].object)
+                    console.log("hello")
+                }
+                else if(this.camRayIntersect[0].object.parent.interactive === true)
+                {
+                    this.interactiveObjects.trigger(this.camRayIntersect[0].object.parent)
+                }
             }
-        }   
+        }
     }
 
     update()
     {
-        if(this.playerControlsEnabled === true)
+        if(this.playerControlsEnabled === true && this.textAdventure.dialogueFocused === false)
         {
             this.raycastFromCamera()
             // update velocity and gravity

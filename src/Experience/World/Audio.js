@@ -24,7 +24,7 @@ export default class Audio
 
         document.querySelector('.startGame').addEventListener('click', () =>
         {
-            this.play()
+            this.playAll()
         })
     }
 
@@ -62,6 +62,19 @@ export default class Audio
         this.speaker2.position.set(-10,5,15)
         this.speaker2.add( this.trainCrossing )
         this.scene.add( this.speaker2 )
+
+        this.doorOpen = new THREE.PositionalAudio( this.listener )
+        this.doorOpen.setBuffer( this.resources.items.doorOpen )
+        this.doorOpen.setRefDistance( 1 )
+        this.doorOpen.setRolloffFactor( 1.5 )
+        this.doorOpen.setLoop( false )
+        this.doorOpen.setVolume( 1 )
+        this.doorClose = new THREE.PositionalAudio( this.listener )
+        this.doorClose.setBuffer( this.resources.items.doorClose )
+        this.doorClose.setRefDistance( 1 )
+        this.doorClose.setRolloffFactor( 1.5 )
+        this.doorClose.setLoop( false )
+        this.doorClose.setVolume( 1 )
     }
 
     setFPAudio()
@@ -72,10 +85,15 @@ export default class Audio
         this.rain.setRolloffFactor( 1.5 )
         this.rain.setLoop( true )
         this.rain.setVolume( 1 )
-        this.camera.add( this.rain )
+        this.camera.add( this.rain, this.doorClose, this.doorOpen )
     }
 
-    play()
+    play(sound)
+    {
+        eval("this." + sound + ".play()")
+    }
+
+    playAll()
     {
         this.windowRain.play()
         this.trainCrossing.play()

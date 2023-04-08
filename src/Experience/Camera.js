@@ -16,7 +16,7 @@ export default class Camera{
             posX: 0,
             posY: 1.6,
             posZ: 0,
-            fov: 50,
+            fov: 40,
             clipNear: 0.1,
             clipFar: 35,
             resetPosition: () => {
@@ -24,6 +24,42 @@ export default class Camera{
             }
         }
 
+        this.setDebug()
+        this.setInstance()
+        // Uncomment below to enable Orbit Controls
+        // this.setOrbitControls()
+    }
+
+    setInstance()
+    {
+        this.instance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, this.params.clipNear, this.params.clipFar)
+        this.instance.position.set(this.params.posX,this.params.posY,this.params.posZ)
+        this.instance.rotation.y = Math.PI
+        this.scene.add(this.instance)
+    }
+
+    setOrbitControls()
+    {
+        this.controls = new OrbitControls(this.instance, this.canvas)
+        this.controls.target.set(0.35,2,-0.6)
+        this.controls.enablePan = false
+        this.controls.enableDamping = true
+    }
+
+    resize()
+    {
+        this.instance.aspect = this.sizes.width / this.sizes.height
+        this.instance.updateProjectionMatrix()
+    }
+
+    update()
+    {
+        // Enable Orbit Controls
+        // this.controls.update()
+    }
+
+    setDebug()
+    {
         if(this.debug.active)
         {
             this.debugFolder = this.debug.playerDebugFolder
@@ -57,37 +93,5 @@ export default class Camera{
             })
             this.debugFolder.close()
         }
-
-        this.setInstance()
-        // Uncomment below to enable Orbit Controls
-        // this.setOrbitControls()
-    }
-
-    setInstance()
-    {
-        this.instance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, this.params.clipNear, this.params.clipFar)
-        this.instance.position.set(this.params.posX,this.params.posY,this.params.posZ)
-        this.instance.rotation.y = Math.PI
-        this.scene.add(this.instance)
-    }
-
-    setOrbitControls()
-    {
-        this.controls = new OrbitControls(this.instance, this.canvas)
-        this.controls.target.set(0.35,2,-0.6)
-        this.controls.enablePan = false
-        this.controls.enableDamping = true
-    }
-
-    resize()
-    {
-        this.instance.aspect = this.sizes.width / this.sizes.height
-        this.instance.updateProjectionMatrix()
-    }
-
-    update()
-    {
-        // Enable Orbit Controls
-        // this.controls.update()
     }
 }

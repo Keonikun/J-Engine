@@ -207,7 +207,7 @@ export default class Layout
             }
             this.textBoxHeight = this.textBox.scrollHeight
             
-        }, 100)
+        }, 50)
     }
 
     setDebug()

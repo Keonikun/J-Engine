@@ -7,6 +7,11 @@ export default [
         type: 'gltfModel',
         path: 'models/physMesh.gltf'
     },
+    {
+        name: 'staticMesh',
+        type: 'gltfModel',
+        path: 'models/staticMesh.gltf'
+    },
     /**
      * ---------TEXTURES---------
      */
@@ -17,6 +22,11 @@ export default [
         path: 'textures/static/rain.png'
     },
     // texture animations
+    {
+        name: 'waterAnim',
+        type: 'texture',
+        path: 'textures/animated/waterAnim.png'
+    },
     // skybox
     {
         name: 'stormydaysEnvMap',
@@ -37,16 +47,26 @@ export default [
     {
         name: 'trainCrossing',
         type: 'audio',
-        path: '/audio/trainCrossing.ogg'
+        path: 'audio/trainCrossing.ogg'
     },
     {
         name: 'windowRain',
         type: 'audio',
-        path: '/audio/windowRain.ogg'
+        path: 'audio/windowRain.ogg'
     },
     {
         name: 'rain',
         type: 'audio',
-        path: '/audio/rain.ogg'
+        path: 'audio/rain.ogg'
+    },
+    {
+        name: 'doorOpen',
+        type: 'audio',
+        path: 'audio/doorOpen.ogg'
+    },
+    {
+        name: 'doorClose',
+        type: 'audio',
+        path: 'audio/doorClose.ogg'
     },
 ]

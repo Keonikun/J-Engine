@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js'
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js'
@@ -16,6 +17,7 @@ export default class Renderer
         this.canvas = this.experience.canvas
         this.sizes = this.experience.sizes
         this.scene = this.experience.scene
+        this.cssScene = this.experience.cssScene
         this.camera = this.experience.camera
         this.debug = this.experience.debug
 
@@ -23,16 +25,18 @@ export default class Renderer
             pixelRatio: 0.2,
             postprocessing: true,
             bloom: true,
-            outline: true,
+            outline: false,
             gammaCorrection: true,
             filmic: true,
-            vignette: true
+            vignette: true,
+            css3D: false,
         }
 
         this.highlightedObject = null
         this.objectsToOutline = []
 
         this.setInstance()
+        this.setCssInstance()
         this.setComposer()
         this.setDebug()
     }
@@ -52,6 +56,19 @@ export default class Renderer
         this.instance.setPixelRatio(this.sizes.pixelRatio * this.params.pixelRatio)
     }
 
+    setCssInstance()
+    {
+        if(this.params.css3D)
+        {
+            this.cssInstance = new CSS3DRenderer()
+            this.cssInstance.setSize(this.sizes.width, this.sizes.height)
+            this.cssInstance.domElement.style.position = 'absolute'
+            this.cssInstance.domElement.style.top = '0px'
+
+            document.querySelector('.cssContainer').appendChild(this.cssInstance.domElement)
+        }   
+    }
+
     setComposer()
     {
         this.composer = new EffectComposer(this.instance)
@@ -62,18 +79,18 @@ export default class Renderer
         {
             this.composer.addPass(new UnrealBloomPass({ x: 64, y: 64 }, 1.0, -1, 0.7 ))
         }
-        if(this.params.filmic === true && this.params.postprocessing === true)
-        {
-            this.composer.addPass(new FilmPass( 0.3, 0.2, 648, false ))
-        }
         if(this.params.outline === true && this.params.postprocessing === true)
         {
             this.outlinePass = new OutlinePass(new THREE.Vector2( this.sizes.width, this.sizes.height ), this.scene, this.camera.instance )
             this.outlinePass.visibleEdgeColor.set('#ffffff')
             this.outlinePass.hiddenEdgeColor.set('#190a05')
             this.outlinePass.edgeThickness = 0.01
-            this.outlinePass.edgeStrength = 1.5
+            this.outlinePass.edgeStrength = 1
             this.composer.addPass(this.outlinePass)
+        }
+        if(this.params.filmic === true && this.params.postprocessing === true)
+        {
+            this.composer.addPass(new FilmPass( 0.3, 0.2, 648, false ))
         }
         if(this.params.gammaCorrection === true && this.params.postprocessing === true)
         {
@@ -88,7 +105,7 @@ export default class Renderer
 
     outline(object)
     {
-        if(object != this.highlightedObject)
+        if(object != this.highlightedObject && this.params.outline === true)
         {
             this.objectsToOutline = []
             this.highlightedObject = object
@@ -99,8 +116,11 @@ export default class Renderer
 
     clearOutline()
     {
-        this.outlinePass.selectedObjects = []
-        this.highlightedObject = null
+        if(this.params.outline === true)
+        {
+            this.outlinePass.selectedObjects = []
+            this.highlightedObject = null
+        }      
     }
 
     resize()
@@ -109,6 +129,11 @@ export default class Renderer
         this.instance.setPixelRatio(this.sizes.pixelRatio * this.params.pixelRatio)
         this.composer.setSize(this.sizes.width, this.sizes.height)
         this.composer.setPixelRatio(this.sizes.pixelRatio * this.params.pixelRatio)
+
+        if(this.params.css3D)
+        {
+            this.cssInstance.setSize(this.sizes.width, this.sizes.height)
+        }
     }
 
     update()
@@ -120,6 +145,10 @@ export default class Renderer
         else if(this.params.postprocessing === true)
         {
             this.composer.render()
+        }
+        if(this.params.css3D)
+        {
+            this.cssInstance.render(this.cssScene, this.camera.instance)
         }
     }
 

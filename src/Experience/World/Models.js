@@ -9,6 +9,7 @@ export default class Models
     
         // GLTF Setup
         this.physMesh = this.resources.items.physMesh
+        this.staticMesh = this.resources.items.staticMesh
 
         this.setModels()
         this.positionModels()
@@ -17,6 +18,7 @@ export default class Models
     setModels()
     {
         this.scene.add(this.physMesh.scene)
+        this.scene.add(this.staticMesh.scene)
     }
 
     positionModels()
