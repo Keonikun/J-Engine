@@ -8,8 +8,17 @@ export default class Models
         this.time = this.experience.time
     
         // GLTF Setup
-        this.physMesh = this.resources.items.physMesh
-        this.staticMesh = this.resources.items.staticMesh
+        this.gltfScene = this.resources.items.gltfScene
+        this.gltfScene.scene.children.forEach(element => {
+            if(element.name === "PhysMesh")
+            {
+                this.physMesh = element
+            }
+            if(element.name === "StaticMesh")
+            {
+                this.staticMesh = element
+            }
+        });
 
         this.setModels()
         this.positionModels()
@@ -17,8 +26,8 @@ export default class Models
 
     setModels()
     {
-        this.scene.add(this.physMesh.scene)
-        this.scene.add(this.staticMesh.scene)
+        this.scene.add(this.physMesh)
+        this.scene.add(this.staticMesh)
     }
 
     positionModels()

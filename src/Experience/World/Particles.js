@@ -20,7 +20,8 @@ export default class Particles
             rainHeightSpawn: 40,
             rainHeightDeath: -20,
             windX: 0,
-            windZ: 0
+            windZ: 0,
+            visible: false,
         }
 
         if(this.params.rainEnabled === true)
@@ -60,43 +61,55 @@ export default class Particles
 
     update()
     {
-        if(this.params.rainEnabled === true && this.experience.worldLoaded === true)
+        if(this.params.visible === true)
         {
-            this.rainAnimPositions = this.rain.geometry.attributes.position.array
-            for( let i = 0; i < this.params.rainDropCount * 3; i+=3 )
+            if(this.params.rainEnabled === true && this.experience.worldLoaded === true)
             {
-                // Wind direction
-                this.rainAnimPositions[i] -= this.params.windX
-                this.rainAnimPositions[i+2] -= this.params.windZ
-
-                // Rain fall speed
-                this.rainAnimPositions[i+1] -= this.params.rainDropSpeed + Math.random() * 0.1
-                if( this.rainAnimPositions[i+1] < (this.params.rainHeightDeath * Math.random()))
+                this.rainAnimPositions = this.rain.geometry.attributes.position.array
+                for( let i = 0; i < this.params.rainDropCount * 3; i+=3 )
                 {
-                    this.rainAnimPositions[i+1] = this.params.rainHeightSpawn
+                    // Wind direction
+                    this.rainAnimPositions[i] -= this.params.windX
+                    this.rainAnimPositions[i+2] -= this.params.windZ
+
+                    // Rain fall speed
+                    this.rainAnimPositions[i+1] -= this.params.rainDropSpeed + Math.random() * 0.1
+                    if( this.rainAnimPositions[i+1] < (this.params.rainHeightDeath * Math.random()))
+                    {
+                        this.rainAnimPositions[i+1] = this.params.rainHeightSpawn
+                    }
+
+                    // reset particles affected by wind
+                    if(this.rainAnimPositions[i] > this.params.rainSimDistance || this.rainAnimPositions[i] < (-1 * this.params.rainSimDistance) || this.rainAnimPositions[i+2] > this.params.rainSimDistance || this.rainAnimPositions[i+2] < (-1 * this.params.rainSimDistance))
+                    {
+                        this.rainAnimPositions[i] = Math.random() * (this.params.rainSimDistance * 2) - this.params.rainSimDistance
+                        this.rainAnimPositions[i+1] = this.params.rainHeightSpawn
+                        this.rainAnimPositions[i+2] = Math.random() * (this.params.rainSimDistance * 2) - this.params.rainSimDistance
+                    }
+                    this.rain.geometry.attributes.position.needsUpdate = true
                 }
 
-                // reset particles affected by wind
-                if(this.rainAnimPositions[i] > this.params.rainSimDistance || this.rainAnimPositions[i] < (-1 * this.params.rainSimDistance) || this.rainAnimPositions[i+2] > this.params.rainSimDistance || this.rainAnimPositions[i+2] < (-1 * this.params.rainSimDistance))
+                // Update particle size when looking up
+                if(typeof this.experience.world.firstPersonControls != "undefined")
                 {
-                    this.rainAnimPositions[i] = Math.random() * (this.params.rainSimDistance * 2) - this.params.rainSimDistance
-                    this.rainAnimPositions[i+1] = this.params.rainHeightSpawn
-                    this.rainAnimPositions[i+2] = Math.random() * (this.params.rainSimDistance * 2) - this.params.rainSimDistance
+                    this.camX = this.experience.firstPerson.pointerLockControls.eulerX
+                    if(this.camX > 0 && this.camX < Math.PI * 0.5)
+                    {
+                        this.rain.material.size = this.params.rainDropSize - (this.params.rainDropSize * ( this.camX / (Math.PI * 0.7)))
+                    }
                 }
-                this.rain.geometry.attributes.position.needsUpdate = true
-            }
+                this.rain.position.y = this.camera.position.y 
 
-            // Update particle size when looking up
-            this.camX = this.experience.firstPerson.pointerLockControls.eulerX
-            if(this.camX > 0 && this.camX < Math.PI * 0.5)
-            {
-                this.rain.material.size = this.params.rainDropSize - (this.params.rainDropSize * ( this.camX / (Math.PI * 0.7)))
+                this.rain.position.x = this.camera.position.x - Math.pow(this.params.windX, 2) * 2
+                this.rain.position.z = this.camera.position.z - Math.pow(this.params.windZ, 2) * 2
             }
-
-            this.rain.position.x = this.camera.position.x - Math.pow(this.params.windX, 2) * 2
-            this.rain.position.z = this.camera.position.z - Math.pow(this.params.windZ, 2) * 2
+        }
+        else if(this.params.visible === false)
+        {
+            this.rain.position.y = 1000
         }
     }
+
 
     setDebug()
     {

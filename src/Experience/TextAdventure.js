@@ -16,6 +16,11 @@ export default class TextAdventure
         this.typewriterWorking = false
         this.dialogueFocused = false
         
+        this.experience.world.on('ready', () =>
+        {
+            this.interactiveObjects = this.experience.world.interactiveObjects
+        })
+        
         // currently, cursor does not work as intended. Leave as "" for now
         this.params = {
             textCursor: "",
@@ -36,15 +41,28 @@ export default class TextAdventure
         {
             if(this.debug.active)
             {
+                this.typewriter.typeString("<p>CONTROLS:</p>")
+                this.typewriter.typeString("<p>Click on the 3D scene above to begin playing.</p>")
+                this.typewriter.typeString("<p>Access Menu: Press 'Q'</p>")
+                this.typewriter.typeString("<p>Walk around: 'WASD' keys</p>")
+                this.typewriter.typeString("<p>Look around: Mouse or Trackpad</p>")
+                this.typewriter.typeString("<p>Interact with doors: Left Click</p>")
+                this.typewriter.typeString("<p>Sprint: Hold Shift Key</p>")
+                
                 this.typewriter.typeString("<a class='choice1' href='#home' style='color:crimson'>Exit Dev Mode</a>")
-                // Begin the typing sequence with this.typeEvent() 
-                // First value is the event type: choice, singleChoice, progressToNext, or none
-                // Second value is the event you would like to move to.
                 this.typeEvent('singleChoice',2)
             }
             else
             {
                 // Create typing sequence in the order you would like the text to appear.
+                this.typewriter.typeString("<p>CONTROLS:</p>")
+                this.typewriter.typeString("<p>Click on the 3D scene above to begin playing.</p>")
+                this.typewriter.typeString("<p>Access Menu: Press 'Q'</p>")
+                this.typewriter.typeString("<p>Walk around: 'WASD' keys</p>")
+                this.typewriter.typeString("<p>Look around: Mouse or Trackpad</p>")
+                this.typewriter.typeString("<p>Interact with doors: Left Click</p>")
+                this.typewriter.typeString("<p>Sprint: Hold Shift Key</p>")
+                
                 this.typewriter.typeString("<a class='choice1' href='#debug' style='color:green'>Dev Mode</a>")
                 // Begin the typing sequence with this.typeEvent() 
                 // First value is the event type: choice, singleChoice, progressToNext, or none
@@ -111,6 +129,39 @@ export default class TextAdventure
             this.typewriter.typeString("<p>No problem, if you want to ask me anything else, don't, because I only have two dialogue options.</p>")
             this.typewriter.typeString("<a class='release' style='color:cornsilk'>End Conversation</a>")
             this.typeEvent('release')
+        }
+
+        if(eventNumber === 6)
+        {
+            this.typewriter.typeString("<p>Hello. Do you want to enter this gate?</p>")
+            this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>Yes Please.</a><br>")
+            this.typewriter.typeString("<a class='choice2' style='color:cornsilk'>Who am I talking to?</a><br>")
+            this.typeEvent('choice',7)   
+        }
+
+        if(eventNumber === 7)
+        {
+            if(choiceResult === 1)
+            {
+                this.typewriter.typeString("<p>Ah yes, of course, just give me a second to sort out the technical difficulties.</p>")
+                this.textDelay()
+                this.typewriter.typeString("<p>...</p>")
+                this.typewriter.typeString("<p>...</p>")
+                this.typewriter.typeString("<p>...</p>")
+                this.textDelay()
+                this.typewriter.typeString("<p>While you're waiting, might I ask you why you came to this place?</p>")
+                this.typewriter.typeString("<a class='release' style='color:cornsilk'>I don't want to talk about that.</a>")
+
+                this.typeEvent('release')   
+
+            }
+            if(choiceResult === 2)
+            {
+                this.typewriter.typeString("<p>I dont' want to talk about that.</p><br>")
+                this.typewriter.typeString("<a class='release' style='color:cornsilk'>End Conversation</a>")
+                this.interactiveObjects.triggerThis('gate1')
+                this.typeEvent('release')
+            }
         }
     }
 
@@ -183,7 +234,7 @@ export default class TextAdventure
             document.querySelector('.release').removeEventListener('click', ()=>{})
             document.querySelector('.release').remove()
             this.dialogueFocused = false
-            this.experience.firstPerson.lockPointer()
+            this.experience.world.firstPerson.lockPointer()
             document.querySelector('.experienceContainer').classList.add('navBoxHidden')
             document.querySelector('.experienceContainer').classList.remove('navBoxDefault')
         })

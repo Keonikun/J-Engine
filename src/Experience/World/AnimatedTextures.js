@@ -10,7 +10,7 @@ export default class AnimatedPlains
         this.resources = this.experience.resources
 
         //Setup
-        this.staticMesh = this.resources.items.staticMesh
+        this.staticMesh = this.experience.world.models.staticMesh
         this.waterAnimTexture = this.resources.items.waterAnim
 
         this.setAnimatedMaterials()
@@ -20,14 +20,19 @@ export default class AnimatedPlains
     {
         this.waterAnim = new PlainAnimator(this.waterAnimTexture, 8, 4, 32, 10)
         this.waterAnimMap = this.waterAnim.init()
-        this.waterAnimMaterial = new THREE.MeshBasicMaterial({map: this.waterAnimMap, transparrent: true})
+        this.waterAnimMaterial = new THREE.MeshBasicMaterial({map: this.waterAnimMap})
         this.applyAnimatedMaterisl()
     }
 
     applyAnimatedMaterisl()
     {
-        console.log(this.staticMesh)
-        this.staticMesh.scene.children[0].children[2].material = this.waterAnimMaterial
+        this.staticMesh.children.forEach(element => {
+            if(element.material.name === "Water")
+            {
+                element.material = this.waterAnimMaterial
+            }
+        });
+        
     }
 
     update()

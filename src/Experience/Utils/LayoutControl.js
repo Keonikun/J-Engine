@@ -24,7 +24,7 @@ export default class Layout
         // Load new game
         this.experience.world.on('ready', () =>
         { 
-            this.firstPerson = this.experience.firstPerson
+            this.firstPerson = this.experience.world.firstPerson
             document.querySelector('.loadingText').classList.add('hidden')
             document.querySelector('.startGame').classList.remove('hidden')
 

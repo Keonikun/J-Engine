@@ -6,7 +6,6 @@ import Renderer from './Renderer.js'
 import World from './World/World.js'
 import Resources from './Utils/Resources'
 import sources from './sources.js'
-import FirstPerson from './FirstPerson.js'
 import Debug from './Utils/Debug.js'
 import TextAdventure from './TextAdventure.js'
 import LayoutControl from './Utils/LayoutControl.js'
@@ -30,10 +29,13 @@ export default class Experience
         this.world = new World(this)
         this.textAdventure = new TextAdventure(this)
         this.layoutControl = new LayoutControl(this)
-        this.firstPerson = new FirstPerson(this)
+
+        //In development
+        this.params = {
+            deployBuild: false
+        }
        
         this.worldLoaded = false
-
         this.world.on('ready', () =>
         {
             this.worldLoaded = true
@@ -63,7 +65,6 @@ export default class Experience
         this.camera.update()
         this.world.update()
         this.renderer.update()
-        this.firstPerson.update()
         this.debug.update()
     }
 }

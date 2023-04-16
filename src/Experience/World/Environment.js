@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { gsap } from 'gsap'
 
 export default class Environment
 {
@@ -10,7 +11,7 @@ export default class Environment
         this.debug = this.experience.debug
 
         this.params = {
-            backgroundAndFogCol: '#5c5c5c',
+            backgroundAndFogCol: '#000000',
             backgroundCol: '#5c5c5c',
             ambientLightInt: 0.5,
             ambientLightCol: '#ffffff',
@@ -22,22 +23,14 @@ export default class Environment
             fogCol: '#5c5c5c',
             fogNear: 20,
             fogFar: 35,
-            envMapEnabled: false,
-            envMap: 'stormydays'
         }
 
         this.setDebug()
         this.setAmbientLight()
         this.setDirectionalLight()
+        this.setSimpleBackground()
+
         this.setFog()
-        if(this.params.envMapEnabled === true)
-        {
-            this.setEnvironmentMap()
-        }
-        else
-        {
-            this.setSimpleBackground()
-        }
     }
 
     setAmbientLight()
@@ -63,31 +56,59 @@ export default class Environment
         this.scene.background = new THREE.Color( this.params.backgroundCol )
     }
 
-    setEnvironmentMap()
+    setBackground(color)
     {
-        this.environmentMap = {}
-        this.environmentMap.intensity = 0.4
-        this.environmentMap.texture = this.resources.items.stormydaysEnvMap
-        this.environmentMap.texture.encoding = THREE.sRGBEncoding
-
-        this.scene.environment = this.environmentMap.texture
-
-        this.setEnvironmentMap.updateMaterial = () =>
-        {
-            this.scene.traverse((child) => 
-            {
-                if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
-                {
-                    child.material.envMap = this.environmentMap.texture
-                    child.material.envMapIntensity = this.environmentMap.intensity
-                    child.material.needsUpdate = true
-                }
-            })
-        }
-        this.setEnvironmentMap.updateMaterial()
-
-        this.scene.background = this.environmentMap.texture
+        this.scene.background = new THREE.Color( color )
     }
+
+    nighttime()
+    {
+        this.toNight = gsap.to(this.scene.background,{r: 0.01, g: 0.01, b: 0.01, duration: 120})
+        this.toNightFog = gsap.to(this.scene.fog.color,{r: 0.01, g: 0.01, b: 0.01, duration: 120})
+        this.toNightFogThickness = gsap.to(this.scene.fog,{near: 10, far: 20, duration: 120})
+        this.toNight.play()
+        this.toNightFog.play()
+        this.toNightFogThickness.play()
+        console.log("triggered night")
+    }
+
+    daytime()
+    {   
+        this.toDay = gsap.to(this.scene.background,{r: 0.36, g: 0.36, b: 0.36, duration: 120})
+        this.toDayFog = gsap.to(this.scene.fog.color,{r: 0.36, g: 0.36, b: 0.36, duration: 120})
+        this.toDayFogThickness = gsap.to(this.scene.fog,{near: this.params.fogNear, far: this.params.fogFar, duration: 120})
+        this.toDay.play()
+        this.toDayFog.play()
+        this.toDayFogThickness.play()
+        console.log("triggered day")
+
+    }
+
+    // setEnvironmentMap()
+    // {
+        // this.environmentMap = {}
+        // this.environmentMap.intensity = 0.4
+        // // this.environmentMap.texture = this.resources.items.stormydaysEnvMap
+        // this.environmentMap.texture.encoding = THREE.sRGBEncoding
+
+        // this.scene.environment = this.environmentMap.texture
+
+        // this.setEnvironmentMap.updateMaterial = () =>
+        // {
+        //     this.scene.traverse((child) => 
+        //     {
+        //         if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
+        //         {
+        //             child.material.envMap = this.environmentMap.texture
+        //             child.material.envMapIntensity = this.environmentMap.intensity
+        //             child.material.needsUpdate = true
+        //         }
+        //     })
+        // }
+        // this.setEnvironmentMap.updateMaterial()
+
+        // this.scene.background = this.environmentMap.texture
+    // }
 
     setDebug()
     {
@@ -156,17 +177,6 @@ export default class Environment
             this.debugFolder.add( this.params, 'dirLightPosZ', -10, 10 ).onChange(() =>
             {
                 this.directionalLight.position.z = this.params.dirLightPosZ
-            })
-            this.debugFolder.add( this.params, 'envMapEnabled').onChange((event) =>
-            {
-                if(event === true)
-                {
-                    this.setEnvironmentMap()
-                }
-                else if(event === false)
-                {
-                    this.setSimpleBackground()
-                }
             })
             this.debugFolder.close()
         }
