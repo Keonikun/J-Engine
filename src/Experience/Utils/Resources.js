@@ -29,7 +29,7 @@ export default class Resources extends EventEmitter
         this.loaders.loadingManager = new THREE.LoadingManager()
         this.loaders.gltfLoader = new GLTFLoader(this.loaders.loadingManager)
         this.loaders.dracoLoader = new DRACOLoader(this.loaders.loadingManager)
-        this.loaders.dracoLoader.setDecoderPath('/Engine/draco/')
+        this.loaders.dracoLoader.setDecoderPath('/draco/')
         this.loaders.gltfLoader.setDRACOLoader(this.loaders.dracoLoader)
         this.loaders.textureLoader = new THREE.TextureLoader(this.loaders.loadingManager)
         this.loaders.cubeTextureLoader = new THREE.CubeTextureLoader(this.loaders.loadingManager)
