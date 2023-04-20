@@ -335,10 +335,11 @@ a
     position: absolute;
     width: 15%;
     height: 100%;
-    border-bottom: 26px solid rgb(223, 221, 198);
+    border-bottom: 26px solid rgb(110, 109, 90);
     border-left: 25px solid transparent;
     border-right: 25px solid transparent;
     transform: translate(0,5px);
+    transition: 0.1s;
 }
 
 .tab1
@@ -353,6 +354,11 @@ a
     border-bottom: 26px solid rgb(110, 109, 90);
 }
 
+.tab.selected
+{
+    border-bottom: 26px solid rgb(223, 221, 198);
+}
+
 .textBox
 {
     position: absolute;
@@ -365,7 +371,7 @@ a
     display: block;
     overflow: auto;
     background-color: rgb(43, 42, 28);
-    transition: 1s;
+    transition: 0.1s;
     /* display: flex;
     flex-direction: column-reverse; */
 }
@@ -412,6 +418,34 @@ a
 .Typewriter__wrapper
 {
     padding-bottom: 20px;
+    transition: 0.1s;
+    opacity: 1;
+}
+
+.textBox.settings
+{
+    
+    overflow: hidden;
+}
+
+.textBox.settings .Typewriter__wrapper
+{
+    opacity: 0;
+}
+
+.settingsContainer
+{
+    position: absolute;
+    margin: 10px;
+    height: auto;
+    top: 0;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    display: block;
+    overflow: auto;
+    background-color: rgb(32, 59, 65);
+    transition: 0.1s;
 }
 
 .volume

@@ -17,7 +17,7 @@ export default class Time extends EventEmitter
         this.secondCounter = this.current + 1000
         
         this.params = {
-            fps: 45
+            fps: 30
         }
 
         this.fpsInterval = 1000 / this.params.fps

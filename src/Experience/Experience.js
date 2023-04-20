@@ -32,7 +32,8 @@ export default class Experience
 
         //In development
         this.params = {
-            deployBuild: false
+            deployBuild: false,
+            appStart: false
         }
        
         this.worldLoaded = false
@@ -62,10 +63,13 @@ export default class Experience
 
     update()
     {
-        this.camera.update()
-        this.world.update()
-        this.renderer.update()
-        this.debug.update()
+        if(this.params.appStart === true)
+        {
+            this.camera.update()
+            this.world.update()
+            this.renderer.update()
+            this.debug.update()
+        }  
     }
 }
 

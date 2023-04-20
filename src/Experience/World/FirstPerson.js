@@ -175,7 +175,7 @@ export default class FirstPerson
         this.pointerMessageActive = false
         document.querySelector('canvas.webgl').addEventListener('click', () =>
         {
-            if(this.experience.world.FPControls === true)
+            if(this.experience.world.FPControls === true && this.experience.params.appStart === true)
             {
                 if(this.pointerLockControls.isLocked === false && this.textAdventure.dialogueFocused === false)
                 {
@@ -233,17 +233,18 @@ export default class FirstPerson
         this.camRay.setFromCamera(this.camRayCoords, this.camera)
         this.camRayIntersect = this.camRay.intersectObject(this.models.physMesh)
     
-        if(this.camRayIntersect[0] != null)
-        {
-            if(this.camRayIntersect[0].object.interactive === true && this.camRayIntersect[0].distance < this.params.interactionDistance)
-            {
-                this.renderer.outline(this.camRayIntersect[0].object)
-            }
-            else
-            {
-                this.renderer.clearOutline()
-            }
-        }
+        // Uncomment below to activate object outlines
+        // if(this.camRayIntersect[0] != null)
+        // {
+        //     if(this.camRayIntersect[0].object.interactive === true && this.camRayIntersect[0].distance < this.params.interactionDistance)
+        //     {
+        //         this.renderer.outline(this.camRayIntersect[0].object)
+        //     }
+        //     else
+        //     {
+        //         this.renderer.clearOutline()
+        //     }
+        // }
     }
 
     interaction()

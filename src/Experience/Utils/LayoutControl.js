@@ -31,6 +31,7 @@ export default class Layout
             document.querySelector('.startGame').addEventListener('click', () =>
             {
                 document.querySelector('.titleScreen').classList.add('hidden')
+                this.experience.params.appStart = true
                 gsap.delayedCall(0.5, () =>
                 {
                     this.setNavBox('default')
@@ -92,6 +93,56 @@ export default class Layout
                 }
             }
         })
+
+        this.focusedTab = 'tab1'
+
+        this.textBoxButton = document.querySelector('.tab1')    
+        this.settingsButton = document.querySelector('.tab2')       
+        this.settingsButton.addEventListener('click', () =>
+        {
+            if(this.focusedTab === 'tab1')
+            {
+                this.textBoxButton.classList.remove('selected')
+                this.settingsButton.classList.add('selected')
+                this.focusedTab = 'tab2'
+                this.experience.params.appStart = false
+                this.textBox.classList.add('settings')
+
+                this.settingsContainer = document.createElement('div')
+                this.settingsContainer.classList.add('settingsContainer')
+                this.navBox.appendChild(this.settingsContainer)
+
+                this.graphicsSettingContainer = document.createElement('div')
+                this.settingsContainer.appendChild(this.graphicsSettingContainer)
+                this.graphicsSetting = document.createElement('select')
+                this.graphicsSetting.innerHTML = 'Graphics Setting'
+
+                this.lowGraphics = document.createElement('option')
+                this.lowGraphics.innerHTML = 'Low'
+                this.medGraphics = document.createElement('option')
+                this.medGraphics.innerHTML = 'Medium'
+                this.highGraphics = document.createElement('option')
+                this.highGraphics.innerHTML = 'High'
+
+                this.graphicsSetting.appendChild(this.highGraphics)
+                this.graphicsSetting.appendChild(this.medGraphics)
+                this.graphicsSetting.appendChild(this.lowGraphics)
+            }
+        })
+
+        this.textBoxButton.addEventListener('click', () =>
+        {
+            if(this.focusedTab === 'tab2')
+            {
+                this.settingsButton.classList.remove('selected')
+                this.textBoxButton.classList.add('selected')
+                this.focusedTab = 'tab1'
+                this.experience.params.appStart = true
+                this.textBox.classList.remove('settings')
+                this.settingsContainer.remove()
+            }
+        })
+        
     }
 
     setExperienceContainer(parameter)

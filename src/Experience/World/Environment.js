@@ -12,7 +12,8 @@ export default class Environment
 
         this.params = {
             backgroundAndFogCol: '#000000',
-            backgroundCol: '#5c5c5c',
+            dayColor: '#5c5c5c',
+            nightColor: '#000000',
             ambientLightInt: 0.5,
             ambientLightCol: '#ffffff',
             dirLightInt: 0.8,
@@ -53,7 +54,7 @@ export default class Environment
 
     setSimpleBackground()
     {
-        this.scene.background = new THREE.Color( this.params.backgroundCol )
+        this.scene.background = new THREE.Color( this.params.dayColor )
     }
 
     setBackground(color)
@@ -127,11 +128,11 @@ export default class Environment
                     console.log("Disable Environment Map Before Adjusting Background Color")
                 }
             })
-            this.debugFolder.addColor( this.params, 'backgroundCol' ).onChange(() =>
+            this.debugFolder.addColor( this.params, 'dayColor' ).onChange(() =>
             {
                 if(this.params.envMapEnabled === false)
                 {
-                    this.scene.background.set(this.params.backgroundCol)
+                    this.scene.background.set(this.params.dayColor)
                 }
                 else
                 {

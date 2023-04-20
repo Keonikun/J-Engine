@@ -22,7 +22,7 @@ export default class Renderer
         this.debug = this.experience.debug
 
         this.params = { 
-            pixelRatio: 0.2,
+            pixelRatio: 0.13,
             postprocessing: true,
             bloom: true,
             outline: false,
