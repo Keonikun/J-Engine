@@ -1,3 +1,4 @@
+import { Clock } from 'three/src/core/Clock.js'
 import EventEmitter from "./EventEmitter";
 
 export default class Time extends EventEmitter
@@ -7,9 +8,12 @@ export default class Time extends EventEmitter
         super()
 
         // Setup 
+        this.clock = new Clock()
         this.start = Date.now()
+        this.fpsTime = Date.now()
         this.current = this.start
         this.elapsed = 0
+        this.elapsedTime = 0
         this.delta = 16
         this.debug = experience.debug
         this.fpsMonitor = 0
@@ -42,16 +46,18 @@ export default class Time extends EventEmitter
         const currentTime = Date.now()
         this.delta = currentTime - this.current
         this.current = currentTime
-        this.elapsed = this.current - this.start
+        this.elapsed = this.current - this.fpsTime
+        this.elapsedTime = this.current - this.start
 
         window.requestAnimationFrame(() => 
         {
             this.tick()
         })
        
+        // Trigger the next tick depending on the FPS interval
         if(this.elapsed > this.fpsInterval)
         {
-            this.start = this.current - ( this.elapsed % this.fpsInterval )
+            this.fpsTime = this.current - ( this.elapsed % this.fpsInterval )
             this.fpsMonitor ++
             this.trigger('tick')
         }

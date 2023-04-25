@@ -3,23 +3,23 @@ import Typewriter from "typewriter-effect/dist/core";
 
 export default class TextAdventure
 {
-    constructor(experience)
+    constructor( experience )
     {
-        this.experience = experience
-        this.debug = this.experience.debug
+        this.experience = experience;
+        this.debug = this.experience.debug;
 
         // PROGRESSION VALUES:
         // 0 = EVENTSTATE
         // 1 = Score
-        this.progressionState = [0, 0]
-        this.choiceResult = null
-        this.typewriterWorking = false
-        this.dialogueFocused = false
+        this.progressionState = [ 0, 0 ];
+        this.choiceResult = null;
+        this.typewriterWorking = false;
+        this.dialogueFocused = false;
         
-        this.experience.world.on('ready', () =>
+        this.experience.world.on( 'ready', () =>
         {
-            this.interactiveObjects = this.experience.world.interactiveObjects
-        })
+            this.interactiveObjects = this.experience.world.interactiveObjects;
+        });
         
         // currently, cursor does not work as intended. Leave as "" for now
         this.params = {
@@ -28,82 +28,82 @@ export default class TextAdventure
             textDelay: 1000,
             textBoxInput: false,
             arrowControls: false
-        }
+        };
 
-        this.setDebug()
-        this.createTypewriter()
-    }
+        this.setDebug();
+        this.createTypewriter();
+    };
 
-    event(eventNumber,choiceResult)
+    event( eventNumber, choiceResult )
     {
         // Each event must have a unique value
-        if(eventNumber === 1)
+        if( eventNumber === 1 )
         {
-            if(this.debug.active)
+            if( this.debug.active )
             {
-                this.typewriter.typeString("<p>CONTROLS:</p>")
-                this.typewriter.typeString("<p>Click on the 3D scene above to begin playing.</p>")
-                this.typewriter.typeString("<p>Access Menu: Press 'Q'</p>")
-                this.typewriter.typeString("<p>Walk around: 'WASD' keys</p>")
-                this.typewriter.typeString("<p>Look around: Mouse or Trackpad</p>")
-                this.typewriter.typeString("<p>Interact with doors: Left Click</p>")
-                this.typewriter.typeString("<p>Sprint: Hold Shift Key</p>")
+                this.typewriter.typeString( "<p>CONTROLS:</p>" );
+                this.typewriter.typeString( "<p>Click on the 3D scene above to begin playing.</p>" );
+                this.typewriter.typeString( "<p>Access Menu: Press 'Q'</p>" );
+                this.typewriter.typeString( "<p>Walk around: 'WASD' keys</p>" );
+                this.typewriter.typeString( "<p>Look around: Mouse or Trackpad</p>" );
+                this.typewriter.typeString( "<p>Interact with doors: Left Click</p>" );
+                this.typewriter.typeString( "<p>Sprint: Hold Shift Key</p>" );
                 
-                this.typewriter.typeString("<a class='choice1' href='#home' style='color:crimson'>Exit Dev Mode</a>")
-                this.typeEvent('singleChoice',2)
+                this.typewriter.typeString( "<a class='choice1' href='#home' style='color:crimson'>Exit Dev Mode</a>" );
+                this.typeEvent( 'singleChoice',2 );
             }
             else
             {
                 // Create typing sequence in the order you would like the text to appear.
-                this.typewriter.typeString("<p>CONTROLS:</p>")
-                this.typewriter.typeString("<p>Click on the 3D scene above to begin playing.</p>")
-                this.typewriter.typeString("<p>Access Menu: Press 'Q'</p>")
-                this.typewriter.typeString("<p>Walk around: 'WASD' keys</p>")
-                this.typewriter.typeString("<p>Look around: Mouse or Trackpad</p>")
-                this.typewriter.typeString("<p>Interact with doors: Left Click</p>")
-                this.typewriter.typeString("<p>Sprint: Hold Shift Key</p>")
+                this.typewriter.typeString( "<p>CONTROLS:</p>" );
+                this.typewriter.typeString( "<p>Click on the 3D scene above to begin playing.</p>" );
+                this.typewriter.typeString( "<p>Access Menu: Press 'Q'</p>" );
+                this.typewriter.typeString( "<p>Walk around: 'WASD' keys</p>" );
+                this.typewriter.typeString( "<p>Look around: Mouse or Trackpad</p>" );
+                this.typewriter.typeString( "<p>Interact with doors: Left Click</p>" );
+                this.typewriter.typeString( "<p>Sprint: Hold Shift Key</p>" );
                 
-                this.typewriter.typeString("<a class='choice1' href='#debug' style='color:green'>Dev Mode</a>")
+                this.typewriter.typeString( "<a class='choice1' href='#debug' style='color:green'>Dev Mode</a>" );
                 // Begin the typing sequence with this.typeEvent() 
                 // First value is the event type: choice, singleChoice, progressToNext, or none
                 // Second value is the event you would like to move to.
-                this.typeEvent('singleChoice',2)
+                this.typeEvent( 'singleChoice', 2 );
             }    
         }
 
-        if(eventNumber === 2)
+        if( eventNumber === 2 )
         {
             // If event is a choice, seperate into two if statements like so:
-            if(choiceResult === 1)
+            if( choiceResult === 1 )
             {
 
-                gsap.delayedCall(0.1, () =>
+                gsap.delayedCall( 0.1, () =>
                 {
-                    window.location.reload()
-                })
-                this.typewriter.typeString("<p>You chose the first choice!</p>")
-                this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>Repeat Text</a>")
-                this.typeEvent('singleChoice',1)
+                    window.location.reload();
+                });
+                this.typewriter.typeString( "<p>You chose the first choice!</p>" );
+                this.typewriter.typeString( "<a class='choice1' style='color:cornsilk'>Repeat Text</a>" );
+                this.typeEvent( 'singleChoice', 1 );
 
-            }
-            if(choiceResult === 2)
+            };
+            if( choiceResult === 2 )
             {
-                this.typewriter.typeString("<p>You chose the second choice!</p>")
-                this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>Repeat Text</a>")
-                this.typeEvent('singleChoice',1)
-            }
+                this.typewriter.typeString( "<p>You chose the second choice!</p>" );
+                this.typewriter.typeString( "<a class='choice1' style='color:cornsilk'>Repeat Text</a>" );
+                this.typeEvent( 'singleChoice', 1 );
+            };
         }
 
         if(eventNumber === 3)
         {
-            this.typewriter.typeString("<br><p>Oh, hello there.</p>")
-            this.textDelay()
-            this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>What are you doing?</a><br>")
-            this.typewriter.typeString("<a class='choice2' style='color:cornsilk'>Where am I?</a><br>")
-            this.typewriter.typeString("<a class='release' style='color:cornsilk'>Leave</a>")
+            this.typewriter.typeString( "<br><p>Oh, hello there.</p>");
+            this.textDelay();
+            this.typewriter.typeString( "<a class='choice1' style='color:cornsilk'>What are you doing?</a><br>")
+            this.typewriter.typeString( "<a class='choice2' style='color:cornsilk'>Where am I?</a><br>");
+            this.typewriter.typeString( "<a class='release' style='color:cornsilk'>Leave</a>");
 
-            this.typeEvent('choice',4)   
-        }
+            this.typeEvent( 'choice', 4 );
+        };
 
         if(eventNumber === 4)
         {
@@ -113,7 +113,7 @@ export default class TextAdventure
                 this.typewriter.typeString("<a class='release' style='color:cornsilk'>End Conversation</a>")
                 this.typeEvent('release')
 
-            }
+            };
             if(choiceResult === 2)
             {
                 this.typewriter.typeString("<p>You are in front of your computer.</p><br>")
@@ -121,15 +121,15 @@ export default class TextAdventure
                 this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>......Thanks?</a>")
 
                 this.typeEvent('singleChoice', 5)
-            }
-        }
+            };
+        };
 
         if(eventNumber === 5)
         {
             this.typewriter.typeString("<p>No problem, if you want to ask me anything else, don't, because I only have two dialogue options.</p>")
             this.typewriter.typeString("<a class='release' style='color:cornsilk'>End Conversation</a>")
             this.typeEvent('release')
-        }
+        };
 
         if(eventNumber === 6)
         {
@@ -137,7 +137,7 @@ export default class TextAdventure
             this.typewriter.typeString("<a class='choice1' style='color:cornsilk'>Yes Please.</a><br>")
             this.typewriter.typeString("<a class='choice2' style='color:cornsilk'>Who am I talking to?</a><br>")
             this.typeEvent('choice',7)   
-        }
+        };
 
         if(eventNumber === 7)
         {
@@ -154,89 +154,89 @@ export default class TextAdventure
 
                 this.typeEvent('release')   
 
-            }
+            };
             if(choiceResult === 2)
             {
                 this.typewriter.typeString("<p>I dont' want to talk about that.</p><br>")
                 this.typewriter.typeString("<a class='release' style='color:cornsilk'>End Conversation</a>")
                 this.interactiveObjects.triggerThis('gate1')
                 this.typeEvent('release')
-            }
-        }
-    }
+            };
+        };
+    };
 
-    printString(string)
+    printString( string )
     {
-        this.typewriter.typeString(string)
-        this.typeEvent()
-    }
+        this.typewriter.typeString( string );
+        this.typeEvent();
+    };
 
     choice(eventNumber)
     {
         document.querySelector('.choice1').addEventListener('click', () =>
         {
-            this.choiceResult = 1
-            this.progressToNextEvent(eventNumber)
-            document.querySelector('.choice1').removeEventListener('click',() => {})
-            document.querySelector('.choice1').remove()
-            document.querySelector('.choice2').removeEventListener('click',() => {})
-            document.querySelector('.choice2').remove()
+            this.choiceResult = 1;
+            this.progressToNextEvent(eventNumber);
+            document.querySelector('.choice1').removeEventListener('click',() => {});
+            document.querySelector('.choice1').remove();
+            document.querySelector('.choice2').removeEventListener('click',() => {});
+            document.querySelector('.choice2').remove();
             if(document.querySelector('.release'))
             {
-                document.querySelector('.release').removeEventListener('click', ()=>{})
-                document.querySelector('.release').remove()
-            }
+                document.querySelector('.release').removeEventListener('click', ()=>{});
+                document.querySelector('.release').remove();
+            };
         })
         document.querySelector('.choice2').addEventListener('click', () =>
         {
-            this.choiceResult = 2
-            this.progressToNextEvent(eventNumber)
-            document.querySelector('.choice1').removeEventListener('click',() => {})
-            document.querySelector('.choice1').remove()
-            document.querySelector('.choice2').removeEventListener('click',() => {})
-            document.querySelector('.choice2').remove()
+            this.choiceResult = 2;
+            this.progressToNextEvent(eventNumber);
+            document.querySelector('.choice1').removeEventListener('click',() => {});
+            document.querySelector('.choice1').remove();
+            document.querySelector('.choice2').removeEventListener('click',() => {});
+            document.querySelector('.choice2').remove();
             if(document.querySelector('.release'))
             {
-                document.querySelector('.release').removeEventListener('click', ()=>{})
-                document.querySelector('.release').remove()
-            }    
+                document.querySelector('.release').removeEventListener('click', ()=>{});
+                document.querySelector('.release').remove();
+            };
         })
         if(document.querySelector('.release'))
         {
-            this.release()
-        }
+            this.release();
+        };
     }
 
     singleChoice(eventNumber)
     {
         document.querySelector('.choice1').addEventListener('click', () =>
         {
-            this.choiceResult = 1
-            this.progressToNextEvent(eventNumber)
-            document.querySelector('.choice1').removeEventListener('click',() => {})
-            document.querySelector('.choice1').remove()
-        })
-    }
+            this.choiceResult = 1;
+            this.progressToNextEvent(eventNumber);
+            document.querySelector('.choice1').removeEventListener('click',() => {});
+            document.querySelector('.choice1').remove();
+        });
+    };
 
     progressToNextEvent(eventNumber)
     {
         gsap.delayedCall(0.4, () =>
         {
-            this.progressionState[0] = eventNumber
-            this.event(this.progressionState[0],this.choiceResult)
-        })
+            this.progressionState[0] = eventNumber;
+            this.event(this.progressionState[0],this.choiceResult);
+        });
     }
 
     release()
     {
         document.querySelector('.release').addEventListener('click', () =>
         {
-            document.querySelector('.release').removeEventListener('click', ()=>{})
-            document.querySelector('.release').remove()
-            this.dialogueFocused = false
-            this.experience.world.firstPerson.lockPointer()
-            document.querySelector('.experienceContainer').classList.add('navBoxHidden')
-            document.querySelector('.experienceContainer').classList.remove('navBoxDefault')
+            document.querySelector('.release').removeEventListener('click', ()=>{});
+            document.querySelector('.release').remove();
+            this.dialogueFocused = false;
+            this.experience.world.firstPerson.lockPointer();
+            document.querySelector('.experienceContainer').classList.add('navBoxHidden');
+            document.querySelector('.experienceContainer').classList.remove('navBoxDefault');
         })
     }
 

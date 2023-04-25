@@ -1,7 +1,7 @@
 import { gsap } from 'gsap'
 import Environment from './Environment.js'
 import Models from './Models.js'
-import AnimatedTextures from './AnimatedTextures.js'
+import Shaders from './Shaders.js'
 import EventEmitter from '../Utils/EventEmitter.js'
 import Particles from './Particles.js'
 import Audio from './Audio.js'
@@ -30,7 +30,7 @@ export default class World extends EventEmitter
         {
             // Setup
             this.models = new Models(this.experience)
-            this.animatedTextures = new AnimatedTextures(this.experience)
+            this.shaders = new Shaders(this.experience)
             this.audio = new Audio(this.experience)
             this.environment = new Environment(this.experience)  
             this.particles = new Particles(this.experience)
@@ -54,7 +54,7 @@ export default class World extends EventEmitter
         if(this.experience.worldLoaded === true)
         {
             // Animations 
-            this.animatedTextures.update()
+            this.shaders.update()
             this.particles.update()
             this.interactiveObjects.update()
             this.firstPerson.update()

@@ -11,18 +11,18 @@ import {VignetteShader} from 'three/examples/jsm/shaders/VignetteShader.js'
 
 export default class Renderer
 {
-    constructor(experience)
+    constructor( experience )
     {
-        this.experience = experience
-        this.canvas = this.experience.canvas
-        this.sizes = this.experience.sizes
-        this.scene = this.experience.scene
-        this.cssScene = this.experience.cssScene
-        this.camera = this.experience.camera
-        this.debug = this.experience.debug
+        this.experience = experience;
+        this.canvas = this.experience.canvas;
+        this.sizes = this.experience.sizes;
+        this.scene = this.experience.scene;
+        this.cssScene = this.experience.cssScene;
+        this.camera = this.experience.camera;
+        this.debug = this.experience.debug;
 
         this.params = { 
-            pixelRatio: 0.13,
+            pixelRatio: 0.3,
             postprocessing: true,
             bloom: true,
             outline: false,
@@ -30,16 +30,16 @@ export default class Renderer
             filmic: true,
             vignette: true,
             css3D: false,
-        }
+        };
 
-        this.highlightedObject = null
-        this.objectsToOutline = []
+        this.highlightedObject = null;
+        this.objectsToOutline = [];
 
-        this.setInstance()
-        this.setCssInstance()
-        this.setComposer()
-        this.setDebug()
-    }
+        this.setInstance();
+        this.setCssInstance();
+        this.setComposer();
+        this.setDebug();
+    };
     
     setInstance()
     {
@@ -49,119 +49,120 @@ export default class Renderer
             powerPreference: "low-power",
             precision: "lowp"
         })
-        this.instance.outputEncoding = THREE.sRGBEncoding
-        this.instance.physicallyCorrectLights = true
-        this.instance.setClearColor('#ffffff')
-        this.instance.setSize(this.sizes.width, this.sizes.height)
-        this.instance.setPixelRatio(this.sizes.pixelRatio * this.params.pixelRatio)
-    }
+        this.instance.outputEncoding = THREE.sRGBEncoding;
+        this.instance.physicallyCorrectLights = true;
+        this.instance.setClearColor( '#ffffff' );
+        this.instance.setSize( this.sizes.width, this.sizes.height );
+        this.instance.setPixelRatio( this.sizes.pixelRatio * this.params.pixelRatio );
+    };
 
     setCssInstance()
     {
-        if(this.params.css3D)
+        if( this.params.css3D )
         {
-            this.cssInstance = new CSS3DRenderer()
-            this.cssInstance.setSize(this.sizes.width, this.sizes.height)
-            this.cssInstance.domElement.style.position = 'absolute'
-            this.cssInstance.domElement.style.top = '0px'
+            this.cssInstance = new CSS3DRenderer();
+            this.cssInstance.setSize( this.sizes.width, this.sizes.height );
+            this.cssInstance.domElement.style.position = 'absolute';
+            this.cssInstance.domElement.style.top = '0px';
 
-            document.querySelector('.cssContainer').appendChild(this.cssInstance.domElement)
-        }   
-    }
+            document.querySelector( '.cssContainer' ).appendChild( this.cssInstance.domElement );
+        };
+    };
 
     setComposer()
     {
-        this.composer = new EffectComposer(this.instance)
-        this.composer.addPass(new RenderPass(this.scene, this.camera.instance))
-        this.composer.powerPreference = "low-power"
+        this.composer = new EffectComposer( this.instance );
+        this.composer.addPass( new RenderPass( this.scene, this.camera.instance ));
+        this.composer.powerPreference = "low-power";
 
-        if(this.params.bloom === true && this.params.postprocessing === true)
+        if( this.params.bloom === true && this.params.postprocessing === true )
         {
-            this.composer.addPass(new UnrealBloomPass({ x: 64, y: 64 }, 1.0, -1, 0.7 ))
-        }
-        if(this.params.outline === true && this.params.postprocessing === true)
+            this.composer.addPass( new UnrealBloomPass({ x: 64, y: 64 }, 1.0, -1, 0.7 ));
+        };
+        if( this.params.outline === true && this.params.postprocessing === true )
         {
-            this.outlinePass = new OutlinePass(new THREE.Vector2( this.sizes.width, this.sizes.height ), this.scene, this.camera.instance )
-            this.outlinePass.visibleEdgeColor.set('#ffffff')
-            this.outlinePass.hiddenEdgeColor.set('#190a05')
-            this.outlinePass.edgeThickness = 0.01
-            this.outlinePass.edgeStrength = 1
-            this.composer.addPass(this.outlinePass)
-        }
-        if(this.params.filmic === true && this.params.postprocessing === true)
+            this.outlinePass = new OutlinePass( new THREE.Vector2( this.sizes.width, this.sizes.height ), this.scene, this.camera.instance );
+            this.outlinePass.visibleEdgeColor.set( '#ffffff' );
+            this.outlinePass.hiddenEdgeColor.set( '#190a05' );
+            this.outlinePass.edgeThickness = 0.01;
+            this.outlinePass.edgeStrength = 1;
+            this.composer.addPass( this.outlinePass );
+        };
+        if( this.params.filmic === true && this.params.postprocessing === true )
         {
-            this.composer.addPass(new FilmPass( 0.3, 0.2, 648, false ))
-        }
-        if(this.params.gammaCorrection === true && this.params.postprocessing === true)
+            this.composer.addPass( new FilmPass( 0.3, 0.2, 648, false ));
+        };
+        if( this.params.gammaCorrection === true && this.params.postprocessing === true )
         {
-            this.composer.addPass(new ShaderPass( GammaCorrectionShader ))
-        }
-        if(this.params.vignette === true && this.params.postprocessing === true)
+            this.composer.addPass( new ShaderPass( GammaCorrectionShader ));
+        };
+        if( this.params.vignette === true && this.params.postprocessing === true )
         {
-            VignetteShader.uniforms.darkness.value = 1.2
-            this.composer.addPass(new ShaderPass( VignetteShader ))
-        }
-    }
+            VignetteShader.uniforms.darkness.value = 1.2;
+            this.composer.addPass(new ShaderPass( VignetteShader ));
+        };
+    };
 
-    outline(object)
+    outline( object )
     {
-        if(object != this.highlightedObject && this.params.outline === true)
+        if( object != this.highlightedObject && this.params.outline === true )
         {
-            this.objectsToOutline = []
-            this.highlightedObject = object
-            this.objectsToOutline.push(object)
-            this.outlinePass.selectedObjects = this.objectsToOutline
-        }
-    }
+            this.objectsToOutline = [];
+            this.highlightedObject = object;
+            this.objectsToOutline.push( object );
+            this.outlinePass.selectedObjects = this.objectsToOutline;
+        };
+    };
 
     clearOutline()
     {
-        if(this.params.outline === true)
+        if( this.params.outline === true )
         {
-            this.outlinePass.selectedObjects = []
-            this.highlightedObject = null
-        }      
-    }
+            this.outlinePass.selectedObjects = [];
+            this.highlightedObject = null;
+        };
+    };
 
     resize()
     {
-        this.instance.setSize(this.sizes.width, this.sizes.height)
-        this.instance.setPixelRatio(this.sizes.pixelRatio * this.params.pixelRatio)
-        this.composer.setSize(this.sizes.width, this.sizes.height)
-        this.composer.setPixelRatio(this.sizes.pixelRatio * this.params.pixelRatio)
+        this.instance.setSize( this.sizes.width, this.sizes.height );
+        this.instance.setPixelRatio( this.sizes.pixelRatio * this.params.pixelRatio );
+        this.composer.setSize( this.sizes.width, this.sizes.height );
+        this.composer.setPixelRatio( this.sizes.pixelRatio * this.params.pixelRatio );
 
-        if(this.params.css3D)
+        if( this.params.css3D )
         {
-            this.cssInstance.setSize(this.sizes.width, this.sizes.height)
-        }
-    }
+            this.cssInstance.setSize( this.sizes.width, this.sizes.height );
+        };
+    };
 
     update()
     {
-        if(this.params.postprocessing === false)
+        if( this.params.postprocessing === false )
         {
-            this.instance.render(this.scene, this.camera.instance)
+            this.instance.render( this.scene, this.camera.instance );
         }
-        else if(this.params.postprocessing === true)
+        else if( this.params.postprocessing === true )
         {
-            this.composer.render()
-        }
-        if(this.params.css3D)
+            this.composer.render();
+        };
+
+        if( this.params.css3D )
         {
-            this.cssInstance.render(this.cssScene, this.camera.instance)
-        }
-    }
+            this.cssInstance.render( this.cssScene, this.camera.instance );
+        };
+    };
 
     setDebug()
     {
-        if(this.debug.active)
+        if( this.debug.active )
         {
             this.debug.renderDebugFolder.add( this.params, 'pixelRatio', 0.05, 1 ).onChange(() =>
             {
-                this.instance.setPixelRatio(this.params.pixelRatio)
-                this.composer.setPixelRatio(this.params.pixelRatio)
-            })
-            this.debug.renderDebugFolder.add( this.params, 'postprocessing')
-        }
-    }
+                this.instance.setPixelRatio( this.params.pixelRatio );
+                this.composer.setPixelRatio( this.params.pixelRatio );
+            });
+            this.debug.renderDebugFolder.add( this.params, 'postprocessing' );
+        };
+    };
 }

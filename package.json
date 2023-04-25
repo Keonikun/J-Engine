@@ -18,6 +18,7 @@
     "three": "^0.148.0",
     "three-mesh-bvh": "^0.5.23",
     "three-plain-animator": "^1.1.2",
-    "typewriter-effect": "^2.19.0"
+    "typewriter-effect": "^2.19.0",
+    "vite-plugin-glsl": "^1.1.2"
   }
 }

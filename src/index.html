@@ -12,44 +12,56 @@
             <p class="titleText">Architecture for the Heart</p>
             <p class="authorText">By Julien Darling-Funk</p>
             <p class="loadingText">Loading: 0%</p>
+
             <div class="loadingBarContainer">
                 <div class="loadingBar"></div>
             </div>
+
             <p class="startGame hidden">Begin</p>
             <p class="loadGame hidden">Load</p>
         </div>
+
         <!-- THREE JS CANVAS -->
         <canvas class="webgl"></canvas>
         <div class="cssContainer"></div>
         
         <div class="2DVisual"></div>
+
         <div class="folderTabs">
             <div class="tab tab1 selected"></div>
             <div class="tab tab2"></div>
         </div>
+
         <div class="boxShadow"></div>
+
         <div class="navBox">
-            <div class="textBox">
-            </div>
+            <div class="textBox"></div>
+
             <hr class="flexDivider">
+
             <div class="userInput hidden" id="userInput"> 
                 <input class="textInput" id="textInput" type="text" value="" tabindex="-1">
                 <button class="submitInput" tabindex="-1">►</button>
             </div>
+
             <div class="arrowControls hidden">
                 <a href="#" class="forwardControl" draggable="false" tabindex="-1">↑</a>
                 <a href="#" class="rightControl" draggable="false" tabindex="-1">→</a>
                 <a href="#" class="backwardControl" draggable="false" tabindex="-1">↓</a>
                 <a href="#" class="leftControl" draggable="false" tabindex="-1">←</a>
             </div>
+
             <div class="score hidden">Score: </div> 
+
             <div class="volume">
                 <input type="range" min="0" max="100" value="50" class="volumeControl" tabindex="-1">
                 <img src="/textures/static/volume.png" alt="" tabindex="-1">
             </div>
+
             <img class="fullscreen" src="/textures/static/fullscreen.png" alt="" tabindex="-1">
         </div>
     </div>
+    
     <script type="module" src="./script.js"></script>
 </body>
 </html>
