@@ -56,6 +56,7 @@ export default class Layout
         this.arrowControls = document.querySelector('.arrowControls')
         this.folderTabs = document.querySelector('.folderTabs')
         this.fullscreen = document.querySelector('.fullscreen')
+        this.visuals = document.querySelector('.visuals')
 
         this.folderTabs.addEventListener('click', () =>
         {
@@ -145,6 +146,45 @@ export default class Layout
         
     }
 
+    openOS()
+    {
+        this.OSIframe = document.createElement('iframe')
+        this.OSIframe.src = './iframe/OS/OS.html'
+        this.OSIframe.style.transform = 'translate(-50%,-50%)'
+        this.OSIframe.style.left = '50%'
+        this.OSIframe.style.top = '50%'
+        this.OSIframe.style.position = 'absolute'
+        this.OSIframe.style.height = '90vh'
+        this.OSIframe.style.width = '90vh'
+        this.OSIframe.style.border = 'none'
+        this.OSIframe.style.border = '20px solid #c0c0c0'
+
+        this.visuals.style.zIndex = "20"
+        this.visuals.appendChild(this.OSIframe)
+
+    }
+
+    closeOS()
+    {
+        this.visuals.style.zIndex = "-1"
+        this.OSIframe.remove()
+        console.log("Closed OS")
+    }
+
+    setArrowKeys()
+    {
+        // this.forwardArrow = false
+        // this.backwardArrow = false
+        // this.leftArrow = false
+        // this.rightArrow = false
+
+        // arrow control elements
+        // this.forwardButton = document.querySelector( '.forwardControl' )
+        // this.backwardButton = document.querySelector( '.backwardControl' )
+        // this.leftButton = document.querySelector( '.leftControl' )
+        // this.rightButton = document.querySelector( '.rightControl' )
+    }
+
     setExperienceContainer(parameter)
     {
         if(parameter)
@@ -217,18 +257,21 @@ export default class Layout
                     clearInterval(this.waitToCloseNavInterval)
                     gsap.delayedCall(3,() =>
                     {
-                        if(this.firstPerson.pointerLockControls.isLocked === false)
+                        if(this.firstPerson.pointerLockControls.isLocked === false && this.firstPerson.disengaged === false)
                         {
                             this.waitingToCloseNav = false
+                            console.log("thing one has happened")
                         }
                         else if(this.params.navBoxSetting === 'hidden' && this.textAdventure.typewriterWorking === false)
                         {
                             this.experienceContainer.classList.remove('navBoxDefault')
                             this.experienceContainer.classList.remove('navBoxFull')
                             this.waitingToCloseNav = false
+                            console.log("thing two has happened")
                         }
                         else
                         {
+                            console.log("thing three has happened")
                             this.waitingToCloseNav = false
                             this.waitToCloseNav()
                         }
@@ -260,6 +303,11 @@ export default class Layout
             
         }, 50)
     }
+
+    /**------------------------------------------------------------------
+     *--------------------------------DEBUG------------------------------
+     *-------------------------------------------------------------------
+    */
 
     setDebug()
     {

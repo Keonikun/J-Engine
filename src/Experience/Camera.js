@@ -1,6 +1,4 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-
 
 export default class Camera{
     constructor(experience)
@@ -19,10 +17,13 @@ export default class Camera{
             fov: 40,
             clipNear: 0.1,
             clipFar: 35,
+            thirdPerson: false,
+            lookAt: false,
         }
 
         this.setDebug()
         this.setInstance()
+        this.setThirdPerson()
         // Uncomment below to enable Orbit Controls
         // this.setOrbitControls()
     }
@@ -31,8 +32,21 @@ export default class Camera{
     {
         this.instance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, this.params.clipNear, this.params.clipFar)
         this.instance.position.set(this.params.posX,this.params.posY,this.params.posZ)
-        this.instance.rotation.y = Math.PI * 0.75
+        this.instance.rotation.y = Math.PI * 0.5
         this.scene.add(this.instance)
+
+        this.lookAtVec3 = new THREE.Vector3(0,0,0)
+    }
+
+    setThirdPerson()
+    {
+        if(this.params.thirdPerson === true)
+        {
+            this.thirdPersonInstance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, this.params.clipNear, this.params.clipFar)
+            this.thirdPersonInstance.position.set(this.instance.position.x,this.instance.position.y,this.instance.position.z)
+            this.thirdPersonInstance.rotation.x = Math.PI * 1.5
+            this.scene.add(this.thirdPersonInstance)
+        }
     }
 
     setOrbitControls()
@@ -49,11 +63,33 @@ export default class Camera{
         this.instance.updateProjectionMatrix()
     }
 
+    lookAt(x,y,z)
+    {
+        this.lookAtVec3.set(x,y,z)
+        this.params.lookAt = true
+    }
+
+    dontLookAt()
+    {
+        this.params.lookAt = false
+    }
+
     update()
     {
-        // Enable Orbit Controls
-        // this.controls.update()
+        if(this.params.thirdPerson === true)
+        {
+            this.thirdPersonInstance.position.set(this.instance.position.x, this.instance.position.y + 10.0, this.instance.position.z)
+        }
+        if(this.params.lookAt === true)
+        {
+            this.instance.lookAt(this.lookAtVec3)
+        }
     }
+
+    /**------------------------------------------------------------------
+     *--------------------------------DEBUG------------------------------
+     *-------------------------------------------------------------------
+    */
 
     setDebug()
     {

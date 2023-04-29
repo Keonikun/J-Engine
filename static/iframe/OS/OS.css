@@ -1,0 +1,299 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+html,
+body
+{
+    background-color: antiquewhite;
+    overflow: hidden;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.desktop
+{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.bootScreen
+{
+    position: absolute;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(20, 20, 20);
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+}
+
+.bootLoad
+{
+    margin: 5%;
+}
+
+.bottomBar
+{
+    position: absolute;
+    bottom: 0;
+    height: 5%;
+    width: 100%;
+    background-color: rgb(83, 77, 69);
+    border: none;
+    z-index: 3;
+    min-height: 35px;
+}
+
+.startButton
+{
+    height: 100%;
+    background-color: rgb(109, 101, 91);
+    float: left;
+    left: 0;
+}
+
+.startButton:hover
+{
+    background-color: rgb(56, 54, 51);
+    cursor: pointer;
+}
+
+.startButton img
+{
+    height: 100%;
+}
+
+.startMenu
+{
+    background-color: aliceblue;
+    height: 0%;
+    position: absolute;
+    width: 30%;
+    transform: translate(0,-100%);
+    border: 2px solid rgb(51, 46, 41);
+    visibility: hidden;
+}
+
+.startMenu.open
+{
+    height: 500%;
+    visibility: visible;
+}
+
+.menuElement
+{
+    padding-left: 5px;
+    height: 20%;
+    border: 1px solid rgb(121, 121, 121);
+    overflow: hidden;
+}
+
+.menuElement:hover
+{
+    background-color: rgb(114, 114, 114);
+    color: white;
+}
+
+.menuElement p
+{
+    padding-top: auto;
+    padding-bottom: auto;
+    top: 0;
+    bottom: 0;
+}
+
+.menuElement img
+{
+    height: 100%;
+    top: 0;
+    float: right;
+}
+
+.minimizedElement
+{
+    width: 15%;
+    height: 100%;
+    background-color: rgba(51, 51, 51, 0.432);
+    float: left;
+    left: 16%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.minimizedElement:hover
+{
+    background-color: rgba(29, 29, 29, 0.548);
+}
+
+.minimizedElement.focused
+{
+    background-color: rgba(0, 0, 0, 0.219);
+}
+
+.minimizedElement p
+{
+    padding-left: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: white;
+}
+
+.info
+{
+    position: absolute;
+    transform: translate(0,-50%);
+    top: 45%;
+    right: 0.7%;
+    height: 70%;
+    width: 10%;
+    font-size: 12px;
+    line-height: 13px;
+}
+
+.info p
+{
+    color: white;
+    float: right;
+}
+
+.info div
+{
+    margin: 2px;
+}
+
+.icon
+{
+    width: 10%;
+    height: 15%;
+    padding: 2%;
+    overflow: hidden;
+    position: absolute;
+    display: block;
+}
+
+.icon.highlighted
+{
+    background-color: rgba(0, 255, 255, 0.178);
+}
+
+.icon img
+{
+    width: 100%;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.icon figcaption
+{
+    text-align: center;
+    transform: translate(0,-10px);
+    font-size: 13px;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+}
+
+.icon:hover
+{
+    cursor: pointer;
+}
+
+.folder1
+{
+    left: 0;
+    top: 0;
+}
+
+.txt1
+{
+    left: 0;
+    top: 17%;
+}
+
+.network
+{
+    left: 0;
+    top: 34%;
+}
+
+.windowApp
+{
+    position: absolute;
+    width: 70%;
+    height: 50%;
+    background-color: white;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    overflow: hidden;
+    transition: 0.2s;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.438);
+}
+
+.windowTopBar
+{
+    position: absolute;
+    top: 0;
+    height: 30px;
+    width: 100%;
+    background-color: rgb(37, 37, 37);
+    overflow: hidden;
+}
+
+.windowTopBarLabel
+{
+    position: absolute;
+    left: 1%;
+    top: 50%;
+    transform: translate(0,-50%);
+    color: white;
+}
+
+.windowTopBarButtons
+{
+    position: absolute;
+    right: 1%;
+    top: 50%;
+    transform: translate(0,-50%);
+    height: 70%;
+}
+
+.windowTopBarButtons img
+{
+    height: 100%;
+    margin-left: 5px;
+    float: right;
+}
+
+.windowTopBar img:hover
+{
+    cursor: pointer;
+    filter: brightness(0.4);
+}
+
+.animatedOverlay
+{
+    background-image: url('/textures/animated/computerNoise.gif');
+    background-size: 20%;
+    background-repeat: repeat;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.03;
+}
+
+.hide
+{
+    display: none;
+}

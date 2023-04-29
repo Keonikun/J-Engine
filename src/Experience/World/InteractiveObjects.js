@@ -9,6 +9,8 @@ export default class InteractiveObjects
         this.textAdventure = this.experience.textAdventure
         this.audio = this.experience.world.audio
         this.time = this.experience.time
+        this.layoutControl = this.experience.layoutControl
+        this.camera = this.experience.camera
 
         this.physMesh = this.experience.world.models.physMesh
 
@@ -147,6 +149,10 @@ export default class InteractiveObjects
             if(element.name === "crossWall2")
             {
                 this.crossWall2 = element
+            }
+            if(element.name === "computer")
+            {
+                this.computer = element
             }
         });
 
@@ -378,6 +384,19 @@ export default class InteractiveObjects
         this.gardenGate.rotationOrigin = this.gardenGate.rotation.y
         this.doors.push(this.gardenGate)
 
+        this.computer.interactive = true
+        this.computer.interactionType = "OS"
+        this.computer.viewPosition = {
+            x: -4.1,
+            y: 1.45,
+            z: -8.88
+        }
+        this.computer.lookAtPosition = {
+            x: -4.83,
+            y: 1.45,
+            z: -8.88
+        }
+
         this.npcs = []
 
         this.npc1.interactive = true
@@ -391,10 +410,6 @@ export default class InteractiveObjects
         this.npcs.push(this.intercom)
 
         this.objects = []
-
-        // this.key1.interactive = true
-        // this.key1.interactionType = "item"
-        // this.objects.push(this.key1)
     }
 
     trigger(object)
@@ -421,6 +436,55 @@ export default class InteractiveObjects
                 this.audio.play("doorClose")
             }
         }
+        if(object.interactionType === "OS")
+        {
+            this.firstPerson.disengaged = true
+            this.firstPerson.unlockPointer()
+            this.lastPosition = {
+                x: this.camera.instance.position.x,
+                y: this.camera.instance.position.y,
+                z: this.camera.instance.position.z
+            }
+            this.camera.lookAt(
+                object.lookAtPosition.x,
+                object.lookAtPosition.y,
+                object.lookAtPosition.z
+            )
+            gsap.to(this.camera.instance.position, { 
+                x: object.viewPosition.x, 
+                y: object.viewPosition.y, 
+                z: object.viewPosition.z 
+            })
+            gsap.delayedCall(2,() =>
+            {
+                this.layoutControl.openOS()
+            })
+            window.addEventListener('message', () =>
+            {
+                console.log("triggeredShutdown")
+                window.removeEventListener('message', () => {})
+                gsap.delayedCall(1,() =>
+                {
+                    this.layoutControl.closeOS()
+                    this.returnToLastPosition()
+                })
+            })
+        }
+    }
+
+    returnToLastPosition()
+    {
+        gsap.to(this.camera.instance.position, { 
+            x: this.lastPosition.x, 
+            y: this.lastPosition.y, 
+            z: this.lastPosition.z 
+        })
+        gsap.delayedCall(0.5, () =>
+        {
+            this.camera.dontLookAt()
+            this.firstPerson.disengaged = false
+            this.firstPerson.lockPointer()
+        })
     }
 
     triggerThis(object)

@@ -223,22 +223,15 @@ a
     visibility: visible;
 }
 
-.cssContainer
+.visuals
 {
-    width: 100%;
-    height: 100%;
     position: absolute;
-    pointer-events: none;
-}
-
-.cssContainer iframe
-{
-    pointer-events: all;
-}
-
-.cssContainer iframe
-{
-    transform: translate(-100%);
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    outline: none;
+    z-index: -1;
 }
 
 .experienceContainer.webglHidden .webgl

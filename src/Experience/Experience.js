@@ -18,48 +18,48 @@ export default class Experience
         this.canvas = canvas;
 
         // Setup
-        this.debug = new Debug( this );
-        this.sizes = new Sizes();
-        this.time = new Time( this );
-        this.scene = new THREE.Scene();
-        this.cssScene = new THREE.Scene();
-        this.resources = new Resources( sources );
-        this.camera = new Camera( this );
-        this.renderer = new Renderer( this );
-        this.world = new World( this );
-        this.textAdventure = new TextAdventure( this );
-        this.layoutControl = new LayoutControl( this );
+        this.debug = new Debug( this )
+        this.sizes = new Sizes()
+        this.time = new Time( this )
+        this.scene = new THREE.Scene()
+        this.cssScene = new THREE.Scene()
+        this.resources = new Resources( sources )
+        this.camera = new Camera( this )
+        this.renderer = new Renderer( this )
+        this.world = new World( this )
+        this.textAdventure = new TextAdventure( this )
+        this.layoutControl = new LayoutControl( this )
 
         // In development
         this.params = {
             deployBuild: false,
             appStart: false
-        };
+        }
        
-        this.worldLoaded = false;
+        this.worldLoaded = false
         this.world.on( 'ready', () =>
         {
             this.worldLoaded = true;
-        });
+        })
 
         // Detect resize
         this.sizes.on( 'resize', () =>
         {
             this.resize();
-        });
+        })
 
         // Time tick event
         this.time.on( 'tick', () =>
         {
             this.update();
-        });
-    };
+        })
+    }
 
     resize()
     {
-        this.camera.resize();
-        this.renderer.resize();
-    };
+        this.camera.resize()
+        this.renderer.resize()
+    }
 
     update()
     {
@@ -69,7 +69,7 @@ export default class Experience
             this.world.update();
             this.renderer.update();
             this.debug.update();
-        };
-    };
-};
+        }
+    }
+}
 

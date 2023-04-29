@@ -7,8 +7,7 @@ import Particles from './Particles.js'
 import Audio from './Audio.js'
 import InteractiveObjects from './InteractiveObjects.js'
 import FirstPerson from './FirstPerson.js'
-import Characters from './Characters.js'
-import CssObjects from './CssObjects.js'
+import Actors from './Actors.js'
 
 export default class World extends EventEmitter
 {
@@ -19,7 +18,7 @@ export default class World extends EventEmitter
         this.experience = experience
         this.scene = this.experience.scene
         this.resources = this.experience.resources
-        // this.cssObjects = new CssObjects(this.experience)
+        this.renderer = this.experience.renderer
 
         //Control Options
         this.FPControls= false
@@ -38,7 +37,7 @@ export default class World extends EventEmitter
             gsap.delayedCall(1,() =>
             {
                 this.interactiveObjects = new InteractiveObjects(this.experience)
-                this.characters = new Characters(this.experience)
+                this.actors = new Actors(this.experience)
                 this.firstPerson = new FirstPerson(this.experience)
 
                 // Enable desired controls
@@ -58,7 +57,7 @@ export default class World extends EventEmitter
             this.particles.update()
             this.interactiveObjects.update()
             this.firstPerson.update()
-            this.characters.update()
+            this.actors.update()
         }
     }
 }

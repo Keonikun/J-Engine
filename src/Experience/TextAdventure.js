@@ -344,13 +344,14 @@ export default class TextAdventure
                 this.stringCompleted.remove()
                 this.stringCompleted = null
             }
-            else
-            {
-                // console.log("waiting for string")
-            }
         }, 500)
         
     }
+
+    /**------------------------------------------------------------------
+     *--------------------------------DEBUG------------------------------
+     *-------------------------------------------------------------------
+    */
 
     setDebug()
     {

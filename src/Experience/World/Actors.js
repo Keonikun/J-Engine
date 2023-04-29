@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { TweenLite } from 'gsap/gsap-core'
 
-export default class Characters
+export default class Actors
 {
     constructor(experience)
     {

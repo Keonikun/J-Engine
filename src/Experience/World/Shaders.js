@@ -49,43 +49,6 @@ export default class Shaders
     setShaders()
     {
         /**
-         *  Test Shaders
-         */
-        // this.testShader = new THREE.ShaderMaterial({
-        //     uniforms: {
-        //         uTime: { value: 0 }
-        //     },
-        //     vertexShader: 
-        //         `
-        //             uniform float uTime;
-
-        //             void main()
-        //             {
-        //                 vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-
-        //                 modelPosition.y = modelPosition.y + sin(modelPosition.x + (uTime * 0.01)) + 1.0;
-
-        //                 vec4 viewPosition = viewMatrix * modelPosition;
-        //                 vec4 projectedPosition = projectionMatrix * viewPosition;
-
-        //                 gl_Position = projectedPosition;
-        //             }
-        //         `,
-        //     fragmentShader:
-        //         `
-        //             void main()
-        //             {
-        //                 gl_FragColor = vec4( 0.0, 0.0, 0.5, 1.0 );
-        //             }
-        //         `
-        // })
-
-        // this.testMesh = new THREE.Mesh(new THREE.PlaneGeometry(1,1,10), this.testShader)
-        // this.testMesh.position.set(61, 2.5, -23)
-        // this.testMesh.rotation.x = Math.PI * 1.5
-        // this.scene.add(this.testMesh)
-
-        /**
          *  WATER SHADER
          */
         this.customWaterUniforms = {
@@ -132,6 +95,11 @@ export default class Shaders
         this.waterAnim.animate()
         this.customWaterUniforms.uTime.value = this.time.elapsedTime
     }
+
+    /**------------------------------------------------------------------
+     *--------------------------------DEBUG------------------------------
+     *-------------------------------------------------------------------
+    */
 
     setDebug()
     {
