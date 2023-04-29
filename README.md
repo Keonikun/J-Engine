@@ -94,6 +94,9 @@ The 3d model used within this project is my own. You are free to use everything 
 
 ## Sources
 
+MeshBVH by gkjohnson
+https://github.com/gkjohnson/three-mesh-bvh
+
 three-plain-animator by MaciejWWojcik
 
 https://github.com/MaciejWWojcik/three-plain-animator
