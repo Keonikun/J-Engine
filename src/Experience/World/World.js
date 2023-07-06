@@ -1,7 +1,7 @@
 import { gsap } from 'gsap'
 import Environment from './Environment.js'
 import Models from './Models.js'
-import Shaders from './Shaders.js'
+import Materials from './Materials.js'
 import EventEmitter from '../Utils/EventEmitter.js'
 import Particles from './Particles.js'
 import Audio from './Audio.js'
@@ -19,6 +19,7 @@ export default class World extends EventEmitter
         this.scene = this.experience.scene
         this.resources = this.experience.resources
         this.renderer = this.experience.renderer
+        this.time = this.experience.time
 
         //Control Options
         this.FPControls= false
@@ -29,14 +30,17 @@ export default class World extends EventEmitter
         {
             // Setup
             this.models = new Models(this.experience)
-            this.shaders = new Shaders(this.experience)
+            this.materials = new Materials(this.experience)
             this.audio = new Audio(this.experience)
             this.environment = new Environment(this.experience)  
             this.particles = new Particles(this.experience)
             
             gsap.delayedCall(1,() =>
             {
-                this.interactiveObjects = new InteractiveObjects(this.experience)
+                if(this.models.dynamicScene === true)
+                {
+                    this.interactiveObjects = new InteractiveObjects(this.experience)
+                }
                 this.actors = new Actors(this.experience)
                 this.firstPerson = new FirstPerson(this.experience)
 
@@ -53,11 +57,11 @@ export default class World extends EventEmitter
         if(this.experience.worldLoaded === true)
         {
             // Animations 
-            this.shaders.update()
+            this.materials.update()
             this.particles.update()
-            this.interactiveObjects.update()
-            this.firstPerson.update()
-            this.actors.update()
+            // this.interactiveObjects.update()
+            this.firstPerson.update( this.time.delta )
+            // this.actors.update()
         }
     }
 }

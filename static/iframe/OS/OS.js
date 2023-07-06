@@ -1,22 +1,22 @@
-/**
- *  GENERAL SETUP
- */
+//////////////////////////////////////////////////////////////
+//                        SETUP                             //
+//////////////////////////////////////////////////////////////
 
-var params = {
+const params = {
     bootProcess: true
 }
 
-var desktop = document.querySelector('.desktop')
-var icon = document.querySelector('.icon')
-var folder1 = document.querySelector('.folder1')
-var txt1 = document.querySelector('.txt1')
-var network = document.querySelector('.network')
-var bottomBar = document.querySelector('.bottomBar')
-var startButton = document.querySelector('.startButton')
-var startMenu = document.querySelector('.startMenu')
-var shutDown = document.querySelector('.shutDown')
-var dateDom = document.querySelector('.date')
-var timeDom = document.querySelector('.time')
+const desktop = document.querySelector( '.desktop' )
+const icon = document.querySelector( '.icon' )
+const folder1 = document.querySelector( '.folder1' )
+const txt1 = document.querySelector( '.txt1' )
+const network = document.querySelector( '.network' )
+const bottomBar = document.querySelector( '.bottomBar' )
+const startButton = document.querySelector( '.startButton' )
+const startMenu = document.querySelector( '.startMenu' )
+const shutDown = document.querySelector( '.shutDown' )
+const dateDom = document.querySelector( '.date' )
+const timeDom = document.querySelector( '.time' )
 
 let apps = []
 
@@ -25,39 +25,11 @@ let startOpen = false
 let draggedElement = null
 let draggedOption = null
 
-var iconWidth = icon.clientWidth
+let iconWidth = icon.clientWidth
 
-/**
- *  OS FUNCTIONS
- */
-
-// OPEN START MENU
-startButton.addEventListener('click', () =>
-{
-    if(startOpen === false)
-    {
-        startOpen = true
-        startMenu.classList.add("open")
-    }
-    else if(startOpen === true)
-    {
-        startOpen = false
-        startMenu.classList.remove("open")
-    }
-})
-
-// SHUT DOWN / EXIT OS
-shutDown.addEventListener('click', () =>
-{
-    // close apps
-    apps.forEach(element =>
-    {
-        exitApp(element)
-    })
-    shutDown.removeEventListener('click', () => {})
-    startButton.removeEventListener('click', () => {})
-    window.parent.postMessage("*", "*")
-})
+//////////////////////////////////////////////////////////////
+//                     CREATE APPS                          //
+//////////////////////////////////////////////////////////////
 
 /**
  *  FOLDERS APP
@@ -66,25 +38,44 @@ shutDown.addEventListener('click', () =>
 let foldersApp = {
     label: "myFolder",
     open: false,
+    url: "/Users/User418/Documents/myFolder",
+    sidePanelElements: ["User418's PC", "Documents", "Pictures", "Videos", "Downloads"],
+    folderItems: 
+    [
+        "shutDown.png", "picture", "shutDownIcon.png",
+        "exit.png", "picture", "exitIcon.png"
+    ]
 }
 
 const openFolder = () =>
 {
-    createApp(foldersApp)
+    createApp( foldersApp, "folder" )
 }
 
 /**
  *  TXT APP
  */
 
+const text1 = 
+`
+Just after arriving, I thought I heard somebody call out to me. 
+When I searched for where the sound came from, everything around me immidiately hushed. 
+It was almost as if the world around me was hiding behind a corner, just out of sight...
+
+It does not hide for too long.
+
+Is somebody there?
+`
+
 let txtApp = {
-    label: "randomThing.txt",
+    label: "isSomeoneThere?.txt",
     open: false,
+    text: text1
 }
 
 const openTxt = () =>
 {
-    createApp(txtApp)
+    createApp( txtApp, "txt" )
 }
 
 /**
@@ -93,118 +84,138 @@ const openTxt = () =>
 
 let networkApp = {
     label: "NETConnect",
+    URL: "netconnect.home",
     open: false,
 }
 
 const openNetwork = () =>
 {
-    createApp(networkApp)
+    createApp( networkApp, "network")
 }
 
 /**
- *  BASIC APP FUNCTIONS
+ *  APP FUNCTIONS
  */
 
-const createApp = (appObject, appType) =>
+const createApp = ( appObject, appType ) =>
 {
-    if(appObject.open === false)
+    if( appObject.open === false )
     {
         appObject.open = true
         appObject.appMaximized = false
         appObject.appMinimized = false
         appObject.appFocused = false
-        appObject.dragType = "window"
+        appObject.appType = appType
+        const dragType = "window"
 
         // Create the main window
-        appObject.window = document.createElement('div')
-        appObject.window.classList.add('windowApp')
-        appObject.window.setAttribute('draggable', false)
+        appObject.window = document.createElement( 'div' )
+        appObject.window.classList.add( 'windowApp' )
+        appObject.window.setAttribute( 'draggable', false )
 
         // Focus the window if clicked
-        appObject.window.addEventListener('click', () =>
+        appObject.window.addEventListener( 'click', () =>
         {
-            if(appObject.appFocused === false)
+            if( appObject.appFocused === false )
             {
-                focusApp(appObject)
+                focusApp( appObject )
             }
-        })
+        } )
 
-        // Set the top bar and enable draggability
-        appObject.topBar = document.createElement('div')
-        appObject.topBar.classList.add('windowTopBar')
-        appObject.topBar.setAttribute('draggable', true)
-        appObject.topBar.addEventListener("dragstart", () =>
+        const topBar = document.createElement( 'div' )
+        topBar.classList.add( 'windowTopBar' )
+        topBar.setAttribute( 'draggable', true )
+        // Enabled drag on top bar
+        topBar.addEventListener( "dragstart", () =>
         {
-            dragStart(appObject.dragType, appObject)
-            appObject.window.style.width = String(appObject.savedWidth) + "px"
-            appObject.window.style.height = String(appObject.savedHeight) + "px"
+            dragStart( dragType, appObject )
+            appObject.window.style.width = String( appObject.savedWidth ) + "px"
+            appObject.window.style.height = String( appObject.savedHeight ) + "px"
             appObject.appMaximized = false
             resize()
-        })
-        appObject.window.appendChild(appObject.topBar)
+        } )
+        appObject.window.appendChild( topBar )
 
-        // Set all of the elements within the topbar:
-        // label, exit, minimize, and maximize buttons.
-        appObject.topBarLabel = document.createElement('p')
-        appObject.topBarLabel.innerHTML = appObject.label
-        appObject.topBarLabel.classList.add('windowTopBarLabel')
-        appObject.topBarButtons = document.createElement('div')
-        appObject.topBarButtons.classList.add('windowTopBarButtons')
-        appObject.exit = document.createElement('img')
-        appObject.exit.src = '/textures/static/exitIcon.png'
-        appObject.maximize = document.createElement('img')
-        appObject.maximize.src = '/textures/static/maximizeIcon.png'
-        appObject.minimize = document.createElement('img')
-        appObject.minimize.src = '/textures/static/minimizeIcon.png'
+        // Set topbar elements
+        const topBarLabel = document.createElement( 'p' )
+        topBarLabel.innerHTML = appObject.label
+        topBarLabel.classList.add( 'windowTopBarLabel' )
+        const topBarButtons = document.createElement( 'div' )
+        topBarButtons.classList.add( 'windowTopBarButtons' )
+        const exit = document.createElement( 'img' )
+        exit.src = '/textures/static/exitIcon.png'
+        const maximize = document.createElement( 'img' )
+        maximize.src = '/textures/static/maximizeIcon.png'
+        const minimize = document.createElement( 'img' )
+        minimize.src = '/textures/static/minimizeIcon.png'
 
-        // Event listeners to trigger corresponding functions
-        // for exit, maximize, and minimize
-        appObject.exit.addEventListener('click', () =>
+        ////////////////////////////////////////////////
+        //                  EXIT APPS                 //
+        ////////////////////////////////////////////////
+        exit.addEventListener( 'click', () =>
         {
-            exitApp(appObject)
-        })
+            topBar.removeEventListener( "dragStart", () => {} )
+            exit.removeEventListener( "click", () => {} )
+            maximize.removeEventListener( "click", () => {} )
+            minimize.removeEventListener( "click", () => {} )
 
-        appObject.maximize.addEventListener('click', () =>
+            if( appObject.appType === "folder" )
+            {
+                folderItemsArray.forEach( element => {
+                    element.removeEventListener( 'click', () => {} )
+                } )
+            }
+
+            if( appObject.appType === "network" )
+            {
+                appObject.netHome.removeEventListener('click', () => {})
+                appObject.netQuickLink1.removeEventListener('click', () => {})
+            }
+
+            exitApp( appObject )
+        } )
+
+        maximize.addEventListener( 'click', () =>
         {
-            if(appObject.appMaximized === false)
+            if( appObject.appMaximized === false )
             {
                 appObject.appMaximized = true
-                maximizeWindow(appObject.window)
+                maximizeWindow( appObject.window )
             }
-            else if(appObject.appMaximized === true)
+            else if( appObject.appMaximized === true )
             {
                 appObject.appMaximized = false
-                unmaximizeWindow(appObject.window, appObject.savedWidth, appObject.savedHeight)
+                unmaximizeWindow( appObject.window, appObject.savedWidth, appObject.savedHeight )
             }
-        })
+        } )
 
-        appObject.minimize.addEventListener('click', () =>
+        minimize.addEventListener( 'click', () =>
         {
-            minimizeWindow(appObject)
-        })
+            minimizeWindow( appObject )
+        } )
 
         // Add elements to topbar
-        appObject.topBarButtons.appendChild(appObject.exit)
-        appObject.topBarButtons.appendChild(appObject.maximize)
-        appObject.topBarButtons.appendChild(appObject.minimize)
-        appObject.topBar.appendChild(appObject.topBarLabel)
-        appObject.topBar.appendChild(appObject.topBarButtons)
+        topBarButtons.appendChild( exit )
+        topBarButtons.appendChild( maximize )
+        topBarButtons.appendChild( minimize )
+        topBar.appendChild( topBarLabel )
+        topBar.appendChild( topBarButtons )
 
         // set minimize element on the os bottom bar
-        appObject.minimizedElement = document.createElement('div')
-        appObject.minimizedElement.classList.add('minimizedElement')
-        var minimizedElementText = document.createElement('p')
+        appObject.minimizedElement = document.createElement( 'div' )
+        appObject.minimizedElement.classList.add( 'minimizedElement' )
+        const minimizedElementText = document.createElement( 'p' )
         minimizedElementText.innerHTML = appObject.label
-        appObject.minimizedElement.appendChild(minimizedElementText)
-        bottomBar.appendChild(appObject.minimizedElement)
+        appObject.minimizedElement.appendChild( minimizedElementText )
+        bottomBar.appendChild( appObject.minimizedElement )
 
-        appObject.minimizedElement.addEventListener('click', () =>
+        appObject.minimizedElement.addEventListener( 'click', () =>
         {
-            minimizeWindow(appObject)
-        })
+            minimizeWindow( appObject )
+        } )
 
         // ADD FINISHED APP TO DOCUMENT
-        desktop.appendChild(appObject.window)
+        desktop.appendChild( appObject.window )
 
         // Update variables
         appObject.height = appObject.window.clientHeight
@@ -212,31 +223,198 @@ const createApp = (appObject, appType) =>
         appObject.savedWidth = appObject.window.clientWidth
         appObject.savedHeight = appObject.window.clientHeight
 
-        apps.push(appObject)
+        apps.push( appObject )
 
-        if(appType === "folder")
+        ////////////////////////////////////////////////
+        //                    FOLDERS                 //
+        ////////////////////////////////////////////////
+
+        let folderItemsArray = []
+
+        if( appType === "folder" )
         {
-            appObject.folderSidePanel = document.createElement('div')
-            appObject.folderSidePanel.classList.add('folderSidePanel')
+            // FOLDER ADDRESS BAR
+            const folderAddressBar = document.createElement( 'div' )
+            folderAddressBar.classList.add( 'folderAddressBar' )
+            const folderAddress = document.createElement( 'div' )
+            folderAddress.classList.add( 'folderAddress' )
+            folderAddressBar.appendChild( folderAddress )
+            folderAddress.innerHTML = appObject.url
 
+            // FOLDER SIDE PANEL
+            const folderSidePanel = document.createElement( 'div' )
+            folderSidePanel.classList.add( 'folderSidePanel' )
+            const folderSidePanelElements = document.createElement( 'div' )
+            folderSidePanelElements.classList.add( 'folderSidePanelElements' )
+            folderSidePanel.appendChild( folderSidePanelElements )
+
+            let sidePanelArray = []
+            let sidePaneli = 0
+            appObject.sidePanelElements.forEach( element => {
+                sidePanelArray[ sidePaneli ] = document.createElement('p')
+                sidePanelArray[ sidePaneli ].innerHTML = element
+                folderSidePanelElements.appendChild( sidePanelArray[ sidePaneli ] )
+                sidePaneli++
+            } )
+
+            // FOLDER ITEM LIST
+            const folderList = document.createElement( 'div' )
+            folderList.classList.add( 'folderList' )
+            const folderListElements = document.createElement( 'div' )
+            folderListElements.classList.add( 'folderListElements' )
+            folderList.appendChild( folderListElements )
+
+            for( let i = 0; i < appObject.folderItems.length / 3; i++ )
+            {
+                folderItemsArray[ i ] = document.createElement( 'p' )
+                folderItemsArray[ i ].innerHTML = appObject.folderItems[ ( i * 3 ) ]
+                folderItemsArray[ i ].addEventListener( 'click', () =>
+                {
+                    folderPreviewElement.src = "/textures/static/" + appObject.folderItems[ ( i * 3 ) + 2 ]
+                } )
+                folderListElements.appendChild(folderItemsArray[ i ])
+            }
+
+            // FOLDER PREVIEW
+            const folderPreview = document.createElement( 'div' )
+            folderPreview.classList.add( 'folderPreview' )
+            const folderPreviewElement = document.createElement( 'img' )
+            folderPreviewElement.classList.add( 'folderPreviewElement' )
+            folderPreview.appendChild( folderPreviewElement )
+
+            // ADD DOM ELEMENTS TO MAIN APP WINDOW
+            appObject.window.appendChild( folderAddressBar )
+            appObject.window.appendChild( folderSidePanel )
+            appObject.window.appendChild( folderList )
+            appObject.window.appendChild( folderPreview )
+        }
+
+        ////////////////////////////////////////////////
+        //                    TXT                     //
+        ////////////////////////////////////////////////
+
+        if( appType === "txt" )
+        {
+            appObject.txtEditableArea = document.createElement( 'div' )
+            appObject.txtEditableArea.classList.add( 'txtEditableArea' )
+            appObject.window.appendChild( appObject.txtEditableArea )
+            appObject.txtInput = document.createElement( 'textarea' )
+            appObject.txtInput.innerHTML = appObject.text
+            appObject.txtInput.classList.add( 'txtInput' )
+            appObject.txtEditableArea.appendChild( appObject.txtInput )
+        }
+
+        ////////////////////////////////////////////////
+        //                    NETWORK                 //
+        ////////////////////////////////////////////////
+        
+        if( appType === "network" )
+        {
+            const netSearchBar = document.createElement( 'div' )
+            netSearchBar.classList.add( 'netSearchBar' )
+            appObject.window.appendChild( netSearchBar )
+
+            appObject.netBackward = document.createElement('img')
+            appObject.netBackward.src = "/textures/static/navArrowIcon.png"
+            appObject.netBackward.classList.add("netBarButton")  
+            appObject.netBackward.classList.add("netBackButton") 
+            appObject.netBackward.setAttribute('draggable', false) 
+            netSearchBar.appendChild(appObject.netBackward)
+
+            appObject.netForward = document.createElement('img')
+            appObject.netForward.src = "/textures/static/navArrowIcon.png"
+            appObject.netForward.classList.add("netBarButton")  
+            appObject.netForward.setAttribute('draggable', false) 
+            netSearchBar.appendChild(appObject.netForward)
+
+            appObject.netHome = document.createElement('img')
+            appObject.netHome.src = "/textures/static/homeIcon.png"
+            appObject.netHome.classList.add("netBarButton")  
+            appObject.netHome.setAttribute('draggable', false) 
+            netSearchBar.appendChild(appObject.netHome)  
+
+            appObject.netHome.addEventListener('click', () =>
+            {
+                netEnvironments.classList.add("hidden")
+                netQuickLinks.classList.remove("hidden")
+                netURL.innerHTML = "netconnect.home"
+            })
+
+            const netURL = document.createElement( 'div' )
+            netURL.classList.add( 'netURL' )
+            netURL.innerHTML = appObject.URL
+            netSearchBar.appendChild( netURL )
+
+            const netViewport = document.createElement( 'div' )
+            netViewport.classList.add( 'netViewport' )
+            appObject.window.appendChild( netViewport )
+
+            /**
+             *  WEBSITES
+             *          TO DO: GET RID OF EVENT LISTENERS ON EXIT
+             */
+            // QUICK LINKS WEBSITE
+            const netQuickLinks = document.createElement( 'div' )
+            netQuickLinks.classList.add( 'netQuickLinks' )
+            netViewport.appendChild( netQuickLinks )
+
+            const netQuickLinksHeader = document.createElement( 'div' )
+            netQuickLinksHeader.classList.add("netQuickLinksHeader")
+            netQuickLinksHeader.innerHTML = "Bookmarks"
+            netQuickLinks.appendChild( netQuickLinksHeader )
+
+            appObject.netQuickLink1 = document.createElement( 'a' )
+            appObject.netQuickLink1.classList.add("netQuickLink")
+            appObject.netQuickLink1.innerHTML = "• Environments"
+            netQuickLinks.appendChild(appObject.netQuickLink1)
+
+            // QUICK LINKS EVENT LISTENERS
+            appObject.netQuickLink1.addEventListener('click', () =>
+            {
+                netQuickLinks.classList.add("hidden")
+                netEnvironments.classList.remove("hidden")
+                netURL.innerHTML = "netconnect.environments"
+            })
+
+            // ENVIRONMENTS WEBSITES
+            const netEnvironments = document.createElement( 'div' )
+            netEnvironments.classList.add( 'netEnvironments' )
+            netEnvironments.classList.add( 'hidden' )
+            netViewport.appendChild( netEnvironments )
+
+            const netEnvironmentsHeader = document.createElement( 'div' )
+            netEnvironmentsHeader.classList.add("netEnvironmentsHeader")
+            netEnvironmentsHeader.innerHTML = "Environments"
+            netEnvironments.appendChild( netEnvironmentsHeader )
+
+            const netEnvironmentsHR = document.createElement( 'hr' )
+            netEnvironmentsHR.classList.add("netEnvironmentsHR")
+            netEnvironments.appendChild( netEnvironmentsHR )
+
+            const netEnvironmentsPara1 = document.createElement( 'p' )
+            netEnvironmentsPara1.classList.add("netEnvironmentsPara1")
+            netEnvironmentsPara1.innerHTML = 
+            `
+            If you have wound up here, you must have found yourself lost in a strange and unknown location.
+            Many have found themselves in your shoes. We have, or will, be lost at some point or another.
+            This place has structure, but one which folds upon itself instantaneously.
+            In hopes to alleviate the weeriness that this place enforces upon its inhabitants, 
+            `
+            netEnvironments.appendChild( netEnvironmentsPara1 )
         }
     }
 }
 
-const exitApp = (appObject) =>
+const exitApp = ( appObject ) =>
 {
     appObject.window.remove()
-    appObject.topBar.removeEventListener("dragStart", () => {})
-    appObject.exit.removeEventListener("click", () => {})
-    appObject.maximize.removeEventListener("click", () => {})
-    appObject.minimize.removeEventListener("click", () => {})
     appObject.open = false
-    appObject.minimizedElement.removeEventListener("click", () => {})
+    appObject.minimizedElement.removeEventListener( "click", () => {} )
     appObject.minimizedElement.remove()
 }
 
 // TO DO : combine these functions into one
-const maximizeWindow = (window, type) =>
+const maximizeWindow = ( window, type ) =>
 {
     window.style.left = "50%"
     window.style.top = "50%"
@@ -245,18 +423,18 @@ const maximizeWindow = (window, type) =>
     resize()
 }
 
-const unmaximizeWindow = (window, width, height) =>
+const unmaximizeWindow = ( window, width, height ) =>
 {
     window.style.left = "50%"
     window.style.top = "50%"
-    window.style.width = String(width) + "px"
-    window.style.height = String(height) + "px"
+    window.style.width = String( width ) + "px"
+    window.style.height = String( height ) + "px"
 }
 
-const minimizeWindow = (appObject) =>
+const minimizeWindow = ( appObject ) =>
 {
     // MINIMIZE WINDOW
-    if(appObject.appMinimized === false)
+    if( appObject.appMinimized === false )
     {
         appObject.appMinimized = true
         appObject.window.style.height = "0"
@@ -266,125 +444,155 @@ const minimizeWindow = (appObject) =>
 
     }
     // UNMAXIMIZE WINDOW
-    else if(appObject.appMinimized === true)
+    else if( appObject.appMinimized === true )
     {
-        focusApp(appObject)
+        focusApp( appObject )
         appObject.appMinimized = false
-        if(appObject.appMaximized === true)
+        if( appObject.appMaximized === true )
         {
             appObject.window.style.height = "100%"
             appObject.window.style.width = "100%"
-        }
-        else
-        {
-            appObject.window.style.height = String(appObject.savedHeight) + "px"
-            appObject.window.style.width = String(appObject.savedWidth) + "px"
+        } else {
+            appObject.window.style.height = String( appObject.savedHeight) + "px"
+            appObject.window.style.width = String( appObject.savedWidth ) + "px"
         }
         appObject.window.style.top = "50%"
         appObject.window.style.left = "50%"
     }
 }
 
-const focusApp = (appObject) =>
+const focusApp = ( appObject ) =>
 {
     appObject.appFocused = true
     appObject.window.style.zIndex = "2"
 
-    apps.forEach(element =>
+    apps.forEach( element =>
     {
-        if(appObject !== element)
+        if( appObject !== element )
         {
-            unfocus(element)
+            unfocus( element )
         }
-    })
+    } )
 }
 
-const unfocus = (appObject) =>
+const unfocus = ( appObject ) =>
 {
     appObject.appFocused = false
     appObject.window.style.zIndex = "1"
 }
 
+//////////////////////////////////////////////////////////////
+//                            OS                            //
+//////////////////////////////////////////////////////////////
+
+// OPEN START MENU
+startButton.addEventListener( 'click', () =>
+{
+    if( startOpen === false )
+    {
+        startOpen = true
+        startMenu.classList.add( "open" )
+    }
+    else if( startOpen === true )
+    {
+        startOpen = false
+        startMenu.classList.remove( "open" )
+    }
+} )
+
+// SHUT DOWN / EXIT OS
+shutDown.addEventListener( 'click', () =>
+{
+    // close apps
+    apps.forEach( element =>
+    {
+        exitApp( element )
+    } )
+    shutDown.removeEventListener( 'click', () => {} )
+    startButton.removeEventListener( 'click', () => {} )
+    window.parent.postMessage( "*", "*" )
+    bootInterval = 1
+    bootNextInterval = bootInterval
+    shuttingDown = true
+    time = 0
+} )
+
+// Handle Resize
+
 const resize = () =>
 {
     iconWidth = icon.clientWidth
-    // if(foldersOpen === true)
-    // {
-    //     foldersAppHeight = foldersApp.clientHeight
-    //     foldersAppWidth = foldersApp.clientWidth
-    // }
+    // FIX ICON AND WINDOW RESIZING
 }
 
-/**
- *  ICON HIGHLIGHT
- */
+// Handle icon highlight
 
 const unhighlight = () =>
 {
-    folder1.classList.remove('highlighted')
-    txt1.classList.remove('highlighted')
+    folder1.classList.remove( 'highlighted' )
+    txt1.classList.remove( 'highlighted' )
 }
 
-folder1.addEventListener('click', () =>
+folder1.addEventListener( 'click', () =>
 {
     unhighlight()
-    folder1.classList.add('highlighted')
-})
+    folder1.classList.add( 'highlighted' )
+} )
 
-txt1.addEventListener('click', () =>
+txt1.addEventListener( 'click', () =>
 {
     unhighlight()
-    txt1.classList.add('highlighted')
-})
+    txt1.classList.add( 'highlighted' )
+} )
 
-folder1.addEventListener('dblclick', () =>
+folder1.addEventListener( 'dblclick', () =>
 {
     openFolder()
-})
+} )
 
-txt1.addEventListener('dblclick', () =>
+txt1.addEventListener( 'dblclick', () =>
 {
     openTxt()
-})
+} )
 
-network.addEventListener('dblclick', () =>
+network.addEventListener( 'dblclick', () =>
 {
     openNetwork()
-})
+} )
 
-desktop.addEventListener('click', () =>
+desktop.addEventListener( 'click', () =>
 {
     unhighlight()
-})
+} )
 
 /**
  *  DRAG AND DROP
  */
 
-const drop = (event) =>
+const drop = ( event ) =>
 {
     event.preventDefault()
-    if(draggedElement !== null)
+    if( draggedElement !== null )
     {
-        if(draggedOption !== "window")
+        if( draggedOption !== "window" )
         {
-            draggedElement.style.left = String(event.clientX - iconWidth / 2) + "px"
-            draggedElement.style.top = String(event.clientY - iconWidth / 2) + "px"
+            draggedElement.style.left = String( event.clientX - iconWidth / 2 ) + "px"
+            draggedElement.style.top = String( event.clientY - iconWidth / 2 ) + "px"
         }
-        else if(draggedOption === "window")
+        else if( draggedOption === "window" )
         {
-            draggedElement.window.style.left = String(event.clientX) + "px"
-            draggedElement.window.style.top = String(event.clientY + draggedElement.height / 2) + "px"
+            draggedElement.window.style.left = String( event.clientX ) + "px"
+            draggedElement.window.style.top = String( event.clientY + draggedElement.height / 2 ) + "px"
         }
         draggedElement = null
         draggedOption = null
     } 
 }
 
-const dragStart = (event, window) =>
+const dragStart = ( event, window ) =>
 {
     draggedElement = event.srcElement
-    if(event === "window")
+    if( event === "window" )
     {
         draggedOption = "window"
         draggedElement = window
@@ -392,75 +600,98 @@ const dragStart = (event, window) =>
     unhighlight()
 }
 
-const dragOver = (event) =>
+const dragOver = ( event ) =>
 {
     event.preventDefault()
 }
 
-// Boot process
+/**
+ *  BOOT PROCESS
+ */
 
-var bootScreen = document.querySelector('.bootScreen')
-var bootLoad = document.querySelector('.bootLoad')
+const bootScreen = document.querySelector( '.bootScreen' )
+const bootLoad = document.querySelector( '.bootLoad' )
 
 let booting = true
+let shuttingDown = false
 let bootInterval = 1
 let bootNextInterval = bootInterval
 
-const bootAnimation = (interval) =>
+const bootAnimation = ( interval ) =>
 {
-    if(params.bootProcess === false)
+    if( params.bootProcess === false )
     {
         bootScreen.remove()
         booting = false
     }
-    if(interval === 2)
+    if( interval === 2 )
     {
         bootLoad.innerHTML = "booting up"
     }
-    if(interval === 3)
+    if( interval === 3 )
     {
         bootLoad.innerHTML = "booting up."
     }
-    if(interval === 4)
+    if( interval === 4 )
     {
         bootLoad.innerHTML = "booting up.."
     }
-    if(interval === 5)
+    if( interval === 5 )
     {
         bootLoad.innerHTML = "booting up..."
     }
-    if(interval === 6)
+    if( interval === 6 )
     {
         bootLoad.innerHTML = "booting up."
     }
-    if(interval === 7)
+    if( interval === 7 )
     {
         bootLoad.innerHTML = "booting up.."
     }
-    if(interval === 8)
+    if( interval === 8 )
     {
         bootLoad.innerHTML = "booting up..."
     }
-    if(interval === 9)
+    if( interval === 9 )
     {
         bootLoad.innerHTML = "booting up...<br>Logged in as user418."
-        document.addEventListener("click", () =>
+        document.addEventListener( "click", () =>
         {
-            document.removeEventListener("keypress", () => {})
+            document.removeEventListener( "keypress", () => {} )
             bootLoad.remove()
             bootScreen.remove()
-        })
+        } )
     }
-    if(interval === 11)
+    if( interval === 11 )
     {
         bootLoad.innerHTML = "booting up...<br>Logged in as user418. <br> (Click To Continue)"
         booting = false
     }
 }
 
-/**
- *  ANIMATIONS & CLOCK
- */
+const shutdownAnim = ( interval ) =>
+{
+    if( interval === 1 )
+    {
+        desktop.appendChild(bootScreen)
+    }
+    if( interval === 2 )
+    {
+        bootLoad.innerHTML = "Shutting down."
+    }
+    if( interval === 3 )
+    {
+        bootLoad.innerHTML = "Shutting down.."
+    }
+    if( interval === 4 )
+    {
+        bootLoad.innerHTML = "Shutting down..."
+    }
+}
+
+//////////////////////////////////////////////////////////////
+//                         UPDATE                           //
+//////////////////////////////////////////////////////////////
 
 let time = 0
 
@@ -477,7 +708,7 @@ let nextTimeUpdate = 0
 const update = () =>
 {
     // Set date, month, year, and time
-    if(time === nextTimeUpdate)
+    if( time === nextTimeUpdate )
     {
         date = realTime.getDate()
         month = realTime.getMonth()
@@ -488,38 +719,44 @@ const update = () =>
 
         let midday = null
         // set dom elements
-        if(hours >= 12)
+        if( hours >= 12 )
         {
             midday = " PM"
-        }
-        else
-        {
+        } else {
             midday = " AM"
         }
-        if(hours > 12)
+        if( hours > 12 )
         {
             hours -= 12
         }
-        timeDom.innerHTML = String(hours) + ":" + String(minutes) + midday
-        dateDom.innerHTML = String(month + 1) + "/" + String(date) + "/" + String(year)
+        timeDom.innerHTML = String( hours ) + ":" + String( minutes ) + midday
+        dateDom.innerHTML = String( month + 1 ) + "/" + String( date ) + "/" + String( year )
     }
 
     // Animation boot process
-    if(time === bootNextInterval && booting === true)
+    if( time === bootNextInterval && booting === true )
     {
         bootNextInterval += bootInterval
         let bootFrame = bootNextInterval / bootInterval
-        bootAnimation(bootFrame)
+        bootAnimation( bootFrame )
+    }
+
+    if( time === bootNextInterval && shuttingDown === true )
+    {
+        bootNextInterval += bootInterval
+        let bootFrame = bootNextInterval / bootInterval
+        shutdownAnim( bootFrame )
+        console.log("Shuttinf down")
     }
 
     // Incriment time
     time ++
 
     // Limit animation frame rate for performance
-    setTimeout(() =>
+    setTimeout( () =>
     {
-        window.requestAnimationFrame(update)
-    }, 500)
+        window.requestAnimationFrame( update )
+    }, 500 )
 }
 
 update()

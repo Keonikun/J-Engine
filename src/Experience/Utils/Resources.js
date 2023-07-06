@@ -4,6 +4,8 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import EventEmitter from "./EventEmitter";
 import { AudioLoader } from 'three';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+import { Typewriter } from 'typewriter-effect/dist/core';
 
 export default class Resources extends EventEmitter
 {
@@ -35,6 +37,7 @@ export default class Resources extends EventEmitter
         this.loaders.cubeTextureLoader = new THREE.CubeTextureLoader(this.loaders.loadingManager)
         this.loaders.fontLoader = new FontLoader(this.loaders.loadingManager)
         this.loaders.audioLoader = new THREE.AudioLoader(this.loaders.loadingManager)
+        this.loaders.rgbeLoader = new RGBELoader(this.loaders.loadingManager)
     }
 
     startLoading()
@@ -43,11 +46,13 @@ export default class Resources extends EventEmitter
         this.loadingBarContainer = document.querySelector('.loadingBarContainer')
         this.loadingBar = document.querySelector('.loadingBar')
         this.loadingText = document.querySelector('.loadingText')
+        // Progress Funciont
         this.loaders.loadingManager.onProgress = (url, loaded, total) =>
         {
             this.loadingText.innerHTML = 'Loading: ' + String(Math.ceil((loaded/total) * 100)) + '%'
             this.loadingBar.style = 'width:' + String(Math.ceil((loaded/total) * 100)) + '%'
         }
+        // Complete Function
         this.loaders.loadingManager.onLoad = (url, loaded, total) =>
         {
             this.loadingBarContainer.classList.add('hidden')
@@ -109,6 +114,16 @@ export default class Resources extends EventEmitter
             else if(source.type === 'audio')
             {
                 this.loaders.audioLoader.load(
+                    source.path,
+                    (file) =>
+                    {
+                        this.sourceLoaded(source, file)
+                    }
+                )
+            }
+            else if(source.type === 'HDR')
+            {
+                this.loaders.rgbeLoader.load(
                     source.path,
                     (file) =>
                     {

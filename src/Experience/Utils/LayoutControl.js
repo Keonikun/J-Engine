@@ -14,7 +14,9 @@ export default class Layout
         this.params = {
             windowMode: 'fullscreen',
             navBoxSetting: 'fullscreen',
-            colorProfile: 'grey'
+            colorProfile: 'grey',
+            OSOnOpen: false,
+            portfolioMode: true,
         }
 
         this.fullscreenEnabled = false
@@ -24,6 +26,7 @@ export default class Layout
         // Load new game
         this.experience.world.on('ready', () =>
         { 
+            console.log("experience loaded")
             this.firstPerson = this.experience.world.firstPerson
             document.querySelector('.loadingText').classList.add('hidden')
             document.querySelector('.startGame').classList.remove('hidden')
@@ -41,11 +44,17 @@ export default class Layout
             })   
         })
 
+        
         this.setDomElements()
         this.setExperienceContainer()
         this.setNavBox()
         this.pinScrollToBottom()
         this.setDebug()
+
+        if(this.params.OSOnOpen)
+        {
+            this.openOS()
+        }
     }
 
     setDomElements()
@@ -57,6 +66,7 @@ export default class Layout
         this.folderTabs = document.querySelector('.folderTabs')
         this.fullscreen = document.querySelector('.fullscreen')
         this.visuals = document.querySelector('.visuals')
+        this.visuals.style.visibility = 'hidden'
 
         this.folderTabs.addEventListener('click', () =>
         {
@@ -68,7 +78,6 @@ export default class Layout
 
         this.fullscreen.addEventListener('click', () =>
         {
-            console.log(this.fullscreenEnabled)
             if(this.fullscreenEnabled === false)
             {
                 this.fullscreenEnabled = true
@@ -154,21 +163,37 @@ export default class Layout
         this.OSIframe.style.left = '50%'
         this.OSIframe.style.top = '50%'
         this.OSIframe.style.position = 'absolute'
-        this.OSIframe.style.height = '90vh'
-        this.OSIframe.style.width = '90vh'
+        this.OSIframe.style.height = '73vh'
+        this.OSIframe.style.width = '73vh'
         this.OSIframe.style.border = 'none'
-        this.OSIframe.style.border = '20px solid #c0c0c0'
+        this.OSIframe.style.border = '20px solid #676764'
+
+
+        this.monitorOverlay = document.createElement('img')
+        this.monitorOverlay.src = './textures/static/monitor.png'
+        this.monitorOverlay.style.height = '100%'
+        this.monitorOverlay.style.zIndex = 21
+        this.monitorOverlay.style.position = 'absolute'
+        this.monitorOverlay.style.left = '50%'
+        this.monitorOverlay.style.transform = 'translate(-50%)'
+        this.monitorOverlay.style.pointerEvents = 'none'
+
 
         this.visuals.style.zIndex = "20"
         this.visuals.appendChild(this.OSIframe)
+        this.visuals.appendChild(this.monitorOverlay)
 
+        gsap.delayedCall(0.1, () =>
+        {
+            this.visuals.style.visibility = 'visible'
+
+        })
     }
 
     closeOS()
     {
         this.visuals.style.zIndex = "-1"
         this.OSIframe.remove()
-        console.log("Closed OS")
     }
 
     setArrowKeys()
@@ -260,18 +285,15 @@ export default class Layout
                         if(this.firstPerson.pointerLockControls.isLocked === false && this.firstPerson.disengaged === false)
                         {
                             this.waitingToCloseNav = false
-                            console.log("thing one has happened")
                         }
                         else if(this.params.navBoxSetting === 'hidden' && this.textAdventure.typewriterWorking === false)
                         {
                             this.experienceContainer.classList.remove('navBoxDefault')
                             this.experienceContainer.classList.remove('navBoxFull')
                             this.waitingToCloseNav = false
-                            console.log("thing two has happened")
                         }
                         else
                         {
-                            console.log("thing three has happened")
                             this.waitingToCloseNav = false
                             this.waitToCloseNav()
                         }

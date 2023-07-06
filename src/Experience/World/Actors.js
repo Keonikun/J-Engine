@@ -16,103 +16,119 @@ export default class Actors
         this.scene = this.experience.scene
 
         this.params = {
+            weather: false,
+            weatherFollowsYou: true,
             rainFrequency: 4500,
+            train: false,
             trainFrequency: 2000,
+            dayNightCycle: false,
+            dayStart: 4500,
             dayLength: 10000,
-            dayColor: this.environment.params.backgroundCol
+            nightLength: 10000,
+            pauseTime: false,
+            dayColor: this.environment.params.backgroundCol,
+            // nightColor:
+
+            // Debug variables
+            triggerDay: () => {this.triggerDay()},
+            triggerNight: () => {this.triggerNight()},
+            triggerRain: () => {this.triggerRain()},
+            triggerTrain: () => {this.triggerTrain()}
         }
-
         
-        this.setNpc1()
-        this.setTrain()
-        this.setWeather()
-        this.setDayNightCycle()
+        this.setup()
+        this.setDebug()
     }
 
-    setNpc1()
-    {
-        
-    }
-
-    setTrain()
+    setup()
     {
         this.trainCounter = 1000
         this.trainActive = false
-    }
 
-    setWeather()
-    {
         this.weatherCounter = 0
         this.rain = false
-    }
 
-    setDayNightCycle()
-    {
-        this.dayCounter = 4500
+        this.dayCounter = this.params.dayStart
+        this.nightCounter = 0
         this.day = true
     }
 
+    triggerDay()
+    {
+
+    }
+
+    triggerNight()
+    {
+
+    }
+
+    triggerRain()
+    {
+
+    }
+
+    triggerTrain()
+    {
+
+    }
+
+    // NOTE: not using delta
     update()
     {
-        this.weatherCounter ++
-        this.trainCounter ++
-        this.dayCounter ++
-        if(this.weatherCounter >= this.params.rainFrequency)
+        if(this.params.dayNightCycle === true && this.params.pauseTime === false)
         {
-            if(this.rain === false)
-            {
-                this.rain = true
-                this.audio.play('rain')
-                this.particles.params.visible = true
-            }
-            else if(this.rain === true)
-            {
-                this.rain = false
-                this.audio.pause('rain')
-                this.particles.params.visible = false
-            }
-            this.weatherCounter = 0
-            
-        }
-        if(this.trainCounter >= this.params.trainFrequency)
-        {
-            if(this.trainActive === false)
-            {
-                this.interactiveObjects.triggerTrainArms()
-                gsap.delayedCall(3, () =>
-                {
-                    this.audio.play('train')
-                })
-                this.trainActive = true
-                this.audio.play('trainCrossing')
-            }
-            else if(this.trainActive === true)
-            {
-                this.trainActive = false
-                this.audio.pause('train')
-                gsap.delayedCall(3, () =>
-                {
-                    this.audio.pause('trainCrossing')
-                    this.interactiveObjects.triggerTrainArms()
-                })
-            }
-            this.trainCounter = 0
-        }
-        
-        if(this.dayCounter >= this.params.dayLength)
-        {
-            if(this.day === true)
-            {
-                this.day = false
-                this.environment.nighttime()
-            }
-            else if(this.day === false)
-            {
-                this.day = true
-                this.environment.daytime()
-            }
-            this.dayCounter = 0
+            this.dayCounter ++
 
+            if(this.dayCounter >= this.params.dayLength)
+            {
+                if(this.day === true)
+                {
+                    this.day = false
+                    this.environment.nighttime()
+                }
+                else if(this.day === false)
+                {
+                    this.day = true
+                    this.environment.daytime()
+                }
+                this.dayCounter = 0
+            }
+        }
+        if(this.params.weather === true && this.params.pauseTime === false)
+        {
+            this.weatherCounter ++
+
+            if(this.weatherCounter >= this.params.rainFrequency)
+            {
+                if(this.rain === false)
+                {
+                    this.rain = true
+                    this.audio.play('rain')
+                    this.particles.params.visible = true
+                }
+                else if(this.rain === true)
+                {
+                    this.rain = false
+                    this.audio.pause('rain')
+                    this.particles.params.visible = false
+                }
+                this.weatherCounter = 0
+                
+            }
+        }
+    }
+
+    setDebug()
+    {
+        if( this.debug.active )
+        {
+            this.debugFolder = this.debug.gui.addFolder('Actors')
+            this.debugFolder.add( this.params, 'dayNightCycle' )
+            this.debugFolder.add( this.params, 'weather' )
+            this.debugFolder.add( this.params, 'triggerNight' )
+            this.debugFolder.add( this.params, 'triggerDay' )
+            this.debugFolder.add( this.params, 'triggerRain' )
         }
     }
 }

@@ -5,7 +5,6 @@ import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js'
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import {FilmPass} from 'three/examples/jsm/postprocessing/FilmPass.js'
-import {OutlinePass} from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import {GammaCorrectionShader} from 'three/examples/jsm/shaders/GammaCorrectionShader.js'
 import {VignetteShader} from 'three/examples/jsm/shaders/VignetteShader.js'
 
@@ -25,13 +24,32 @@ export default class Renderer extends EventEmitter
         this.world = this.experience.world
 
         this.params = { 
-            pixelRatio: 0.3,
+
+            resolution: 0.3,
+            renderDistance: 50,
+
             postprocessing: true,
+
+            // BLOOM
             bloom: true,
-            outline: false,
-            gammaCorrection: true,
+            bloomResolution: 64,
+            bloomPower: 0.5,
+            bloomRadius: 0,
+            bloomThreshold: 0.5,
+
+            // Film Shader
             filmic: true,
+            noiseIntensity: 0.15,
+            ScanlineIntensity: 0.5,
+            ScanlineCount: 1000,
+            grayscale: false,
+
+            // Vignette
             vignette: true,
+            vignetteIntensity: 1.2,
+
+            gammaCorrection: true,
+
         }
 
         this.highlightedObject = null
@@ -55,7 +73,9 @@ export default class Renderer extends EventEmitter
         this.instance.physicallyCorrectLights = true
         this.instance.setClearColor( '#ffffff' )
         this.instance.setSize( this.sizes.width, this.sizes.height )
-        this.instance.setPixelRatio( this.sizes.pixelRatio * this.params.pixelRatio )
+        this.instance.setPixelRatio( this.sizes.pixelRatio * this.params.resolution )
+
+        this.camera.setRenderDistance(this.params.renderDistance)
     }
 
     setComposer()
@@ -66,20 +86,14 @@ export default class Renderer extends EventEmitter
 
         if( this.params.bloom === true && this.params.postprocessing === true )
         {
-            this.composer.addPass( new UnrealBloomPass({ x: 64, y: 64 }, 1.0, -1, 0.7 ))
-        }
-        if( this.params.outline === true && this.params.postprocessing === true )
-        {
-            this.outlinePass = new OutlinePass( new THREE.Vector2( this.sizes.width, this.sizes.height ), this.scene, this.camera.instance )
-            this.outlinePass.visibleEdgeColor.set( '#ffffff' )
-            this.outlinePass.hiddenEdgeColor.set( '#190a05' )
-            this.outlinePass.edgeThickness = 0.01
-            this.outlinePass.edgeStrength = 1
-            this.composer.addPass( this.outlinePass )
+            this.composer.addPass( new UnrealBloomPass(
+                { x: this.params.bloomResolution, y: this.params.bloomResolution }, 
+                this.params.bloomPower, this.params.bloomRadius, this.params.bloomThreshold 
+            ))
         }
         if( this.params.filmic === true && this.params.postprocessing === true )
         {
-            this.composer.addPass( new FilmPass( 0.3, 0.2, 648, false ))
+            this.composer.addPass( new FilmPass( this.params.noiseIntensity, this.params.ScanlineIntensity, this.params.ScanlineCount, this.params.grayscale ))
         }
         if( this.params.gammaCorrection === true && this.params.postprocessing === true )
         {
@@ -87,37 +101,17 @@ export default class Renderer extends EventEmitter
         }
         if( this.params.vignette === true && this.params.postprocessing === true )
         {
-            VignetteShader.uniforms.darkness.value = 1.2
+            VignetteShader.uniforms.darkness.value = this.params.vignetteIntensity
             this.composer.addPass(new ShaderPass( VignetteShader ))
-        }
-    }
-
-    outline( object )
-    {
-        if( object != this.highlightedObject && this.params.outline === true )
-        {
-            this.objectsToOutline = []
-            this.highlightedObject = object
-            this.objectsToOutline.push( object )
-            this.outlinePass.selectedObjects = this.objectsToOutline
-        };
-    };
-
-    clearOutline()
-    {
-        if( this.params.outline === true )
-        {
-            this.outlinePass.selectedObjects = []
-            this.highlightedObject = null
         }
     }
 
     resize()
     {
         this.instance.setSize( this.sizes.width, this.sizes.height )
-        this.instance.setPixelRatio( this.sizes.pixelRatio * this.params.pixelRatio )
+        this.instance.setPixelRatio( this.sizes.pixelRatio * this.params.resolution )
         this.composer.setSize( this.sizes.width, this.sizes.height )
-        this.composer.setPixelRatio( this.sizes.pixelRatio * this.params.pixelRatio )
+        this.composer.setPixelRatio( this.sizes.pixelRatio * this.params.resolution )
     }
 
     update()
@@ -141,10 +135,10 @@ export default class Renderer extends EventEmitter
     {
         if( this.debug.active )
         {
-            this.debug.renderDebugFolder.add( this.params, 'pixelRatio', 0.05, 1 ).onChange(() =>
+            this.debug.renderDebugFolder.add( this.params, 'resolution', 0.05, 1 ).onChange(() =>
             {
-                this.instance.setPixelRatio( this.params.pixelRatio )
-                this.composer.setPixelRatio( this.params.pixelRatio )
+                this.instance.setPixelRatio( this.params.resolution )
+                this.composer.setPixelRatio( this.params.resolution )
             })
             this.debug.renderDebugFolder.add( this.params, 'postprocessing' )
         }

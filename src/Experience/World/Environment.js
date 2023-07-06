@@ -12,8 +12,8 @@ export default class Environment
 
         this.params = {
             backgroundAndFogCol: '#000000',
-            dayColor: '#5c5c5c',
-            nightColor: '#000000',
+            
+            
             ambientLightInt: 0.5,
             ambientLightCol: '#ffffff',
             dirLightInt: 0.8,
@@ -22,15 +22,22 @@ export default class Environment
             dirLightPosY: 2,
             dirLightPosZ: - 1.25,
             fogCol: '#5c5c5c',
-            fogNear: 20,
-            fogFar: 35,
+            fogNear: 50,
+
+            // Day/Night Cycle
+            dayColor: '#5c5c5c',
+            dayFog: 50,
+            nightColor: '#000000',
+            nightFog: 30,
+            fadeDuration: 150,
         }
+        
 
         this.setDebug()
         this.setAmbientLight()
         this.setDirectionalLight()
         this.setSimpleBackground()
-
+        this.setEnvironmentMap()
         this.setFog()
     }
 
@@ -49,12 +56,13 @@ export default class Environment
 
     setFog()
     {
-        this.scene.fog = new THREE.Fog(this.params.fogCol, this.params.fogNear, this.params.fogFar)
+        this.scene.fog = new THREE.Fog(this.params.fogCol, this.params.fogNear, this.params.fogNear + 15)
     }
 
     setSimpleBackground()
     {
         this.scene.background = new THREE.Color( this.params.dayColor )
+
     }
 
     setBackground(color)
@@ -64,29 +72,26 @@ export default class Environment
 
     nighttime()
     {
-        this.toNight = gsap.to(this.scene.background,{r: 0.01, g: 0.01, b: 0.01, duration: 120})
-        this.toNightFog = gsap.to(this.scene.fog.color,{r: 0.01, g: 0.01, b: 0.01, duration: 120})
-        this.toNightFogThickness = gsap.to(this.scene.fog,{near: 10, far: 20, duration: 120})
+        this.toNight = gsap.to(this.scene.background,{r: 0.01, g: 0.01, b: 0.01, duration: this.params.fadeDuration})
+        this.toNightFog = gsap.to(this.scene.fog.color,{r: 0.01, g: 0.01, b: 0.01, duration: this.params.fadeDuration})
+        this.toNightFogThickness = gsap.to(this.scene.fog,{near: this.params.nightFog, far: this.params.nightFog + 15, duration: this.params.fadeDuration})
         this.toNight.play()
         this.toNightFog.play()
         this.toNightFogThickness.play()
-        console.log("triggered night")
     }
 
     daytime()
     {   
-        this.toDay = gsap.to(this.scene.background,{r: 0.36, g: 0.36, b: 0.36, duration: 120})
-        this.toDayFog = gsap.to(this.scene.fog.color,{r: 0.36, g: 0.36, b: 0.36, duration: 120})
-        this.toDayFogThickness = gsap.to(this.scene.fog,{near: this.params.fogNear, far: this.params.fogFar, duration: 120})
+        this.toDay = gsap.to(this.scene.background,{r: 0.36, g: 0.36, b: 0.36, duration: this.params.fadeDuration})
+        this.toDayFog = gsap.to(this.scene.fog.color,{r: 0.36, g: 0.36, b: 0.36, duration: this.params.fadeDuration})
+        this.toDayFogThickness = gsap.to(this.scene.fog,{near: this.params.fogNear, far: this.params.fogFar, duration: this.params.fadeDuration})
         this.toDay.play()
         this.toDayFog.play()
         this.toDayFogThickness.play()
-        console.log("triggered day")
-
     }
 
-    // setEnvironmentMap()
-    // {
+    setEnvironmentMap()
+    {
         // this.environmentMap = {}
         // this.environmentMap.intensity = 0.4
         // // this.environmentMap.texture = this.resources.items.stormydaysEnvMap
@@ -109,7 +114,11 @@ export default class Environment
         // this.setEnvironmentMap.updateMaterial()
 
         // this.scene.background = this.environmentMap.texture
-    // }
+
+        this.studioHDR = this.resources.items.studioHDR
+        this.studioHDR.mapping = THREE.EquirectangularReflectionMapping
+        this.scene.environment = this.studioHDR
+    }
 
     /**------------------------------------------------------------------
      *--------------------------------DEBUG------------------------------
@@ -151,10 +160,6 @@ export default class Environment
             this.debugFolder.add( this.params, 'fogNear', 0, 500).onChange(() =>
             {
                 this.scene.fog.near = this.params.fogNear
-            })
-            this.debugFolder.add( this.params, 'fogFar', 0, 500).onChange(() =>
-            {
-                this.scene.fog.far = this.params.fogFar
             })
             this.debugFolder.add( this.params, 'ambientLightInt', 0, 2 ).onChange(() =>
             {

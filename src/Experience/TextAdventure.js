@@ -55,15 +55,17 @@ export default class TextAdventure
             else
             {
                 // Create typing sequence in the order you would like the text to appear.
-                this.typewriter.typeString( "<p>CONTROLS:</p>" );
-                this.typewriter.typeString( "<p>Click on the 3D scene above to begin playing.</p>" );
-                this.typewriter.typeString( "<p>Access Menu: Press 'Q'</p>" );
-                this.typewriter.typeString( "<p>Walk around: 'WASD' keys</p>" );
-                this.typewriter.typeString( "<p>Look around: Mouse or Trackpad</p>" );
-                this.typewriter.typeString( "<p>Interact with doors: Left Click</p>" );
-                this.typewriter.typeString( "<p>Sprint: Hold Shift Key</p>" );
+                this.typewriter.typeString( "<p>Dear Jeff," );
+                this.typewriter.typeString( "<p>Happy Birthday! You are such a wonderful person. I love how </p>" );
+                this.typewriter.typeString( "<p>creative you are and how you are always idea-making for your</p>" );
+                this.typewriter.typeString( "<p>next big project. I love seeing the updates you send me, it fills</p>" );
+                this.typewriter.typeString( "<p>me with a lot of joy. I look up to you everyday thinking... 'what</p>" );
+                this.typewriter.typeString( "<p>would Jeff do in this situation?' Maybe I can become as cool as you</p>" );
+                this.typewriter.typeString( "<p>one day. I made you a little diorama with an archway design,</p>" );
+                this.typewriter.typeString( "<p>although I'm not sure how practical it is!</p>" );
+
                 
-                this.typewriter.typeString( "<a class='choice1' href='#debug' style='color:green'>Dev Mode</a>" );
+                this.typewriter.typeString( "<a class='choice1' href='#debug' style='color:green'>With lots of love, Julien</a>" );
                 // Begin the typing sequence with this.typeEvent() 
                 // First value is the event type: choice, singleChoice, progressToNext, or none
                 // Second value is the event you would like to move to.

@@ -27,59 +27,72 @@ export default [
     /**
      * ---------AUDIO-----------
      */
+    // {
+    //     name: 'trainCrossing',
+    //     type: 'audio',
+    //     path: '/audio/trainCrossing.ogg'
+    // },
+    // {
+    //     name: 'train',
+    //     type: 'audio',
+    //     path: '/audio/train.ogg'
+    // },
+    // {
+    //     name: 'windowRain',
+    //     type: 'audio',
+    //     path: '/audio/windowRain.ogg'
+    // },
+    // {
+    //     name: 'rain',
+    //     type: 'audio',
+    //     path: '/audio/rain.ogg'
+    // },
+    // {
+    //     name: 'doorOpen',
+    //     type: 'audio',
+    //     path: '/audio/doorOpen.ogg'
+    // },
+    // {
+    //     name: 'doorClose',
+    //     type: 'audio',
+    //     path: '/audio/doorClose.ogg'
+    // },
+    // {
+    //     name: 'footstep',
+    //     type: 'audio',
+    //     path: '/audio/footstep.ogg'
+    // },
+    // {
+    //     name: 'water',
+    //     type: 'audio',
+    //     path: '/audio/water.ogg'
+    // },
+    // {
+    //     name: 'sewer',
+    //     type: 'audio',
+    //     path: '/audio/sewer.ogg'
+    // },
+    // {
+    //     name: 'inhabitted',
+    //     type: 'audio',
+    //     path: '/audio/inhabitted.ogg'
+    // },
+    // {
+    //     name: 'wind',
+    //     type: 'audio',
+    //     path: '/audio/wind.ogg'
+    // },
+    // {
+    //     name: 'bootUp',
+    //     type: 'audio',
+    //     path: '/audio/bootUp.ogg'
+    // },
+    /**
+     * ---------HDR-----------
+     */
     {
-        name: 'trainCrossing',
-        type: 'audio',
-        path: '/audio/trainCrossing.ogg'
-    },
-    {
-        name: 'train',
-        type: 'audio',
-        path: '/audio/train.ogg'
-    },
-    {
-        name: 'windowRain',
-        type: 'audio',
-        path: '/audio/windowRain.ogg'
-    },
-    {
-        name: 'rain',
-        type: 'audio',
-        path: '/audio/rain.ogg'
-    },
-    {
-        name: 'doorOpen',
-        type: 'audio',
-        path: '/audio/doorOpen.ogg'
-    },
-    {
-        name: 'doorClose',
-        type: 'audio',
-        path: '/audio/doorClose.ogg'
-    },
-    {
-        name: 'footstep',
-        type: 'audio',
-        path: '/audio/footstep.ogg'
-    },
-    {
-        name: 'water',
-        type: 'audio',
-        path: '/audio/water.ogg'
-    },
-    {
-        name: 'sewer',
-        type: 'audio',
-        path: '/audio/sewer.ogg'
-    },
-    {
-        name: 'inhabitted',
-        type: 'audio',
-        path: '/audio/inhabitted.ogg'
-    },
-    {
-        name: 'wind',
-        type: 'audio',
-        path: '/audio/wind.ogg'
+        name: 'studioHDR',
+        type: 'HDR',
+        path: '/textures/static/studio.hdr'
     },
 ]

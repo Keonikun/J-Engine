@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { PlainAnimator } from 'three-plain-animator/lib/plain-animator'
 
 
-export default class Shaders
+export default class Materials
 {
     constructor( experience )
     {
@@ -24,13 +24,13 @@ export default class Shaders
 
     setup()
     {
-        this.staticMesh = this.experience.world.models.staticMesh
+        this.staticMesh = this.experience.world.models.physMesh
         this.waterAnimTexture = this.resources.items.waterAnim
     }
 
     setAnimatedMaterials()
     {
-        this.waterAnim = new PlainAnimator( this.waterAnimTexture, 8, 4, 32, 10 )
+        this.waterAnim = new PlainAnimator( this.waterAnimTexture, 4, 4, 16, 5 )
         this.waterAnimMap = this.waterAnim.init()
         this.waterMaterial = new THREE.MeshBasicMaterial({ map: this.waterAnimMap })
         this.applyAnimatedMaterials()
@@ -56,7 +56,7 @@ export default class Shaders
             uSpeed: { value: 0.002 },
             uFrequencyX: { value: 0.5 },
             uFrequencyZ: { value: 0.2 },
-            uElevation: { value: 0.1 },
+            uElevation: { value: 0.005 },
         }
 
         this.waterMaterial.onBeforeCompile = ( shader ) =>

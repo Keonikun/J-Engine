@@ -4,6 +4,7 @@ export default class Camera{
     constructor(experience)
     {
         this.experience = experience
+        this.world = this.experience.world
         this.sizes = this.experience.sizes
         this.scene = this.experience.scene
         this.cssScene = this.experience.cssScene
@@ -11,14 +12,14 @@ export default class Camera{
         this.debug = this.experience.debug
 
         this.params = {
+
             posX: 0,
             posY: 0,
             posZ: 0,
             fov: 40,
-            clipNear: 0.1,
-            clipFar: 35,
             thirdPerson: false,
             lookAt: false,
+            clip: 50,
         }
 
         this.setDebug()
@@ -30,7 +31,7 @@ export default class Camera{
 
     setInstance()
     {
-        this.instance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, this.params.clipNear, this.params.clipFar)
+        this.instance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, 0.1, this.params.clip)
         this.instance.position.set(this.params.posX,this.params.posY,this.params.posZ)
         this.instance.rotation.y = Math.PI * 0.5
         this.scene.add(this.instance)
@@ -38,11 +39,16 @@ export default class Camera{
         this.lookAtVec3 = new THREE.Vector3(0,0,0)
     }
 
+    setRenderDistance(far)
+    {
+            this.instance.far = far
+    }
+
     setThirdPerson()
     {
         if(this.params.thirdPerson === true)
         {
-            this.thirdPersonInstance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, this.params.clipNear, this.params.clipFar)
+            this.thirdPersonInstance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, 0.1, this.params.clip)
             this.thirdPersonInstance.position.set(this.instance.position.x,this.instance.position.y,this.instance.position.z)
             this.thirdPersonInstance.rotation.x = Math.PI * 1.5
             this.scene.add(this.thirdPersonInstance)
@@ -113,14 +119,9 @@ export default class Camera{
                 this.instance.fov = this.params.fov
                 this.instance.updateProjectionMatrix()
             })
-            this.debug.renderDebugFolder.add(this.params, 'clipNear', 0.01, 10).onChange(() =>
+            this.debug.renderDebugFolder.add(this.params, 'clip', 10, 1000).onChange(() =>
             {
-                this.instance.near = this.params.clipNear
-                this.instance.updateProjectionMatrix()
-            })
-            this.debug.renderDebugFolder.add(this.params, 'clipFar', 10, 1000).onChange(() =>
-            {
-                this.instance.far = this.params.clipFar
+                this.instance.far = this.params.clip
                 this.instance.updateProjectionMatrix()
             })
             this.debugFolder.close()

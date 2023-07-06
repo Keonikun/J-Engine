@@ -22,14 +22,14 @@ export default class FirstPerson
 
         this.params = { 
             playerHeight: 1.6, 
-            playerSpeed: 0.06, 
+            playerSpeed: 0.04, 
             sprintFactor: 1.5, 
             gravity: 0.08,
             sprintingEnabled: true,
             collisionDistance: 0.5,
             locationHelper: false,
             interactionDistance: 3.3,
-            spawnPoint: {x: 0.58, y: 0.12, z: -11.26, r: 1 },
+            spawnPoint: {x: 0, y: 0, z: 0, r: 2 },
             locations: 'spawn',
             resetPosition: () =>
             {
@@ -242,7 +242,7 @@ export default class FirstPerson
     raycastFromCamera()
     {
         this.camRay.setFromCamera( this.camRayCoords, this.camera )
-        this.camRayIntersect = this.camRay.intersectObject( this.models.physMesh )
+        this.camRayIntersect = this.camRay.intersectObject( this.models.dynamicObjects )
     
         // Code for object outlines (do not uncomment)
         // if(this.camRayIntersect[0] != null)
@@ -281,6 +281,7 @@ export default class FirstPerson
             // Object interactions
             if( this.camRayIntersect[0].distance < 4 )
             {
+                console.log(this.camRayIntersect[0].object)
                 if( this.camRayIntersect[0].object.interactive === true )
                 {
                     this.interactiveObjects.trigger( this.camRayIntersect[0].object )
@@ -360,7 +361,7 @@ export default class FirstPerson
                 // Footsteps
                 if(this.playerWalkingCount >= this.params.footstepFrequency)
                 {
-                    this.audio.play('footstep')
+                    // this.audio.play('footstep')
                     this.playerWalkingCount = 0
                 }
             }
@@ -498,59 +499,13 @@ export default class FirstPerson
             this.debugFolder.add( this.params, 'resetPosition' )
             this.locationsFolder = this.debug.locationsFolder
             this.locationsFolder.add( this.params, 'locations', [
-                'spawn', 
-                'sewers', 
-                'park', 
-                'outlook', 
-                'theatre', 
-                'apartment1',
-                'sanctuary',
-                'garage',
-                'basement',
-                'trainCrossing'
+                'spawn'
             ]).onChange(() =>
             {
                 if( this.params.locations === 'spawn' )
                 {
                     this.resetPosition()
-                }
-                if( this.params.locations === 'sewers' )
-                {
-                    this.setPosition( 27.5, -7.4, 6.7 )
-                }
-                if( this.params.locations === 'outlook' )
-                {
-                    this.setPosition( 19, 9.3, -20 )
-                }
-                if( this.params.locations === 'theatre' )
-                {
-                    this.setPosition( 56, 0.5, 40 )
-                }
-                if( this.params.locations === 'park' )
-                {
-                    this.setPosition( -43, -8, 42 )
-                }
-                if( this.params.locations === 'apartment1' )
-                {
-                    this.setPosition( 78, 11, 25 )
-                }
-                if( this.params.locations === 'sanctuary' )
-                {
-                    this.setPosition( 50, -6.5, 76.6 )
-                }
-                if( this.params.locations === 'garage' )
-                {
-                    this.setPosition( -7, -3, 61 )
-                }
-                if( this.params.locations === 'basement' )
-                {
-                    this.setPosition( 24, -11, 5.3 )
-                }
-                if( this.params.locations === 'trainCrossing' )
-                {
-                    this.setPosition( 0, 0, 15 )
-                }
-                
+                }   
             })
             this.debugFolder.add( this.params, 'playerSpeed', 0.001, 1 )
             this.debugFolder.add( this.params, 'gravity', 0, 1 )

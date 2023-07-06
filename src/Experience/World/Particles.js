@@ -68,23 +68,11 @@ export default class Particles
                 this.rainAnimPositions = this.rain.geometry.attributes.position.array
                 for( let i = 0; i < this.params.rainDropCount * 3; i+=3 )
                 {
-                    // Wind direction
-                    this.rainAnimPositions[i] -= this.params.windX
-                    this.rainAnimPositions[i+2] -= this.params.windZ
-
                     // Rain fall speed
                     this.rainAnimPositions[i+1] -= this.params.rainDropSpeed + Math.random() * 0.1
                     if( this.rainAnimPositions[i+1] < (this.params.rainHeightDeath * Math.random()))
                     {
                         this.rainAnimPositions[i+1] = this.params.rainHeightSpawn
-                    }
-
-                    // reset particles affected by wind
-                    if(this.rainAnimPositions[i] > this.params.rainSimDistance || this.rainAnimPositions[i] < (-1 * this.params.rainSimDistance) || this.rainAnimPositions[i+2] > this.params.rainSimDistance || this.rainAnimPositions[i+2] < (-1 * this.params.rainSimDistance))
-                    {
-                        this.rainAnimPositions[i] = Math.random() * (this.params.rainSimDistance * 2) - this.params.rainSimDistance
-                        this.rainAnimPositions[i+1] = this.params.rainHeightSpawn
-                        this.rainAnimPositions[i+2] = Math.random() * (this.params.rainSimDistance * 2) - this.params.rainSimDistance
                     }
                     this.rain.geometry.attributes.position.needsUpdate = true
                 }
@@ -100,8 +88,8 @@ export default class Particles
                 }
                 this.rain.position.y = this.camera.position.y 
 
-                this.rain.position.x = this.camera.position.x - Math.pow(this.params.windX, 2) * 2
-                this.rain.position.z = this.camera.position.z - Math.pow(this.params.windZ, 2) * 2
+                this.rain.position.x = this.camera.position.x
+                this.rain.position.z = this.camera.position.z   
             }
         }
         else if(this.params.visible === false)
@@ -120,19 +108,6 @@ export default class Particles
         if(this.debug.active)
         {
             this.debugFolder = this.debug.gui.addFolder('Particles')
-            this.debugFolder.add(this.params, 'rainEnabled').onChange(() =>
-            {
-                if(this.params.rainEnabled === true)
-                {
-                    this.setRain()
-                }
-                else
-                {
-                    this.rain.geometry.dispose()
-                    this.rain.material.dispose()
-                    this.scene.remove(this.rain)
-                }
-            })
             this.debugFolder.add(this.params, 'rainDropCount').onChange(() =>
             {
                 if(this.params.rainEnabled)

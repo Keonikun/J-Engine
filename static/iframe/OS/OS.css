@@ -7,12 +7,25 @@
     user-select: none;
 }
 
+@font-face
+{
+    font-family: "95";
+    src: url(/fonts/MS_Sans_Serif_8pt.ttf) format("truetype");
+}
+
+@font-face
+{
+    font-family: "95 Bold";
+    src: url(/fonts/MS_Sans_Serif_8pt_bold.ttf) format("truetype");
+}
+
 html,
 body
 {
-    background-color: antiquewhite;
+    background-color: rgb(16, 39, 16);
     overflow: hidden;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: "95";
+    letter-spacing: 1px;
 }
 
 .desktop
@@ -31,7 +44,7 @@ body
     width: 100%;
     height: 100%;
     background-color: rgb(20, 20, 20);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "95";
     color: white;
 }
 
@@ -40,58 +53,85 @@ body
     margin: 5%;
 }
 
+/* 
+//////////////////////////////////////////////////////////////
+//                        TASKBAR                           //
+//////////////////////////////////////////////////////////////
+*/
+
 .bottomBar
 {
     position: absolute;
     bottom: 0;
     height: 5%;
     width: 100%;
-    background-color: rgb(83, 77, 69);
-    border: none;
+    background-color: rgb(189, 189, 189);
+    border-top: 4px solid rgb(231, 231, 231);
+    border-left: 4px solid rgb(236, 236, 236);
+    border-right: 4px solid rgb(59, 59, 59);
+    border-bottom: 4px solid rgb(59, 59, 59);
+
     z-index: 3;
     min-height: 35px;
+    box-sizing: border-box;
 }
 
 .startButton
 {
-    height: 100%;
-    background-color: rgb(109, 101, 91);
+    height: 22px;
+    width: 65px;
+    background-color: rgb(212, 212, 212);
+    border-top: 2px solid rgb(231, 231, 231);
+    border-left: 2px solid rgb(236, 236, 236);
+    border-right: 2px solid rgb(59, 59, 59);
+    border-bottom: 2px solid rgb(59, 59, 59);
     float: left;
     left: 0;
 }
 
 .startButton:hover
 {
-    background-color: rgb(56, 54, 51);
+    background-color: rgb(138, 138, 138);
     cursor: pointer;
 }
 
 .startButton img
 {
-    height: 100%;
+    height: 90%;
+}
+
+.startButton p
+{
+    float: right;
+    padding-right: 3px;
+    font-family: "95 bold";
+    font-size: 12px;
 }
 
 .startMenu
 {
-    background-color: aliceblue;
+    background-color: rgb(212, 212, 212);
     height: 0%;
     position: absolute;
-    width: 30%;
+    width: 120px;
     transform: translate(0,-100%);
-    border: 2px solid rgb(51, 46, 41);
+    border-top: 2px solid rgb(231, 231, 231);
+    border-left: 2px solid rgb(236, 236, 236);
+    border-right: 2px solid rgb(59, 59, 59);
+    border-bottom: 2px solid rgb(59, 59, 59);
     visibility: hidden;
 }
 
 .startMenu.open
 {
-    height: 500%;
+    height: auto;
     visibility: visible;
 }
 
 .menuElement
 {
     padding-left: 5px;
-    height: 20%;
+    height: 22px;
     border: 1px solid rgb(121, 121, 121);
     overflow: hidden;
 }
@@ -108,6 +148,8 @@ body
     padding-bottom: auto;
     top: 0;
     bottom: 0;
+    font-size: 12px;
+    font-family: "95 bold";
 }
 
 .menuElement img
@@ -120,12 +162,17 @@ body
 .minimizedElement
 {
     width: 15%;
-    height: 100%;
+    height: 22px;
     background-color: rgba(51, 51, 51, 0.432);
     float: left;
     left: 16%;
     overflow: hidden;
     white-space: nowrap;
+    border-top: 2px solid rgb(231, 231, 231);
+    border-left: 2px solid rgb(236, 236, 236);
+    border-right: 2px solid rgb(59, 59, 59);
+    border-bottom: 2px solid rgb(59, 59, 59);
+
 }
 
 .minimizedElement:hover
@@ -146,30 +193,49 @@ body
     white-space: nowrap;
     font-size: 12px;
     color: white;
+    vertical-align: middle;
+    line-height: 100%;
+    transform: translate(0,5px);
 }
+
+/* 
+//////////////////////////////////////////////////////////////
+//                     DATE AND TIME                        //
+//////////////////////////////////////////////////////////////
+*/
 
 .info
 {
     position: absolute;
-    transform: translate(0,-50%);
-    top: 45%;
     right: 0.7%;
-    height: 70%;
-    width: 10%;
-    font-size: 12px;
-    line-height: 13px;
+    height: 22px;
+    width: 70px;
+    font-size: 9px;
+    line-height: 11px;
+    font-family: "95 bold";
+    border-right: 2px solid rgb(231, 231, 231);
+    border-bottom: 2px solid rgb(236, 236, 236);
+    border-top: 2px solid rgb(59, 59, 59);
+    border-left: 2px solid rgb(59, 59, 59);
 }
 
 .info p
 {
-    color: white;
+    color: rgb(0, 0, 0);
     float: right;
+    transform: translate(0,-2px);
 }
 
 .info div
 {
     margin: 2px;
 }
+
+/* 
+//////////////////////////////////////////////////////////////
+//                         ICONS                            //
+//////////////////////////////////////////////////////////////
+*/
 
 .icon
 {
@@ -179,11 +245,6 @@ body
     overflow: hidden;
     position: absolute;
     display: block;
-}
-
-.icon.highlighted
-{
-    background-color: rgba(0, 255, 255, 0.178);
 }
 
 .icon img
@@ -200,6 +261,7 @@ body
     font-size: 13px;
     word-wrap: break-word;
     text-overflow: ellipsis;
+    color: white;
 }
 
 .icon:hover
@@ -225,12 +287,22 @@ body
     top: 34%;
 }
 
+/* 
+//////////////////////////////////////////////////////////////
+//                      APP WINDOW                          //
+//////////////////////////////////////////////////////////////
+*/
+
 .windowApp
 {
     position: absolute;
     width: 70%;
     height: 50%;
-    background-color: white;
+    background-color: rgb(189, 189, 189);
+    border-top: 2px solid rgb(214, 214, 214);
+    border-left: 2px solid rgb(214, 214, 214);
+    border-bottom: 2px solid rgb(59, 59, 59);
+    border-right: 2px solid rgb(59, 59, 59);
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
@@ -243,10 +315,11 @@ body
 {
     position: absolute;
     top: 0;
-    height: 30px;
+    height: 22px;
     width: 100%;
-    background-color: rgb(37, 37, 37);
+    background: linear-gradient(90deg, rgba(6,6,71,1) 7%, rgba(0,212,255,1) 100%);
     overflow: hidden;
+    z-index: 2;
 }
 
 .windowTopBarLabel
@@ -261,16 +334,16 @@ body
 .windowTopBarButtons
 {
     position: absolute;
-    right: 1%;
+    right: 2px;
     top: 50%;
     transform: translate(0,-50%);
-    height: 70%;
+    height: 85%;
 }
 
 .windowTopBarButtons img
 {
     height: 100%;
-    margin-left: 5px;
+    margin-left: 2px;
     float: right;
 }
 
@@ -279,6 +352,284 @@ body
     cursor: pointer;
     filter: brightness(0.4);
 }
+
+/*
+//////////////////////////////////////////////////////////////
+//                      FOLDERS APP                         //
+//////////////////////////////////////////////////////////////
+*/
+
+.folderAddressBar
+{
+    position: absolute;
+    top: 30px;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 10%;
+    max-height: 35px;
+    background-color: rgb(197, 197, 197);
+    border-bottom: 2px solid grey;
+}
+
+.folderAddress
+{
+    position: absolute;
+    font-size: 12px;
+    border: 2px solid grey;
+    height: 50%;
+    left: 25%;
+    top: 50%;
+    width: 70%;
+    transform: translate(0,-50%);
+    overflow: hidden;
+}
+
+.folderSidePanel
+{
+    position: absolute;
+    left: 0;
+    width: 25%;
+    height: 100%;
+    border-right: 2px solid grey;
+    overflow: hidden;
+}
+
+.folderSidePanelElements
+{
+    position: absolute;
+    top: 10%;
+    padding-top: 30px;
+}
+
+.folderSidePanelElements p
+{
+    margin: 10px;
+    font-size: 13px;
+    color: rgb(39, 39, 39);
+}
+
+.folderList
+{
+    position: absolute;
+    left: 25%;
+    height: 100%;
+    width: 30%;
+    border-right: 2px solid grey;
+    overflow: hidden;
+}
+
+.folderListElements
+{
+    position: absolute;
+    top: 10%;
+    margin-top: 32px;
+}
+
+.folderListElements p
+{
+    padding: 2px;
+    padding-left: 6px;
+    text-decoration: underline;
+    font-size: 13px;
+    width: 100%;
+    left: 0;
+    right: 0;
+}
+
+.folderList p:hover
+{
+    cursor: pointer;
+    color: blue;
+}
+
+.folderPreview
+{
+    position: absolute;
+    left: 55%;
+    height: 100%;
+    width: 45%;
+    border-right: 2px solid grey;
+    overflow: hidden;
+}
+
+.folderPreviewElement
+{
+    margin: 10px;
+    position: absolute;
+    top: 10%;
+    margin-top: 35px;
+    width: 90%;
+}
+
+/* 
+//////////////////////////////////////////////////////////////
+//                        TXT APP                           //
+//////////////////////////////////////////////////////////////
+*/
+
+.txtEditableArea
+{
+    position: absolute;
+    width: 100%;
+    top: 30px;
+    bottom: 0;
+    height: auto;
+    
+}
+
+.txtInput
+{
+    font-family: "95";
+    position: absolute;
+    margin: 5px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: auto;
+    width: auto;
+    border: none;
+    outline: none;
+    background-color: rgb(189, 189, 189);
+
+}
+
+/*
+//////////////////////////////////////////////////////////////
+//                      NETWORK APP                         //
+//////////////////////////////////////////////////////////////
+*/
+
+.netSearchBar
+{
+    position: absolute;
+    top: 30px;
+    height: 30px;
+    width: 100%;
+    border-bottom: 2px solid grey;
+    overflow: hidden;
+}
+
+.netBarButton
+{
+    width: 5%;
+    margin-left: 2px;
+    top: 0;
+    bottom: 0;
+    max-width: 30px;
+}
+
+.netBarButton:hover
+{
+    filter: brightness(120%);
+    cursor: pointer;
+}
+
+.netBackButton
+{
+    transform: scaleX(-1);
+}
+
+.netURL
+{
+    position: absolute;
+    padding: 2px;
+    top: 50%;
+    right: 5px;
+    transform: translate( 0, -50% );
+    border: 1px solid grey;
+    height: 60%;
+    width: 80%;
+}
+
+.netViewport
+{
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    background-color: rgb(167, 245, 255);
+}
+
+/*
+//////////////////////////////////////////////////////////////
+//                 QUICK LINKS WEBSITE                      //
+//////////////////////////////////////////////////////////////
+*/
+
+.netQuickLinks
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    font-family: 'Times New Roman', Times, serif;
+    background-color: rgb(56, 48, 40);
+    color: white;
+}
+
+.netQuickLinksHeader
+{
+    width: 100%;
+    margin: 3px;
+    text-align: center;
+    font-size: 20px;
+    text-decoration: underline;
+}
+
+.netQuickLink
+{
+    margin-left: 20px;
+    font-style: italic;
+    line-height: 24px;
+}
+
+.netQuickLink:hover
+{
+    cursor: pointer;
+    color: rgb(255, 193, 193);
+}
+
+/*
+//////////////////////////////////////////////////////////////
+//                 ENVIRONMENTS WEBSITE                     //
+//////////////////////////////////////////////////////////////
+*/
+
+.netEnvironments
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    font-family: 'Times New Roman', Times, serif;
+    background-image: linear-gradient(to right, rgb(187, 255, 249), rgb(156, 156, 255));
+    color: rgb(7, 7, 7);
+}
+
+.netEnvironmentsHeader
+{
+    width: 100%;
+    margin: 5px;
+    margin-left: 2.5%;
+    font-size: 25px;
+    font-style: italic;
+}
+
+.netEnvironmentsHR
+{
+    width: 95%;
+    margin-left: 2.5%;
+    background-color: black;
+    border: none;
+    height: 1px;
+}
+
+/*
+//////////////////////////////////////////////////////////////
+//                          EXTRA                           //
+//////////////////////////////////////////////////////////////
+*/
 
 .animatedOverlay
 {
@@ -293,7 +644,8 @@ body
     opacity: 0.03;
 }
 
-.hide
+.hidden
 {
-    display: none;
+    visibility: hidden;
+    opacity: 0;
 }
