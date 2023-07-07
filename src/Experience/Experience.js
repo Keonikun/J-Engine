@@ -30,10 +30,11 @@ export default class Experience
         this.textAdventure = new TextAdventure( this )
         this.layoutControl = new LayoutControl( this )
 
-        // In development
         this.params = {
-            deployBuild: false,
-            appStart: false
+            audio: true,
+            portfolioMode: false,
+
+            appStart: false,
         }
        
         this.worldLoaded = false

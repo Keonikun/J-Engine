@@ -29,13 +29,14 @@ export default class FirstPerson
             collisionDistance: 0.5,
             locationHelper: false,
             interactionDistance: 3.3,
-            spawnPoint: {x: 0, y: 0, z: 0, r: 2 },
+            spawnPoint: { x: -5.9, y: -0.22, z: -21.32, r: 1.07 },
             locations: 'spawn',
             resetPosition: () =>
             {
                 this.resetPosition()
             },
-            footstepFrequency: 30
+            footstepFrequency: 30,
+            rotationSpeed: 0.02
         }
 
         this.setup()
@@ -49,10 +50,13 @@ export default class FirstPerson
 
         this.disengaged = false
 
+        this.arrowControlsEnabled = true
+
         this.velocity = 0
         this.fpsGravity = 0
         this.playerWalkingCount = 0
         this.playerControlsEnabled = false
+        this.firstTimeInteraction = true
 
         this.camRay = new THREE.Raycaster()
         this.camRay.firstHitOnly = true
@@ -148,6 +152,148 @@ export default class FirstPerson
         this.detectWest.set( this.camera.position, this.westDirection)
     }
 
+    setArrowControls()
+    {
+        this.forwardArrowPressed = false
+        this.backwardArrowPressed = false
+        this.leftArrowPressed = false
+        this.rightArrowPressed = false
+        this.lookLeftArrowPressed = false
+        this.lookRightArrowPressed = false
+
+        // arrow control elements
+        this.forwardButton = document.querySelector( '.forwardControl' )
+        this.backwardButton = document.querySelector( '.backwardControl' )
+        this.leftButton = document.querySelector( '.leftControl' )
+        this.rightButton = document.querySelector( '.rightControl' )
+        this.lookLeftButton = document.querySelector( '.lookLeftControl' )
+        this.lookRightButton = document.querySelector( '.lookRightControl' )
+
+        this.forwardButton.addEventListener('mousedown', () =>
+        {
+            this.forwardArrowPressed = true
+            this.walking = true
+            console.log("forward")
+        })
+        this.forwardButton.addEventListener('mouseup', () =>
+        {
+            this.forwardArrowPressed = false
+        })
+        this.backwardButton.addEventListener('mousedown', () =>
+        {
+            this.backwardArrowPressed = true
+            this.walking = true
+            console.log("forward")
+
+        })
+        this.backwardButton.addEventListener('mouseup', () =>
+        {
+            this.backwardArrowPressed = false
+        })
+        this.leftButton.addEventListener('mousedown', () =>
+        {
+            this.leftArrowPressed = true
+            this.walking = true
+        })
+        this.leftButton.addEventListener('mouseup', () =>
+        {
+            this.leftArrowPressed = false
+        })
+        this.rightButton.addEventListener('mousedown', () =>
+        {
+            this.rightArrowPressed = true
+            this.walking = true
+        })
+        this.rightButton.addEventListener('mouseup', () =>
+        {
+            this.rightArrowPressed = false
+        })
+        this.lookLeftButton.addEventListener('mousedown', () =>
+        {
+            this.lookLeftArrowPressed = true
+            this.walking = true
+        })
+        this.lookLeftButton.addEventListener('mouseup', () =>
+        {
+            this.lookLeftArrowPressed = false
+        })
+        this.lookRightButton.addEventListener('mousedown', () =>
+        {
+            this.lookRightArrowPressed = true
+            this.walking = true
+        })
+        this.lookRightButton.addEventListener('mouseup', () =>
+        {
+            this.lookRightArrowPressed = false
+        })
+
+        //
+
+        this.forwardButton.addEventListener('touchstart', () =>
+        {
+            this.forwardArrowPressed = true
+            this.walking = true
+            console.log("forward")
+        })
+        this.forwardButton.addEventListener('touchend', () =>
+        {
+            this.forwardArrowPressed = false
+        })
+        this.backwardButton.addEventListener('touchstart', () =>
+        {
+            this.backwardArrowPressed = true
+            this.walking = true
+            console.log("forward")
+
+        })
+        this.backwardButton.addEventListener('touchend', () =>
+        {
+            this.backwardArrowPressed = false
+        })
+        this.leftButton.addEventListener('touchstart', () =>
+        {
+            this.leftArrowPressed = true
+            this.walking = true
+        })
+        this.leftButton.addEventListener('touchend', () =>
+        {
+            this.leftArrowPressed = false
+        })
+        this.rightButton.addEventListener('touchstart', () =>
+        {
+            this.rightArrowPressed = true
+            this.walking = true
+        })
+        this.rightButton.addEventListener('touchend', () =>
+        {
+            this.rightArrowPressed = false
+        })
+        this.lookLeftButton.addEventListener('touchstart', () =>
+        {
+            this.lookLeftArrowPressed = true
+            this.walking = true
+        })
+        this.lookLeftButton.addEventListener('touchend', () =>
+        {
+            this.lookLeftArrowPressed = false
+        })
+        this.lookRightButton.addEventListener('touchstart', () =>
+        {
+            this.lookRightArrowPressed = true
+            this.walking = true
+        })
+        this.lookRightButton.addEventListener('touchend', () =>
+        {
+            this.lookRightArrowPressed = false
+        })
+
+        if( this.rightArrowPressed === false && this.leftArrowPressed === false && this.forwardArrowPressed === false && this.backwardArrowPressed === false && this.lookLeftArrowPressed === false && this.lookRightArrowPressed === false )
+        {
+            this.walking = false
+        }
+
+    }
+
     setKeyListener()
     {
         // Listen to all keyboard events and add them to the keyboard object
@@ -181,13 +327,20 @@ export default class FirstPerson
         )
         document.querySelector( 'canvas.webgl' ).addEventListener( 'click', () =>
         {
-            console.log(this.disengaged)
             if( this.experience.world.FPControls === true && 
                 this.experience.params.appStart === true && 
                 this.disengaged === false )
             {
                 if( this.pointerLockControls.isLocked === false && this.textAdventure.dialogueFocused === false )
                 {
+                    if(this.firstTimeInteraction === true)
+                    {
+                        this.experience.camera.animateFovTo(this.experience.camera.params.defaultFov)
+                        this.firstTimeInteraction = false
+                        document.querySelector('.navBox').classList.add('default')
+                        document.querySelector('.boxShadow').classList.add('default')
+                        document.querySelector('.folderTabs').classList.add('default')
+                    }
                     this.pointerLockControls.lock()
                     this.playerControlsEnabled = true
 
@@ -242,20 +395,7 @@ export default class FirstPerson
     raycastFromCamera()
     {
         this.camRay.setFromCamera( this.camRayCoords, this.camera )
-        this.camRayIntersect = this.camRay.intersectObject( this.models.dynamicObjects )
-    
-        // Code for object outlines (do not uncomment)
-        // if(this.camRayIntersect[0] != null)
-        // {
-        //     if(this.camRayIntersect[0].object.interactive === true && this.camRayIntersect[0].distance < this.params.interactionDistance)
-        //     {
-        //         this.renderer.outline(this.camRayIntersect[0].object)
-        //     }
-        //     else
-        //     {
-        //         this.renderer.clearOutline()
-        //     }
-        // }
+        this.camRayIntersect = this.camRay.intersectObject( this.models.physMesh )
     }
 
     interaction()
@@ -274,7 +414,8 @@ export default class FirstPerson
                     "<p>X: " + String( this.camRayIntersect[0].point.x ) + 
                     ",<br>Y: " + String( this.camRayIntersect[0].point.y ) + 
                     ",<br> Z: " + String( this.camRayIntersect[0].point.z ) + 
-                    "</p>"
+                    ",<br> Player Rotation: " + String( this.camera.rotation.y ) +
+                    "</p>" 
 
                 this.textAdventure.printString( this.locationHelperMessage )
             }
@@ -296,7 +437,7 @@ export default class FirstPerson
 
     update()
     {
-        if( this.playerControlsEnabled === true && this.textAdventure.dialogueFocused === false )
+        if( this.playerControlsEnabled === true && this.textAdventure.dialogueFocused === false || this.arrowControlsEnabled === true)
         {           
             // Update Velocity and Gravity based on FPS
             this.fpsVelocity = this.velocity / this.time.currentFps * 60
@@ -310,25 +451,25 @@ export default class FirstPerson
                 this.vector = this.camera.getWorldDirection( this.cameraDirection )
                 this.yAngle = Math.atan2( this.vector.x, this.vector.z )
                 // Forward ('W')
-                if( this.keyboard[87] )
+                if( this.keyboard[87] || this.forwardArrowPressed === true )
                 {
                     this.camera.position.x -= -Math.sin( this.yAngle ) * this.fpsVelocity
                     this.camera.position.z += Math.cos( this.yAngle ) * this.fpsVelocity
                 }
                 // Left ('A')
-                if( this.keyboard[65] )
+                if( this.keyboard[65] || this.leftArrowPressed )
                 {
                     this.camera.position.x -= Math.sin( this.yAngle - Math.PI/2 ) * this.fpsVelocity
                     this.camera.position.z -= Math.cos( this.yAngle - Math.PI/2 ) * this.fpsVelocity
                 }
                 // Backward ('S')
-                if( this.keyboard[83] )
+                if( this.keyboard[83] || this.backwardArrowPressed )
                 {
                     this.camera.position.x += -Math.sin( this.yAngle ) * this.fpsVelocity
                     this.camera.position.z -= Math.cos( this.yAngle ) * this.fpsVelocity
                 }
                 // Right ('D')
-                if( this.keyboard[68] )
+                if( this.keyboard[68] || this.rightArrowPressed )
                 {
                     this.camera.position.x -= -Math.sin( this.yAngle - Math.PI/2 ) * this.fpsVelocity
                     this.camera.position.z += Math.cos( this.yAngle - Math.PI/2 ) * this.fpsVelocity
@@ -348,7 +489,16 @@ export default class FirstPerson
                 {
                     this.velocity = this.params.playerSpeed
                 }
-                if(this.keyboard[87] || this.keyboard[83] || this.keyboard[65] || this.keyboard[68])
+                // Mobile controls
+                if( this.lookLeftArrowPressed )
+                {
+                    this.camera.rotation.y += this.params.rotationSpeed
+                }
+                if( this.lookRightArrowPressed )
+                {
+                    this.camera.rotation.y -= this.params.rotationSpeed
+                }
+                if(this.keyboard[87] || this.keyboard[83] || this.keyboard[65] || this.keyboard[68] || this.backwardArrowPressed || this.forwardArrowPressed || this.leftArrowPressed || this.rightArrowPressed )
                 {
                     this.playerWalkingCount ++
                     this.walking = true
@@ -361,7 +511,26 @@ export default class FirstPerson
                 // Footsteps
                 if(this.playerWalkingCount >= this.params.footstepFrequency)
                 {
-                    // this.audio.play('footstep')
+                    let stepVariation = Math.floor(Math.random(1)*4 + 1)
+
+                    if( stepVariation === 1 )
+                    {
+                        this.audio.play('footstep1')
+                    } 
+                    else if( stepVariation === 2 ) 
+                    {
+                        this.audio.play('footstep2')
+                    }
+                    else if( stepVariation === 3 ) 
+                    {
+                        this.audio.play('footstep3')
+                    }
+                    else if( stepVariation === 4 ) 
+                    {
+                        this.audio.play('footstep4')
+                    }
+
+                    
                     this.playerWalkingCount = 0
                 }
             }
@@ -388,7 +557,7 @@ export default class FirstPerson
             /**
              *  Collision Detection
              */
-            if( this.experience.world.FPCollisions === true && this.disengaged === false)
+            if( this.experience.world.FPCollisions === true && this.disengaged === false || this.experience.world.FPCollisions === true && this.arrowControlsEnabled === true)
             {       
                 // Always raycast the floor so that the player cannot stop midair
                 this.floorCollision()
@@ -497,16 +666,16 @@ export default class FirstPerson
         {
             this.debugFolder = this.debug.playerDebugFolder
             this.debugFolder.add( this.params, 'resetPosition' )
-            this.locationsFolder = this.debug.locationsFolder
-            this.locationsFolder.add( this.params, 'locations', [
-                'spawn'
-            ]).onChange(() =>
-            {
-                if( this.params.locations === 'spawn' )
-                {
-                    this.resetPosition()
-                }   
-            })
+            // this.locationsFolder = this.debug.locationsFolder
+            // this.locationsFolder.add( this.params, 'locations', [
+            //     'spawn'
+            // ]).onChange(() =>
+            // {
+            //     if( this.params.locations === 'spawn' )
+            //     {
+            //         this.resetPosition()
+            //     }   
+            // })
             this.debugFolder.add( this.params, 'playerSpeed', 0.001, 1 )
             this.debugFolder.add( this.params, 'gravity', 0, 1 )
             this.debugFolder.add( this.params, 'playerHeight', 0.1, 4 )

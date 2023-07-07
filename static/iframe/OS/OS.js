@@ -42,8 +42,11 @@ let foldersApp = {
     sidePanelElements: ["User418's PC", "Documents", "Pictures", "Videos", "Downloads"],
     folderItems: 
     [
-        "shutDown.png", "picture", "shutDownIcon.png",
-        "exit.png", "picture", "exitIcon.png"
+        "Ouroboros", "gif", "ouroboros.gif",
+        "Exit", "picture", "exitIcon.png",
+        "PC", "picture", "monitor.png",
+        "Static", "gif", "computerNoise.gif",
+        "Flower", "picture", "startIcon.png",
     ]
 }
 
@@ -270,7 +273,14 @@ const createApp = ( appObject, appType ) =>
                 folderItemsArray[ i ].innerHTML = appObject.folderItems[ ( i * 3 ) ]
                 folderItemsArray[ i ].addEventListener( 'click', () =>
                 {
-                    folderPreviewElement.src = "/textures/static/" + appObject.folderItems[ ( i * 3 ) + 2 ]
+                    if(appObject.folderItems[ ( i * 3 ) + 1 ] === "picture")
+                    {
+                        folderPreviewElement.src = "/textures/static/" + appObject.folderItems[ ( i * 3 ) + 2 ]
+                    }
+                    else if(appObject.folderItems[ ( i * 3 ) + 1 ] === "gif")
+                    {
+                        folderPreviewElement.src = "/textures/animated/" + appObject.folderItems[ ( i * 3 ) + 2 ]
+                    }
                 } )
                 folderListElements.appendChild(folderItemsArray[ i ])
             }

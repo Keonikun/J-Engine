@@ -17,6 +17,13 @@ export default class Models
 
     loadColliderEnvironment()
     {
+        this.physMesh = null
+        this.staticMesh = null
+        this.dynamicMesh = null
+
+        this.staticScene = false
+        this.dynamicScene = false
+        
         // GLTF Setup
         this.gltfScene = this.resources.items.gltfScene
 
@@ -38,6 +45,26 @@ export default class Models
             {
                 this.staticMesh = element
                 this.staticScene = true
+            }
+            if(element.name === "ArchSpeaker")
+            {
+                this.archSpeaker = element
+            }
+            if(element.name === "BrichSpeaker")
+            {
+                this.birchSpeaker= element
+            }
+            if(element.name === "CherrySpeaker")
+            {
+                this.cherrySpeaker = element
+            }
+            if(element.name === "FountainSpeaker")
+            {
+                this.fountainSpeaker = element
+            }
+            if(element.name === "WindowSpeaker")
+            {
+                this.windowSpeaker = element
             }
         })
     }

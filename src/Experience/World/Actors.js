@@ -17,22 +17,21 @@ export default class Actors
 
         this.params = {
             weather: false,
-            weatherFollowsYou: true,
-            rainFrequency: 4500,
-            train: false,
-            trainFrequency: 2000,
+            indefiniteRain: true,
+            weatherFollowsYou: false,
+            rainFrequency: 1000,
+            weatherClearFrequency: 100,
+            silentWeather: true,
+
             dayNightCycle: false,
             dayStart: 4500,
             dayLength: 10000,
             nightLength: 10000,
             pauseTime: false,
-            dayColor: this.environment.params.backgroundCol,
-            // nightColor:
 
             // Debug variables
             triggerDay: () => {this.triggerDay()},
             triggerNight: () => {this.triggerNight()},
-            triggerRain: () => {this.triggerRain()},
             triggerTrain: () => {this.triggerTrain()}
         }
         
@@ -42,35 +41,22 @@ export default class Actors
 
     setup()
     {
-        this.trainCounter = 1000
-        this.trainActive = false
-
         this.weatherCounter = 0
         this.rain = false
+        if(this.params.indefiniteRain === true)
+        {
+            this.rain = true
+            // this.audio.play('rain')
+            this.particles.params.visible = true
+        }
+        if(this.params.weatherFollowsYou === false)
+        {
+            this.particles.staticPosition = true
+        }
 
         this.dayCounter = this.params.dayStart
         this.nightCounter = 0
         this.day = true
-    }
-
-    triggerDay()
-    {
-
-    }
-
-    triggerNight()
-    {
-
-    }
-
-    triggerRain()
-    {
-
-    }
-
-    triggerTrain()
-    {
-
     }
 
     // NOTE: not using delta
@@ -95,7 +81,7 @@ export default class Actors
                 this.dayCounter = 0
             }
         }
-        if(this.params.weather === true && this.params.pauseTime === false)
+        if( this.params.weather === true && this.params.pauseTime === false && this.params.indefiniteRain === false )
         {
             this.weatherCounter ++
 
@@ -104,13 +90,20 @@ export default class Actors
                 if(this.rain === false)
                 {
                     this.rain = true
-                    this.audio.play('rain')
+                    if(this.params.silentWeather === false)
+                    {
+                        console.log("hello")
+                        this.audio.play('rain')
+                    }
                     this.particles.params.visible = true
                 }
                 else if(this.rain === true)
                 {
                     this.rain = false
-                    this.audio.pause('rain')
+                    if(this.params.silentWeather === false)
+                    {
+                        this.audio.pause('rain')
+                    }
                     this.particles.params.visible = false
                 }
                 this.weatherCounter = 0
@@ -123,12 +116,57 @@ export default class Actors
     {
         if( this.debug.active )
         {
-            this.debugFolder = this.debug.gui.addFolder('Actors')
-            this.debugFolder.add( this.params, 'dayNightCycle' )
-            this.debugFolder.add( this.params, 'weather' )
-            this.debugFolder.add( this.params, 'triggerNight' )
-            this.debugFolder.add( this.params, 'triggerDay' )
-            this.debugFolder.add( this.params, 'triggerRain' )
+            this.debugFolder = this.debug.environmentDebugFolder
+            this.debugFolder.add( this.params, 'weather' ).name('Weather')
+            this.debugFolder.add( this.params, 'rainFrequency' ).name('Rain Frequency')
+            this.debugFolder.add( this.params, 'indefiniteRain' ).name('Toggle Rain')
+            .onChange( () =>
+            {
+                if( this.params.indefiniteRain === false )
+                {
+                    this.params.indefiniteRain = false
+                    this.audio.pause('rain')
+                    this.particles.params.visible = false
+                }
+                else if( this.params.indefiniteRain === true )
+                {
+                    this.params.indefiniteRain = true
+                    this.audio.play('rain')
+                    this.particles.params.visible = true
+                }
+            })
+            this.debugFolder.add( this.params, 'weatherFollowsYou' ).name('Weather Follows You?')
+            .onChange( () =>
+            {
+                if( this.params.weatherFollowsYou === true )
+                {
+                    this.particles.staticPosition = false
+                }
+                else if( this.params.weatherFollowsYou === false )
+                {
+                    this.particles.staticPosition = true
+                }
+            })
+            this.weatherPosDebugFolder = this.debugFolder.addFolder('Weather Position')
+            this.weatherPosDebugFolder.close()
+            this.weatherPosDebugFolder.add( this.particles.params, 'posX' )
+            .name('X')
+            .onChange( () =>
+            {
+                this.particles.rain.position.x = this.particles.params.posX
+            })
+            this.weatherPosDebugFolder.add( this.particles.params, 'posY' )
+            .name('Y')
+            .onChange( () =>
+            {
+                this.particles.rain.position.y = this.particles.params.posY
+            })
+            this.weatherPosDebugFolder.add( this.particles.params, 'posZ' )
+            .name('Z')
+            .onChange( () =>
+            {
+                this.particles.rain.position.z = this.particles.params.posZ
+            })
         }
     }
 }

@@ -61,7 +61,7 @@ export default class World extends EventEmitter
             this.particles.update()
             // this.interactiveObjects.update()
             this.firstPerson.update( this.time.delta )
-            // this.actors.update()
+            this.actors.update()
         }
     }
 }

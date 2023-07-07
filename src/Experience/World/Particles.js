@@ -9,25 +9,39 @@ export default class Particles
         this.camera = this.experience.camera.instance
         this.scene = this.experience.scene
         this.debug = this.experience.debug
+        this.world = this.experience.world
+        this.ready = false
 
         this.params = {
             rainEnabled: true,
             rainDropCount: 2000,
-            rainDropSpeed: 0.5,
-            rainDropColor: '#3a3489',
-            rainDropSize: 0.8,
-            rainSimDistance: 20,
+            rainDropSpeed: 0.1,
+            rainDropColor: '#ffffff',
+            rainDropSize: 0.2,
+            rainSimDistance: 0.7,
             rainHeightSpawn: 40,
             rainHeightDeath: -20,
             windX: 0,
             windZ: 0,
             visible: false,
+
+            posX: -4,
+            posY: -0,
+            posZ: -13
         }
+
+        this.staticPosition = false
+
 
         if(this.params.rainEnabled === true)
         {
             this.setRain()
         }
+
+        this.world.on('ready', () =>
+        {
+            this.firstPerson = this.world.firstPerson
+        })
 
         this.setDebug()
     }
@@ -56,6 +70,7 @@ export default class Particles
         })
 
         this.rain = new THREE.Points(this.rainGeo, this.rainMat)
+        this.rain.position.set(this.params.posX, this.params.posY, this.params.posZ)
         this.scene.add(this.rain)
     }
 
@@ -77,19 +92,22 @@ export default class Particles
                     this.rain.geometry.attributes.position.needsUpdate = true
                 }
 
-                // Update particle size when looking up
-                if(typeof this.experience.world.firstPersonControls != "undefined")
+                // Update particle size when looking up -- prevent spaghetti rain
+                if(this.experience.worldLoaded === true)
                 {
-                    this.camX = this.experience.firstPerson.pointerLockControls.eulerX
+                    this.camX = this.experience.world.firstPerson.pointerLockControls.eulerX
                     if(this.camX > 0 && this.camX < Math.PI * 0.5)
                     {
                         this.rain.material.size = this.params.rainDropSize - (this.params.rainDropSize * ( this.camX / (Math.PI * 0.7)))
                     }
                 }
-                this.rain.position.y = this.camera.position.y 
-
-                this.rain.position.x = this.camera.position.x
-                this.rain.position.z = this.camera.position.z   
+                
+                if(this.staticPosition === false)
+                {
+                    this.rain.position.y = this.camera.position.y 
+                    this.rain.position.x = this.camera.position.x
+                    this.rain.position.z = this.camera.position.z 
+                }
             }
         }
         else if(this.params.visible === false)
@@ -107,7 +125,7 @@ export default class Particles
     {
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder('Particles')
+            this.debugFolder = this.debug.environmentDebugFolder.addFolder('Rain Particle Settings')
             this.debugFolder.add(this.params, 'rainDropCount').onChange(() =>
             {
                 if(this.params.rainEnabled)
@@ -133,7 +151,7 @@ export default class Particles
                     this.rain.material.size = this.params.rainDropSize
                 }
             })
-            this.debugFolder.add(this.params, 'rainSimDistance').onChange(() =>
+            this.debugFolder.add(this.params, 'rainSimDistance', 0.1, 20).onChange(() =>
             {
                 if(this.params.rainEnabled)
                 {
@@ -143,10 +161,6 @@ export default class Particles
                     this.setRain()
                 }
             })
-            this.debugFolder.add(this.params, 'rainHeightSpawn', 0, 100)
-            this.debugFolder.add(this.params, 'rainHeightDeath', -100, 0)
-            this.debugFolder.add(this.params, 'windX', -0.2, 0.2)
-            this.debugFolder.add(this.params, 'windZ', -0.2, 0.2)
             this.debugFolder.close()     
         }
     }

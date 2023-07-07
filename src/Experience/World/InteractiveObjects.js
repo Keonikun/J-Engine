@@ -136,7 +136,6 @@ export default class InteractiveObjects
             gsap.delayedCall( 0.1, () =>
             {
                 this.layoutControl.openOS()
-                this.audio.play("bootUp")
             } )
             window.addEventListener( 'message', () =>
             {

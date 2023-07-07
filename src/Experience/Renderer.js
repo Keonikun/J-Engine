@@ -40,8 +40,8 @@ export default class Renderer extends EventEmitter
             // Film Shader
             filmic: true,
             noiseIntensity: 0.15,
-            ScanlineIntensity: 0.5,
-            ScanlineCount: 1000,
+            scanlineIntensity: 0.5,
+            scanlineCount: 1000,
             grayscale: false,
 
             // Vignette
@@ -93,7 +93,7 @@ export default class Renderer extends EventEmitter
         }
         if( this.params.filmic === true && this.params.postprocessing === true )
         {
-            this.composer.addPass( new FilmPass( this.params.noiseIntensity, this.params.ScanlineIntensity, this.params.ScanlineCount, this.params.grayscale ))
+            this.composer.addPass( new FilmPass( this.params.noiseIntensity, this.params.scanlineIntensity, this.params.scanlineCount, this.params.grayscale ))
         }
         if( this.params.gammaCorrection === true && this.params.postprocessing === true )
         {
@@ -135,12 +135,25 @@ export default class Renderer extends EventEmitter
     {
         if( this.debug.active )
         {
-            this.debug.renderDebugFolder.add( this.params, 'resolution', 0.05, 1 ).onChange(() =>
+            this.debug.renderDebugFolder.add( this.params, 'resolution', 0.05, 1 )
+            .name('Resolution')
+            .onChange(() =>
             {
                 this.instance.setPixelRatio( this.params.resolution )
                 this.composer.setPixelRatio( this.params.resolution )
             })
-            this.debug.renderDebugFolder.add( this.params, 'postprocessing' )
+
+            this.debugFolder = this.debug.renderDebugFolder.addFolder('Postprocessing')
+            this.debugFolder.close()
+            this.debugFolder.add( this.params, 'bloom' ).name('Bloom')
+            this.debugFolder.add( this.params, 'bloomPower' ).name('Bloom Amount')
+            this.debugFolder.add( this.params, 'filmic' ).name('Film Effect')
+            this.debugFolder.add( this.params, 'scanlineCount' ).name('Scanline Count')
+            this.debugFolder.add( this.params, 'scanlineIntensity' ).name('Scanline Intensity')
+            this.debugFolder.add( this.params, 'grayscale' ).name('Greyscale')
+            this.debugFolder.add( this.params, 'noiseIntensity' ).name('Noise Intensity')
+            this.debugFolder.add( this.params, 'gammaCorrection' ).name('Gamma Correction')
+            this.debugFolder.add( this.params, 'scanlineCount' ).name('Scanline Count')
         }
     }
 }

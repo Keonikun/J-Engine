@@ -23,70 +23,74 @@ export default [
         type: 'texture',
         path: '/textures/animated/waterAnim.png'
     },
-    // skybox
+    {
+        name: 'rainAnim',
+        type: 'texture',
+        path: '/textures/animated/rainAnim.png'
+    },
     /**
      * ---------AUDIO-----------
      */
-    // {
-    //     name: 'trainCrossing',
-    //     type: 'audio',
-    //     path: '/audio/trainCrossing.ogg'
-    // },
-    // {
-    //     name: 'train',
-    //     type: 'audio',
-    //     path: '/audio/train.ogg'
-    // },
-    // {
-    //     name: 'windowRain',
-    //     type: 'audio',
-    //     path: '/audio/windowRain.ogg'
-    // },
-    // {
-    //     name: 'rain',
-    //     type: 'audio',
-    //     path: '/audio/rain.ogg'
-    // },
-    // {
-    //     name: 'doorOpen',
-    //     type: 'audio',
-    //     path: '/audio/doorOpen.ogg'
-    // },
-    // {
-    //     name: 'doorClose',
-    //     type: 'audio',
-    //     path: '/audio/doorClose.ogg'
-    // },
-    // {
-    //     name: 'footstep',
-    //     type: 'audio',
-    //     path: '/audio/footstep.ogg'
-    // },
-    // {
-    //     name: 'water',
-    //     type: 'audio',
-    //     path: '/audio/water.ogg'
-    // },
-    // {
-    //     name: 'sewer',
-    //     type: 'audio',
-    //     path: '/audio/sewer.ogg'
-    // },
-    // {
-    //     name: 'inhabitted',
-    //     type: 'audio',
-    //     path: '/audio/inhabitted.ogg'
-    // },
-    // {
-    //     name: 'wind',
-    //     type: 'audio',
-    //     path: '/audio/wind.ogg'
-    // },
-    // {
-    //     name: 'bootUp',
-    //     type: 'audio',
-    //     path: '/audio/bootUp.ogg'
-    // },
+    {
+        name: 'footstep1',
+        type: 'audio',
+        path: '/audio/footstep1.mp3'
+    },
+    {
+        name: 'footstep2',
+        type: 'audio',
+        path: '/audio/footstep2.mp3'
+    },
+    {
+        name: 'footstep3',
+        type: 'audio',
+        path: '/audio/footstep3.mp3'
+    },
+    {
+        name: 'footstep4',
+        type: 'audio',
+        path: '/audio/footstep4.mp3'
+    },
+    {
+        name: 'windowRain',
+        type: 'audio',
+        path: '/audio/windowRain.mp3'
+    },
+    {
+        name: 'rain',
+        type: 'audio',
+        path: '/audio/rain.mp3'
+    },
+    {
+        name: 'doorOpen',
+        type: 'audio',
+        path: '/audio/doorOpen.mp3'
+    },
+    {
+        name: 'doorClose',
+        type: 'audio',
+        path: '/audio/doorClose.mp3'
+    },
+    {
+        name: 'water',
+        type: 'audio',
+        path: '/audio/water.mp3'
+    },
+    {
+        name: 'wind',
+        type: 'audio',
+        path: '/audio/wind.mp3'
+    },
+    {
+        name: 'bootUp',
+        type: 'audio',
+        path: '/audio/bootUp.mp3'
+    },
+    {
+        name: 'wood',
+        type: 'audio',
+        path: '/audio/wood.mp3'
+    },
     /**
      * ---------HDR-----------
      */

@@ -11,9 +11,7 @@ export default class Environment
         this.debug = this.experience.debug
 
         this.params = {
-            backgroundAndFogCol: '#000000',
-            
-            
+            backgroundColor: '#000000',
             ambientLightInt: 0.5,
             ambientLightCol: '#ffffff',
             dirLightInt: 0.8,
@@ -21,8 +19,8 @@ export default class Environment
             dirLightPosX: 3.5,
             dirLightPosY: 2,
             dirLightPosZ: - 1.25,
-            fogCol: '#5c5c5c',
-            fogNear: 50,
+            fogNear: 30,
+            fogDistance: 20,
 
             // Day/Night Cycle
             dayColor: '#5c5c5c',
@@ -56,12 +54,12 @@ export default class Environment
 
     setFog()
     {
-        this.scene.fog = new THREE.Fog(this.params.fogCol, this.params.fogNear, this.params.fogNear + 15)
+        this.scene.fog = new THREE.Fog(this.params.backgroundColor, this.params.fogNear, this.params.fogNear + this.params.fogDistance)
     }
 
     setSimpleBackground()
     {
-        this.scene.background = new THREE.Color( this.params.dayColor )
+        this.scene.background = new THREE.Color( this.params.backgroundColor )
 
     }
 
@@ -129,63 +127,62 @@ export default class Environment
     {
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder( 'Environment' )
-            this.debugFolder.addColor( this.params, 'backgroundAndFogCol' ).onChange(() =>
+            this.debugFolder = this.debug.environmentDebugFolder
+            this.debugFolder.addColor( this.params, 'backgroundColor' )
+            .name( 'Background Color' )
+            .onChange( () =>
             {
-                if(this.params.envMapEnabled === false)
-                {
-                    this.scene.background.set(this.params.backgroundAndFogCol)
-                    this.scene.fog.color.set(this.params.backgroundAndFogCol)
-                }
-                else
-                {
-                    console.log("Disable Environment Map Before Adjusting Background Color")
-                }
-            })
-            this.debugFolder.addColor( this.params, 'dayColor' ).onChange(() =>
-            {
-                if(this.params.envMapEnabled === false)
-                {
-                    this.scene.background.set(this.params.dayColor)
-                }
-                else
-                {
-                    console.log("Disable Environment Map Before Adjusting Background Color")
-                }
-            })
-            this.debugFolder.addColor( this.params, 'fogCol' ).onChange( () =>
-            {
-                this.scene.fog.color.set(this.params.fogCol)
+                this.scene.fog.color.set(this.params.backgroundColor)
+                this.scene.background.set(this.params.backgroundColor)
             } )
-            this.debugFolder.add( this.params, 'fogNear', 0, 500).onChange(() =>
+            this.debugFolder.add( this.params, 'fogNear', 0, 100 )
+            .name('Fog Depth')
+            .onChange(() =>
             {
                 this.scene.fog.near = this.params.fogNear
+                this.scene.fog.far = this.params.fogNear + this.params.fogDistance
             })
-            this.debugFolder.add( this.params, 'ambientLightInt', 0, 2 ).onChange(() =>
+            this.debugFolder.add( this.params, 'ambientLightInt', 0, 2 )
+            .name('Ambient Light Intensity')
+            .onChange(() =>
             {
                 this.ambientLight.intensity = this.params.ambientLightInt
             })
-            this.debugFolder.addColor( this.params, 'ambientLightCol' ).onChange(() =>
+            this.debugFolder.addColor( this.params, 'ambientLightCol' )
+            .name('Ambient Light Color')
+            .onChange(() =>
             {
                 this.ambientLight.color.set(this.params.ambientLightCol)
             })
-            this.debugFolder.add( this.params, 'dirLightInt', 0, 2).onChange(() =>
+            this.debugFolder.add( this.params, 'dirLightInt', 0, 2)
+            .name('Directional Light Intensity')
+            .onChange(() =>
             {
                 this.directionalLight.intensity = this.params.dirLightInt
             })
-            this.debugFolder.addColor( this.params, 'dirLightCol' ).onChange(() =>
+            this.debugFolder.addColor( this.params, 'dirLightCol' )
+            .name('Directional Light Color')
+            .onChange(() =>
             {
                 this.directionalLight.color.set(this.params.dirLightCol)
             })
-            this.debugFolder.add( this.params, 'dirLightPosX', -10, 10 ).onChange(() =>
+            this.dirLightPosFolder = this.debugFolder.addFolder('Directional Light Position')
+            this.dirLightPosFolder.close()
+            this.dirLightPosFolder.add( this.params, 'dirLightPosX', -10, 10 )
+            .name('X')
+            .onChange(() =>
             {
                 this.directionalLight.position.x = this.params.dirLightPosX
             })
-            this.debugFolder.add( this.params, 'dirLightPosY', -10, 10 ).onChange(() =>
+            this.dirLightPosFolder.add( this.params, 'dirLightPosY', -10, 10 )
+            .name('Y')
+            .onChange(() =>
             {
                 this.directionalLight.position.y = this.params.dirLightPosY
             })
-            this.debugFolder.add( this.params, 'dirLightPosZ', -10, 10 ).onChange(() =>
+            this.dirLightPosFolder.add( this.params, 'dirLightPosZ', -10, 10 )
+            .name('Z')
+            .onChange(() =>
             {
                 this.directionalLight.position.z = this.params.dirLightPosZ
             })

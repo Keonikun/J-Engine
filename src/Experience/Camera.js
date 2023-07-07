@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { gsap } from 'gsap'
 
 export default class Camera{
     constructor(experience)
@@ -16,12 +17,14 @@ export default class Camera{
             posX: 0,
             posY: 0,
             posZ: 0,
-            fov: 40,
+            startFov: 20,
+            fov: 50,
+            fovAnimationTime: 1,
             thirdPerson: false,
             lookAt: false,
             clip: 50,
         }
-
+        
         this.setDebug()
         this.setInstance()
         this.setThirdPerson()
@@ -31,12 +34,25 @@ export default class Camera{
 
     setInstance()
     {
-        this.instance = new THREE.PerspectiveCamera(this.params.fov, this.sizes.width / this.sizes.height, 0.1, this.params.clip)
+        this.instance = new THREE.PerspectiveCamera(this.params.startFov, this.sizes.width / this.sizes.height, 0.1, this.params.clip)
         this.instance.position.set(this.params.posX,this.params.posY,this.params.posZ)
         this.instance.rotation.y = Math.PI * 0.5
         this.scene.add(this.instance)
 
+        this.fovTransitioning = false
+        this.fovVariable = 
+        {
+            fov: this.params.startFov
+        }
+
         this.lookAtVec3 = new THREE.Vector3(0,0,0)
+    }
+
+    animateFovTo(fov)
+    {
+        this.fovTransitioning = true
+        this.fovAnimation = gsap.to(this.fovVariable, {fov: this.params.fov , duration: this.params.fovAnimationTime, onComplete: () => { this.fovTransitioning = false } })
+        this.fovAnimation.play()
     }
 
     setRenderDistance(far)
@@ -90,6 +106,11 @@ export default class Camera{
         {
             this.instance.lookAt(this.lookAtVec3)
         }
+        if( this.fovTransitioning === true )
+        {
+            this.instance.fov = this.fovVariable.fov
+            this.instance.updateProjectionMatrix()
+        }
     }
 
     /**------------------------------------------------------------------
@@ -102,24 +123,36 @@ export default class Camera{
         if(this.debug.active)
         {
             this.debugFolder = this.debug.playerDebugFolder
-            this.debugFolder.add(this.params, 'posX').onChange(() =>
+            this.positionFolder = this.debugFolder.addFolder('Position')
+            this.positionFolder.close()
+            this.positionFolder.add(this.params, 'posX', -100, 100)
+            .name('Position X')
+            .onChange(() =>
             {
                 this.instance.position.x = this.params.posX
             })
-            this.debugFolder.add(this.params, 'posY').onChange(() =>
+            this.positionFolder.add(this.params, 'posY', -100, 100)
+            .name('Position Y')
+            .onChange(() =>
             {
                 this.instance.position.y = this.params.posY
             })
-            this.debugFolder.add(this.params, 'posZ').onChange(() =>
+            this.positionFolder.add(this.params, 'posZ', -100, 100)
+            .name('Position Z')
+            .onChange(() =>
             {
                 this.instance.position.z = this.params.posZ
             })
-            this.debug.renderDebugFolder.add(this.params, 'fov', 10, 100).onChange(() =>
+            this.debug.renderDebugFolder.add(this.params, 'fov', 10, 100)
+            .name('FOV')
+            .onChange(() =>
             {
                 this.instance.fov = this.params.fov
                 this.instance.updateProjectionMatrix()
             })
-            this.debug.renderDebugFolder.add(this.params, 'clip', 10, 1000).onChange(() =>
+            this.debug.renderDebugFolder.add(this.params, 'clip', 10, 100)
+            .name('Render Distance')
+            .onChange(() =>
             {
                 this.instance.far = this.params.clip
                 this.instance.updateProjectionMatrix()

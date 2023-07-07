@@ -28,7 +28,9 @@ export default class Time extends EventEmitter
 
         if(this.debug.active)
         {
-            this.debug.renderDebugFolder.add(this.params, 'fps', 10, 60).onChange(() =>
+            this.debug.renderDebugFolder.add(this.params, 'fps', 10, 60)
+            .name('Frames Per Second')
+            .onChange(() =>
             {
                 this.fpsInterval = 1000 / this.params.fps
             })

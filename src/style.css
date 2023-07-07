@@ -110,7 +110,7 @@ a
     position: absolute;
     left: 50%;
     top: 60%;
-    transform: translate(-50%,-50%);
+    transform: translate(-90%,-50%);
     font-size: 20px;
     text-align: center;
     opacity: 1;
@@ -126,7 +126,7 @@ a
 .loadingBarContainer
 {
     position: absolute;
-    top: 64%;
+    top: 73%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 30%;
@@ -135,6 +135,7 @@ a
     overflow: hidden;
     opacity: 1;
     transition: 1s;
+    visibility: hidden;
 }
 
 .loadingBarContainer.hidden
@@ -148,18 +149,38 @@ a
     top: 50%;
     left: 0;
     width: 0;
-    height: 25%;
+    height: 1px;
     background-color: white;
     box-sizing: border-box;
     margin-left: 4px;
     transform: translate(0,-50%);
 }
 
-.startGame
+.ouroborosContainer
 {
     position: absolute;
     left: 50%;
     top: 60%;
+    z-index: 20;
+    width: auto;
+    
+}
+
+.ouroboros
+{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(60%,-50%);
+    width: 50px;
+
+}
+
+.startGame
+{
+    position: absolute;
+    left: 50%;
+    top: 50%;
     transform: translate(-50%,-50%);
     font-size: 20px;
     text-align: center;
@@ -168,6 +189,7 @@ a
     opacity: 1;
     transition: 0.5s;
     cursor: pointer;
+    z-index: 22;
 }
 
 .startGame.hidden
@@ -260,9 +282,14 @@ a
     justify-content: center;
     display: flex;
     flex-flow: wrap;
-    transition: 1s;
+    transition: 3s;
     box-sizing: border-box;
     z-index: 10;
+}
+
+.navBox.default
+{
+    transition: 1s;
 }
 
 .experienceContainer.navBoxDefault .navBox
@@ -288,6 +315,11 @@ a
     bottom: 0;
     z-index: 1;
     box-shadow: 0px -15px 25px 10px  rgba(0, 0, 0, 0.507);
+    transition: 3s;
+}
+
+.boxShadow.default
+{
     transition: 1s;
 }
 
@@ -311,6 +343,11 @@ a
     height: 30px;
     z-index: 9;
     transform: translate(0,-100%);
+    transition: 3s;
+}
+
+.folderTabs.default
+{
     transition: 1s;
 }
 
@@ -593,57 +630,56 @@ a
     margin: 8px;
 }
 
-.cardinalDirections
+.arrowControls
 {
+    z-index: 10;
+    width: 100%;
+    height: 40%;
+    min-height: 100px;
+    background-color: black;
+    opacity: 50%;
     position: absolute;
-    width: 100px;
-    height: 100px;
-    display: grid;
-    gap: 2px;
-    grid-template-columns: 3;
-    grid-template-rows: 3;
-    background-color: rgb(36, 36, 36);
-    left: 83%;
-    top: 0;
-    margin: 10px;
+    visibility: visible;
+    transform: translate(0,-100%);
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    user-select: none;
+    -webkit-touch-callout: none;
 }
 
-.cardinalDirections *
+.arrowControls.hidden
 {
-    text-decoration: none;
+    visibility: hidden;
+}
+
+.arrowControls a
+{
+    font-size: 25px;
     color: white;
-    font-size: 20px;
+    text-decoration: none;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.movementControls
+{
     text-align: center;
+    position: absolute;
+    left: 20px;
 }
 
-.cardinalDirections *.active
+.lookControls
 {
-    color: rgb(218, 170, 170);
+    right: 20px;
+    position: absolute;
+    height: 100%;
 }
 
-.forwardControl
+.lookControls a
 {
-    grid-column: 2;
-    grid-row: 1;
-}
-
-.backwardControl
-{
-    grid-column: 2;
-    grid-row: 3;
-    color: red;
-}
-
-.leftControl
-{
-    grid-column: 1;
-    grid-row: 2;
-}
-
-.rightControl
-{
-    grid-column: 3;
-    grid-row: 2;
+    font-size: 30px;
+    height: 100%;
+    width: 20%;
+    background-color: white;
 }
 
 .pointerLockNotification
@@ -663,4 +699,12 @@ a
 .pointerLockNotification.hidden
 {
     opacity: 0;
+}
+
+/* LIL GUI */
+
+.lil-gui
+{
+    background-color: black;
+    opacity: 90%;
 }

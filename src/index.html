@@ -9,15 +9,16 @@
 <body>
     <div class="experienceContainer navBoxFull userInputHidden onScreenArrows">
         <div class="titleScreen">
-            <p class="titleText">To J</p>
-            <p class="authorText">by J</p>
+            <p class="titleText">J-Engine</p>
+            <p class="authorText">By Julien Darling-Funk</p>
             <p class="loadingText">Loading: 0%</p>
-
             <div class="loadingBarContainer">
                 <div class="loadingBar"></div>
             </div>
-
-            <p class="startGame hidden">Enter</p>
+            <div class="ouroborosContainer">
+                <p class="startGame hidden">Enter</p>
+                <img class="ouroboros" src="/textures/animated/ouroboros.gif" alt="">
+            </div>
         </div>
 
         <!-- THREE JS CANVAS -->
@@ -43,13 +44,19 @@
             </div>
 
             <div class="arrowControls hidden">
-                <a href="#" class="forwardControl" draggable="false" tabindex="-1">↑</a>
-                <a href="#" class="rightControl" draggable="false" tabindex="-1">→</a>
-                <a href="#" class="backwardControl" draggable="false" tabindex="-1">↓</a>
-                <a href="#" class="leftControl" draggable="false" tabindex="-1">←</a>
+                <div class="movementControls">
+                    <a href="#" class="forwardControl" draggable="false" tabindex="-1">↑</a>
+                    <br>
+                    <a href="#" class="leftControl" draggable="false" tabindex="-1">←</a>
+                    <a href="#" class="backwardControl" draggable="false" tabindex="-1">↓</a>
+                    <a href="#" class="rightControl" draggable="false" tabindex="-1">→</a>
+                </div>
+                <div class="lookControls">
+                    <a href="#" class="lookLeftControl" draggable="false">→</a>
+                    <a href="#" class="lookRightControl" draggable="false">←</a>
+                </div>
+               
             </div>
-
-            <div class="score hidden">Score: </div> 
 
             <img class="fullscreen" src="/textures/static/fullscreen.png" alt="" tabindex="-1">
         </div>

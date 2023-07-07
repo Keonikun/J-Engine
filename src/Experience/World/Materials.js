@@ -11,6 +11,7 @@ export default class Materials
         this.resources = this.experience.resources
         this.time = this.experience.time
         this.debug = this.experience.debug
+        this.models = this.experience.world.models
   
         this.params = {
             
@@ -24,26 +25,76 @@ export default class Materials
 
     setup()
     {
-        this.staticMesh = this.experience.world.models.physMesh
+        this.physMesh = this.experience.world.models.physMesh
+        if(this.models.staticScene === true)
+        {
+            this.staticMesh = this.experience.world.models.staticMesh
+        }
+        if(this.models.dynamicScene === true)
+        {
+            this.dynamicMesh = this.experience.world.models.dynamicMesh
+        }
         this.waterAnimTexture = this.resources.items.waterAnim
+        this.rainAnimTexture = this.resources.items.rainAnim
     }
 
     setAnimatedMaterials()
     {
         this.waterAnim = new PlainAnimator( this.waterAnimTexture, 4, 4, 16, 5 )
         this.waterAnimMap = this.waterAnim.init()
-        this.waterMaterial = new THREE.MeshBasicMaterial({ map: this.waterAnimMap })
+        this.waterMaterial = new THREE.MeshStandardMaterial({ map: this.waterAnimMap, transparent: true, metalness: 0.5 })
+       
+        this.rainAnim = new PlainAnimator( this.rainAnimTexture, 8, 8, 60, 10 )
+        this.rainAnimMap = this.rainAnim.init()
+        this.rainMaterial = new THREE.MeshStandardMaterial({ map: this.rainAnimMap, transparent: true })
+
         this.applyAnimatedMaterials()
     }
 
     applyAnimatedMaterials()
     {
-        this.staticMesh.children.forEach( element => {
+        this.physMesh.children.forEach( element => {
             if( element.material.name === "Water" )
             {
                 element.material = this.waterMaterial
             }
-        }); 
+        }) 
+        this.physMesh.children.forEach( element => {
+            if( element.material.name === "WindowRain" )
+            {
+                element.material = this.rainMaterial
+            }
+        })
+        if(this.models.staticScene === true)
+        {
+            this.staticMesh.children.forEach( element => {
+                if( element.material.name === "Water" )
+                {
+                    element.material = this.waterMaterial
+                }
+            }) 
+            this.staticMesh.children.forEach( element => {
+                if( element.material.name === "WindowRain" )
+                {
+                    element.material = this.rainMaterial
+                }
+            })
+        }
+        if(this.models.dynamicScene === true)
+        {
+            this.dynamicMesh.children.forEach( element => {
+                if( element.material.name === "Water" )
+                {
+                    element.material = this.waterMaterial
+                }
+            }) 
+            this.dynamicMesh.children.forEach( element => {
+                if( element.material.name === "WindowRain" )
+                {
+                    element.material = this.rainMaterial
+                }
+            })
+        }
     }
 
     setShaders()
@@ -93,6 +144,7 @@ export default class Materials
     update()
     {
         this.waterAnim.animate()
+        this.rainAnim.animate()
         this.customWaterUniforms.uTime.value = this.time.elapsedTime
     }
 
@@ -105,7 +157,7 @@ export default class Materials
     {
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.gui.addFolder('Shaders')
+            this.debugFolder = this.debug.shadersDebugFolder
 
             this.waterDebugFolder = this.debugFolder.addFolder('Water')
             this.waterDebugFolder.add(this.customWaterUniforms.uSpeed, 'value').min(0.00001).max(0.02).step(0.00001).name('Speed')
