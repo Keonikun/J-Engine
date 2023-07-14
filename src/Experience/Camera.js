@@ -17,7 +17,7 @@ export default class Camera{
             posX: 0,
             posY: 0,
             posZ: 0,
-            startFov: 20,
+            startFov: 50,
             fov: 50,
             fovAnimationTime: 1,
             thirdPerson: false,

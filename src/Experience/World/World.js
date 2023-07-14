@@ -59,6 +59,7 @@ export default class World extends EventEmitter
             // Animations 
             this.materials.update()
             this.particles.update()
+            this.audio.update()
             // this.interactiveObjects.update()
             this.firstPerson.update( this.time.delta )
             this.actors.update()

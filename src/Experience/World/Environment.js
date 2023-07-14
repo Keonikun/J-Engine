@@ -12,9 +12,9 @@ export default class Environment
 
         this.params = {
             backgroundColor: '#000000',
-            ambientLightInt: 0.5,
+            ambientLightInt: 0.7,
             ambientLightCol: '#ffffff',
-            dirLightInt: 0.8,
+            dirLightInt: 0,
             dirLightCol: '#ffffff',
             dirLightPosX: 3.5,
             dirLightPosY: 2,
@@ -113,9 +113,9 @@ export default class Environment
 
         // this.scene.background = this.environmentMap.texture
 
-        this.studioHDR = this.resources.items.studioHDR
-        this.studioHDR.mapping = THREE.EquirectangularReflectionMapping
-        this.scene.environment = this.studioHDR
+        // this.studioHDR = this.resources.items.studioHDR
+        // this.studioHDR.mapping = THREE.EquirectangularReflectionMapping
+        // this.scene.environment = this.studioHDR
     }
 
     /**------------------------------------------------------------------

@@ -1,4 +1,5 @@
 import { gsap } from "gsap"
+import Typewriter from "typewriter-effect/dist/core";
 
 export default class Layout
 {
@@ -11,8 +12,10 @@ export default class Layout
         this.debug = this.experience.debug
         this.waitingToCloseNav = false
         this.audio = this.experience.world.audio
+        this.sizes = this.experience.sizes
+        this.world = this.experience.world
 
-        // IMPORTANT: of the 3 different window modes, only fullscreen works right now :/
+        // NOTE: of the 3 different window modes, only fullscreen works right now :/
 
         this.params = {
             windowMode: 'fullscreen',
@@ -21,6 +24,12 @@ export default class Layout
             OSOnOpen: false,
             portfolioMode: true,
             OSOpened: false,
+
+            webGLContained: true,
+            renderHeight: 100,
+            renderWidth: 100,
+            leftOffset: 0,
+            topOffset: 0,
         }
 
         this.fullscreenEnabled = false
@@ -54,14 +63,24 @@ export default class Layout
 
             document.querySelector('.startGame').addEventListener('click', () =>
             {
+                
                 this.audio.beginAudio()
                 document.querySelector('.titleScreen').classList.add('hidden')
                 this.experience.params.appStart = true
                 gsap.delayedCall(0.5, () =>
                 {
-                    this.setNavBox('default')
                     document.querySelector('.titleScreen').remove()
-                    this.textAdventure.progressToNextEvent(1)
+                    if(this.experience.params.portfolioMode === true)
+                    {
+                        this.setNavBox('disappear')
+                        console.log("hello")
+                    }
+                    if(this.experience.params.portfolioMode === false)
+                    {
+                        this.setNavBox('default')
+
+                        this.textAdventure.progressToNextEvent(1)
+                    }
                 })
             })   
         })
@@ -73,6 +92,11 @@ export default class Layout
         this.pinScrollToBottom()
         this.setDebug()
 
+        if(this.params.webGLContained === true)
+        {
+            this.webGLContained()
+        }
+
         if(this.params.OSOnOpen)
         {
             this.openOS()
@@ -81,7 +105,10 @@ export default class Layout
 
     setDomElements()
     {
+        this.transformingWebglContainer = false
+
         this.experienceContainer = document.querySelector('.experienceContainer')
+        this.webGLContainer = document.querySelector('.webgl')
         this.navBox = document.querySelector('.navBox')
         this.textBox = document.querySelector('.textBox')
         this.arrowControls = document.querySelector('.arrowControls')
@@ -89,6 +116,9 @@ export default class Layout
         this.fullscreen = document.querySelector('.fullscreen')
         this.visuals = document.querySelector('.visuals')
         this.visuals.style.visibility = 'hidden'
+
+        this.webGLContainedWidth = null
+        this.webGLContainedHeight = null
 
         this.folderTabs.addEventListener('click', () =>
         {
@@ -277,6 +307,31 @@ export default class Layout
             this.experienceContainer.classList.remove('navBoxDefault')
             this.experienceContainer.classList.add('navBoxFull')
         }
+        if(parameter === "disappear")
+        {
+            this.navBox.style.opacity = "0"
+            document.querySelector('.folderTabs').style.opacity = "0"
+            document.querySelector('.boxShadow').style.opacity = "0"
+            gsap.delayedCall(1, () =>
+            {
+                this.navBox.style.visibility = "hidden"
+                this.navBox.style.zIndex = "0"
+                document.querySelector('.boxShadow').style.visibility = "hidden"
+                document.querySelector('.folderTabs').style.visibility = "hidden"
+            })
+ 
+        }
+        if(parameter === "appear")
+        {
+            document.querySelector('.boxShadow').style.visibility = "visible"
+            document.querySelector('.folderTabs').style.visibility = "visible"
+            this.navBox.style.visibility = "visible"
+            this.navBox.style.opacity = "1"
+            document.querySelector('.folderTabs').style.opacity = "1"
+            document.querySelector('.boxShadow').style.opacity = "1"
+            this.navBox.style.zIndex = "10"
+
+        }
     }
 
     waitToCloseNav()
@@ -336,6 +391,51 @@ export default class Layout
         }, 50)
     }
 
+    webGLContained()
+    {
+        this.webGLContainer.style.maxHeight = String(this.params.renderHeight) + "%"
+        this.webGLContainer.style.maxWidth = String(this.params.renderWidth) + "%"
+        this.webGLContainer.style.transform = "translate(" + String(this.params.leftOffset - 50) + "%, " + String(this.params.topOffset - 50) + "%)"
+        this.webGLContainedHeight = parseInt(this.webGLContainer.clientHeight)
+        this.webGLContainedWidth = parseInt(this.webGLContainer.clientWidth)
+        if(this.renderer.params.postprocessing === true)
+        {
+            this.renderer.composer.setSize(this.webGLContainedHeight, this.webGLContainedHeight)
+            this.renderer.composer.setPixelRatio(window.devicePixelRatio, 1)
+        }
+        else if(this.renderer.params.postprocessing === false)
+        {
+            this.renderer.instance.setSize(this.webGLContainedHeight, this.webGLContainedHeight)
+            this.renderer.instance.setPixelRatio(window.devicePixelRatio, 1)
+        }
+        this.camera.instance.aspect =  this.webGLContainedWidth / this.webGLContainedHeight
+        this.camera.instance.updateProjectionMatrix()
+    }
+
+    update()
+    {
+        if(this.transformingWebglContainer === true)
+        {
+            this.webGLContainer.style.maxHeight = String(this.params.renderHeight) + "%"
+            this.webGLContainer.style.maxWidth = String(this.params.renderWidth) + "%"
+            this.webGLContainer.style.transform = "translate(" + String(this.params.leftOffset - 50) + "%, " + String(this.params.topOffset - 50) + "%)"
+            this.webGLContainedHeight = parseInt(this.webGLContainer.clientHeight)
+            this.webGLContainedWidth = parseInt(this.webGLContainer.clientWidth)
+            if(this.renderer.params.postprocessing === true)
+            {
+                this.renderer.composer.setSize(this.webGLContainedHeight, this.webGLContainedHeight)
+                this.renderer.composer.setPixelRatio(window.devicePixelRatio, 1)
+            }
+            else if(this.renderer.params.postprocessing === false)
+            {
+                this.renderer.instance.setSize(this.webGLContainedHeight, this.webGLContainedHeight)
+                this.renderer.instance.setPixelRatio(window.devicePixelRatio, 1)
+            }
+            this.camera.instance.aspect =  this.webGLContainedWidth / this.webGLContainedHeight
+            this.camera.instance.updateProjectionMatrix()
+        }
+    }
+
     /**------------------------------------------------------------------
      *--------------------------------DEBUG------------------------------
      *-------------------------------------------------------------------
@@ -356,6 +456,45 @@ export default class Layout
                 {
                     this.closeOS()
                 }
+            })
+            this.renderDebugFolder = this.debug.renderDebugFolder
+            this.renderDebugFolder.add(this.params, 'renderHeight', 0, 100)
+            .onChange(() =>
+            {
+                this.webGLContainer.style.maxHeight = String(this.params.renderHeight) + "%"
+                this.webGLContainedHeight = parseInt(this.webGLContainer.clientHeight)
+                this.webGLContainedWidth = parseInt(this.webGLContainer.clientWidth)
+                if(this.renderer.params.postprocessing === true)
+                {
+                    this.renderer.composer.setSize(this.webGLContainedHeight, this.webGLContainedHeight)
+                    this.renderer.composer.setPixelRatio(window.devicePixelRatio, 1)
+                }
+                else if(this.renderer.params.postprocessing === false)
+                {
+                    this.renderer.instance.setSize(this.webGLContainedHeight, this.webGLContainedHeight)
+                    this.renderer.instance.setPixelRatio(window.devicePixelRatio, 1)
+                }
+                this.camera.instance.aspect =  this.webGLContainedWidth / this.webGLContainedHeight
+                this.camera.instance.updateProjectionMatrix()
+            })
+            this.renderDebugFolder.add(this.params, 'renderWidth', 0, 100)
+            .onChange(() =>
+            {
+                this.webGLContainer.style.maxWidth = String(this.params.renderWidth) + "%"
+                this.webGLContainedHeight = parseInt(this.webGLContainer.clientHeight)
+                this.webGLContainedWidth = parseInt(this.webGLContainer.clientWidth)
+                if(this.renderer.params.postprocessing === true)
+                {
+                    this.renderer.composer.setSize(this.webGLContainedHeight, this.webGLContainedHeight)
+                    this.renderer.composer.setPixelRatio(window.devicePixelRatio, 1)
+                }
+                else if(this.renderer.params.postprocessing === false)
+                {
+                    this.renderer.instance.setSize(this.webGLContainedHeight, this.webGLContainedHeight)
+                    this.renderer.instance.setPixelRatio(window.devicePixelRatio, 1)
+                }
+                this.camera.instance.aspect =  this.webGLContainedWidth / this.webGLContainedHeight
+                this.camera.instance.updateProjectionMatrix()
             })
         //     this.debugFolder.add(this.params, 'windowMode', [ 'fullscreen', 'fullSquare', 'square']).onChange(() =>
         //     {

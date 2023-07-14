@@ -145,6 +145,8 @@ export default class Renderer extends EventEmitter
 
             this.debugFolder = this.debug.renderDebugFolder.addFolder('Postprocessing')
             this.debugFolder.close()
+            this.debugFolder.add( this.params, 'postprocessing' ).name('Postprocessing Enabled?')
+
             this.debugFolder.add( this.params, 'bloom' ).name('Bloom')
             this.debugFolder.add( this.params, 'bloomPower' ).name('Bloom Amount')
             this.debugFolder.add( this.params, 'filmic' ).name('Film Effect')

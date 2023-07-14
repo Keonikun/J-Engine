@@ -43,14 +43,14 @@ export default class Audio
         this.footstep1.setRefDistance(1)
         this.footstep1.setRolloffFactor(1)
         this.footstep1.setLoop(false)
-        this.footstep1.setVolume(1)
+        this.footstep1.setVolume(0.1)
 
         this.footstep2 = new THREE.PositionalAudio( this.listener )
         this.footstep2.setBuffer(this.resources.items.footstep2)
         this.footstep2.setRefDistance(1)
         this.footstep2.setRolloffFactor(1)
         this.footstep2.setLoop(false)
-        this.footstep2.setVolume(1.2)
+        this.footstep2.setVolume(1)
 
         this.footstep3 = new THREE.PositionalAudio( this.listener )
         this.footstep3.setBuffer(this.resources.items.footstep3)
@@ -92,22 +92,22 @@ export default class Audio
         this.archSpeaker.position.set(this.models.archSpeaker.position.x, this.models.archSpeaker.position.y, this.models.archSpeaker.position.z)
         this.archSpeaker.add(this.wood)
 
-        this.water = new THREE.PositionalAudio( this.listener )
-        this.water.setBuffer(this.resources.items.water)
-        this.water.setRefDistance(0.1)
-        this.water.setRolloffFactor(1)
-        this.water.setLoop(true)
-        this.water.setVolume(1)
+        // this.water = new THREE.PositionalAudio( this.listener )
+        // this.water.setBuffer(this.resources.items.water)
+        // this.water.setRefDistance(0.1)
+        // this.water.setRolloffFactor(1)
+        // this.water.setLoop(true)
+        // this.water.setVolume(1)
 
-        this.fountainSpeaker = new THREE.Mesh( this.speakerGeo, this.speakerMat )
-        this.scene.add(this.fountainSpeaker)
-        this.fountainSpeaker.position.set(this.models.fountainSpeaker.position.x, this.models.fountainSpeaker.position.y, this.models.fountainSpeaker.position.z)
-        this.fountainSpeaker.add(this.water)
+        // this.fountainSpeaker = new THREE.Mesh( this.speakerGeo, this.speakerMat )
+        // this.scene.add(this.fountainSpeaker)
+        // this.fountainSpeaker.position.set(this.models.fountainSpeaker.position.x, this.models.fountainSpeaker.position.y, this.models.fountainSpeaker.position.z)
+        // this.fountainSpeaker.add(this.water)
 
         this.windowRain = new THREE.PositionalAudio( this.listener )
         this.windowRain.setBuffer(this.resources.items.windowRain)
-        this.windowRain.setRefDistance(0.3)
-        this.windowRain.setRolloffFactor(0.8)
+        this.windowRain.setRefDistance(0.5)
+        this.windowRain.setRolloffFactor(2)
         this.windowRain.setLoop(true)
         this.windowRain.setVolume(1.2)
 
@@ -115,6 +115,30 @@ export default class Audio
         this.scene.add(this.windowSpeaker)
         this.windowSpeaker.position.set(this.models.windowSpeaker.position.x, this.models.windowSpeaker.position.y, this.models.windowSpeaker.position.z)
         this.windowSpeaker.add(this.windowRain)
+
+        this.drip = new THREE.PositionalAudio( this.listener )
+        this.drip.setBuffer(this.resources.items.drip)
+        this.drip.setRefDistance(0.1)
+        this.drip.setRolloffFactor(2)
+        this.drip.setLoop(true)
+        this.drip.setVolume(1.4)
+
+        this.dripSpeaker = new THREE.Mesh( this.speakerGeo, this.speakerMat )
+        this.scene.add(this.dripSpeaker)
+        this.dripSpeaker.position.set(this.models.dripSpeaker.position.x, this.models.dripSpeaker.position.y, this.models.dripSpeaker.position.z)
+        this.dripSpeaker.add(this.drip)
+
+        this.clock = new THREE.PositionalAudio( this.listener )
+        this.clock.setBuffer(this.resources.items.clock)
+        this.clock.setRefDistance(0.2)
+        this.clock.setRolloffFactor(1)
+        this.clock.setLoop(true)
+        this.clock.setVolume(1.2)
+
+        this.clockSpeaker = new THREE.Mesh( this.speakerGeo, this.speakerMat )
+        this.scene.add(this.clockSpeaker)
+        this.clockSpeaker.position.set(this.models.clockSpeaker.position.x, this.models.clockSpeaker.position.y, this.models.clockSpeaker.position.z)
+        this.clockSpeaker.add(this.clock)
 
         this.camera.add( 
             this.listener, 
@@ -142,9 +166,31 @@ export default class Audio
         gsap.delayedCall(1, () =>
         {
             this.wood.play()
-            this.water.play()
+            // this.water.play()
             this.windowRain.play()
+            this.drip.play()
+            this.clock.play()
         })
+    }
+
+    masterVolumeOn()
+    {
+        gsap.to(this.params, {masterVolume: 0.7, duration:2, onComplete: () => {this.audioChanging = false}}).play()
+        this.audioChanging = true
+    }
+
+    masterVolumeOff()
+    {
+        gsap.to(this.params, {masterVolume: 0, duration:2, onComplete: () => {this.audioChanging = false}}).play()
+        this.audioChanging = true
+    }
+
+    update()
+    {
+        if(this.audioChanging === true)
+        {
+            this.listener.setMasterVolume(this.params.masterVolume)
+        }
     }
 
     /**------------------------------------------------------------------

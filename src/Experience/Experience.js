@@ -33,7 +33,6 @@ export default class Experience
         this.params = {
             audio: true,
             portfolioMode: false,
-
             appStart: false,
         }
        
@@ -66,10 +65,11 @@ export default class Experience
     {
         if( this.params.appStart === true )
         {
-            this.camera.update();
-            this.world.update();
-            this.renderer.update();
-            this.debug.update();
+            this.camera.update()
+            this.world.update()
+            this.renderer.update()
+            this.debug.update()
+            this.layoutControl.update()
         }
     }
 }

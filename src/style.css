@@ -233,17 +233,271 @@ a
     opacity: 0;
 }
 
+/* -----------PORTFOLIO SECTION--------------- */
+
+.portfolioContainer
+{
+    position: absolute;
+    width:  300px;
+    min-width: 150px;
+    padding: 20px;
+    z-index: 10;
+}
+
+.portfolioTitle
+{
+    color: white;
+    text-decoration: none;
+    font-style: italic;
+}
+
+.horizontalLine
+{
+    margin-top: 15px;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+}
+
+.portfolioLinks
+{
+    opacity: 1;
+    visibility: visible;
+}
+
+.portfolioLinks.hidden
+{
+    opacity: 0;
+    visibility: hidden;
+    font-size: 100px;
+}
+
+.portfolioLinks ul li
+{
+    margin-top: 18px;
+}
+
+.portfolioLinks ul li:hover
+{
+    margin-left: 2px;
+}
+
+.portfolioLinks ul li a
+{
+    color: white;
+    text-decoration: none;
+    font-style: italic;
+    letter-spacing: 2px;
+    font-size: 20px;
+}
+
+.portfolioLinks ul li a.selected
+{
+    color: aquamarine;
+}
+
+.portfolioLinks ul li a:hover
+{
+    color: aquamarine;
+    cursor: pointer;
+}
+
+.portfolioContainer2
+{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-40%,-42%);
+    width: 80%;
+    height: 80%;
+    z-index: 10;
+    transition: 1s;
+    opacity: 1;
+}
+
+.portfolioContainer2.hidden
+{
+    opacity: 0;
+}
+
+.portfolioContainer2.inactive
+{
+    visibility: hidden;
+}
+
+.portfolioContainer2.mobile
+{
+    transform: translate(-50%,-34%);
+    width: 90%;
+    height: 90%;
+}
+
+.mobileBack
+{
+    position: absolute;
+    top: 90px;
+    transition: 0.5s;
+    opacity: 1;
+    visibility: visible;
+    color: white;
+    left: 17px;
+    text-decoration: none;
+    color: aquamarine;
+    font-size: 22px;
+    z-index: 12;
+}
+
+.mobileBack.hidden
+{
+    opacity: 0;
+    visibility: hidden;
+}
+
+.information
+{
+    color: white;
+    position: absolute;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    font-size: 17px;
+    line-height: 25px;
+    max-width: 450px;
+}
+
+.information a
+{
+    color: aquamarine;
+    text-decoration: none;
+}
+
+.information.mobile
+{
+    overflow-y: scroll;
+}
+
+.information::-webkit-scrollbar
+{
+    width: 15px;
+}
+
+.information::-webkit-scrollbar-track
+{
+    background: none;
+}
+
+.information::-webkit-scrollbar-thumb
+{
+    width: 10px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
+    border: 5px solid transparent;
+    background-clip: content-box ;
+}
+
+.images
+{
+    position: absolute;
+    right: 0;
+    width: 60%;
+    height: 100%;
+    transition: 0;
+}
+
+.images.active
+{
+    overflow-y: scroll;
+}
+
+.images img
+{
+    transition: 1s;
+    width: 100%;
+}
+
+.firstImage
+{
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.images iframe
+{
+    transition: 1s;
+    width: 100%;
+}
+
+.images p
+{
+    color: white;
+}
+
+.images a
+{
+    text-decoration: none;
+    color: aquamarine;
+    text-align: center;
+}
+
+.sublinkTitle
+{
+    text-align: center;
+    font-size: 25px;
+    font-style: italic;
+}
+
+.sublinkParagraph
+{
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 17px;
+}
+
+.images::-webkit-scrollbar
+{
+    width: 15px;
+}
+
+.images::-webkit-scrollbar-track
+{
+    background: none;
+}
+
+.images::-webkit-scrollbar-thumb
+{
+    width: 10px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
+    border: 5px solid transparent;
+    background-clip: content-box ;
+}
+
+.profile
+{
+    max-width: 200px;
+
+}
+
 /*-------------WebGL Container----------------*/
 
 .webgl
 {
     position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+    top: 50%;
+    left: 50%;
     outline: none;
     visibility: visible;
+    max-width: 100%;
+    max-height: 100%;
+    transform: translate(-50%,-50%);
+}
+
+.webgl.hide
+{
+    opacity: 0;
 }
 
 .visuals

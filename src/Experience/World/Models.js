@@ -19,7 +19,7 @@ export default class Models
     {
         this.physMesh = null
         this.staticMesh = null
-        this.dynamicMesh = null
+        this.dynamicObjects = null
 
         this.staticScene = false
         this.dynamicScene = false
@@ -50,17 +50,13 @@ export default class Models
             {
                 this.archSpeaker = element
             }
-            if(element.name === "BrichSpeaker")
+            if(element.name === "DripSpeaker")
             {
-                this.birchSpeaker= element
+                this.dripSpeaker= element
             }
-            if(element.name === "CherrySpeaker")
+            if(element.name === "ClockSpeaker")
             {
-                this.cherrySpeaker = element
-            }
-            if(element.name === "FountainSpeaker")
-            {
-                this.fountainSpeaker = element
+                this.clockSpeaker = element
             }
             if(element.name === "WindowSpeaker")
             {

@@ -29,7 +29,7 @@ export default class FirstPerson
             collisionDistance: 0.5,
             locationHelper: false,
             interactionDistance: 3.3,
-            spawnPoint: { x: -5.9, y: -0.22, z: -21.32, r: 1.07 },
+            spawnPoint: { x: -0.5, y: 0, z: 0, r: 1, r2: 0.1 },
             locations: 'spawn',
             resetPosition: () =>
             {
@@ -51,6 +51,8 @@ export default class FirstPerson
         this.disengaged = false
 
         this.arrowControlsEnabled = true
+
+        this.camera.rotation.x = Math.PI * 0.05
 
         this.velocity = 0
         this.fpsGravity = 0
@@ -89,7 +91,7 @@ export default class FirstPerson
         this.setPointerLockControls()
     }
 
-    setPosition( x, y, z, r )
+    setPosition( x, y, z, r, r2 )
     {
         this.camera.position.set( x, y + 1.6, z )
         if(r)
@@ -395,7 +397,7 @@ export default class FirstPerson
     raycastFromCamera()
     {
         this.camRay.setFromCamera( this.camRayCoords, this.camera )
-        this.camRayIntersect = this.camRay.intersectObject( this.models.physMesh )
+        this.camRayIntersect = this.camRay.intersectObject( this.models.dynamicObjects )
     }
 
     interaction()

@@ -80,21 +80,21 @@ export default class Materials
                 }
             })
         }
-        if(this.models.dynamicScene === true)
-        {
-            this.dynamicMesh.children.forEach( element => {
-                if( element.material.name === "Water" )
-                {
-                    element.material = this.waterMaterial
-                }
-            }) 
-            this.dynamicMesh.children.forEach( element => {
-                if( element.material.name === "WindowRain" )
-                {
-                    element.material = this.rainMaterial
-                }
-            })
-        }
+        // if(this.models.dynamicScene === true)
+        // {
+        //     this.dynamicMesh.children.forEach( element => {
+        //         if( element.material.name === "Water" )
+        //         {
+        //             element.material = this.waterMaterial
+        //         }
+        //     }) 
+        //     this.dynamicMesh.children.forEach( element => {
+        //         if( element.material.name === "WindowRain" )
+        //         {
+        //             element.material = this.rainMaterial
+        //         }
+        //     })
+        // }
     }
 
     setShaders()

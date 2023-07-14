@@ -38,9 +38,8 @@ export default class InteractiveObjects
 
         // SET DYNAMIC OBJECTS HERE
         this.dynamicObjectsArray = []
-
         this.dynamicObjects.children.forEach(element => {
-            if(element.name === "monitor")
+            if(element.name === "Computer")
             {
                 this.computer = element
                 this.dynamicObjectsArray.push(this.computer)

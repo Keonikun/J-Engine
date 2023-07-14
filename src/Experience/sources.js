@@ -91,6 +91,16 @@ export default [
         type: 'audio',
         path: '/audio/wood.mp3'
     },
+    {
+        name: 'clock',
+        type: 'audio',
+        path: '/audio/clock.mp3'
+    },
+    {
+        name: 'drip',
+        type: 'audio',
+        path: '/audio/drip.mp3'
+    },
     /**
      * ---------HDR-----------
      */

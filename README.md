@@ -13,16 +13,15 @@ your own games.
 ## Current Features
 
 - First-Person Controls
-- Simple Collisions (very flawed at the moment)
-- Performant level management
+- Simple Collisions (can be a bit buggy)
 - Weather system (Rain)
 - Day/night cycle
 - Interactive objects (Doors, NPC's, Computers)
 - in-game OS (In early development)
 - Spacial Audio
 - Dialogue System
-- Dev Mode
-- Custom Shaders (Water)
+- Debug Mode
+- Custom Shaders
 
 ## Installation
 1. Download [Node.js](https://nodejs.org/en/download/).
@@ -49,32 +48,19 @@ npm run build
 
 You will need a 3D editor. I use [Blender](https://www.blender.org/).
 
-Your exported model will be divided into two components: StaticMesh and PhysMesh. This is to make the scene more performant.
+### Simplest Method:
 
-PhysMesh consists of every object that can collide with the player.
-StaticMesh consists of every object the player does not interact with. More complex models should be placed here. 
-
-### Simple Method (Bad Performance):
-
-If you do not care about good performance, parent all objects in your 3D scene to an empty object and title it 'PhysMesh'. Export the scene as 'scene.gltf' replace the existing scene.gltf in /static/models/.
-
-### Performant Method:
-
-Select all the items you want the player to collide with and parent it to an empty object. Title this empty 'PhysMesh'.
-Select everything else and merge them into one mesh. Title this mesh 'StaticMesh'.
-While exporting the scene, consider using DRACO compression (When exporting in blender, it is under the 'data' tab). This will reduce file size and improve performance even more.
-Export the scene as 'scene.gltf' replace the existing scene.gltf in /static/models/.
+If you do not care about good performance, select all the objects in your 3D scene and join them into one object. Name this object 'PhysMesh'. Export the scene as a GLTF file in within the 'models' folder (/static/models/scene.gltf). Make sure to name the gltf 'scene.gltf' when you are exporting the file.
 
 ### Things to keep in mind
 
 Webgl limits the performance of your GPU. Try to simplify your scene as much as possible
-and keep an eye out for the triangle count of your scene. The scene should not exceed 100,000 triangles or you will notice a dip in performance, especially on older devices.
+and keep an eye out for the triangle count of your scene. The scene should not exceed 60,000 triangles or you will notice a dip in performance, especially on older devices.
 
 If you are interested in using the engine and have questions, contact me [here](juliendf@me.com) and I would be happy to give you a quick tutorial!
 
 ## In development/Coming-soon
 
-- Skybox implimentation
 - Debug options for day/night cycle and weather system
 - Snow weather
 - More performant weather system
@@ -90,7 +76,7 @@ If you are interested in using the engine and have questions, contact me [here](
 
 ## Ownership
 
-The 3d model used within this project is my own. You are free to use everything else within this tool for your own projects.
+The 3d model (scene.gltf) used within this project is my own. You are free to use everything else within this tool for your own projects.
 
 ## Sources
 
