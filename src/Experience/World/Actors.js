@@ -17,22 +17,17 @@ export default class Actors
 
         this.params = {
             weather: false,
-            indefiniteRain: true,
+            indefiniteRain: false,
             weatherFollowsYou: false,
             rainFrequency: 1000,
             weatherClearFrequency: 100,
-            silentWeather: true,
+            silentWeather: false,
 
             dayNightCycle: false,
             dayStart: 4500,
             dayLength: 10000,
             nightLength: 10000,
             pauseTime: false,
-
-            // Debug variables
-            triggerDay: () => {this.triggerDay()},
-            triggerNight: () => {this.triggerNight()},
-            triggerTrain: () => {this.triggerTrain()}
         }
         
         this.setup()
@@ -46,7 +41,7 @@ export default class Actors
         if(this.params.indefiniteRain === true)
         {
             this.rain = true
-            // this.audio.play('rain')
+            this.audio.play('rain')
             this.particles.params.visible = true
         }
         if(this.params.weatherFollowsYou === false)
@@ -62,25 +57,28 @@ export default class Actors
     // NOTE: not using delta
     update()
     {
-        if(this.params.dayNightCycle === true && this.params.pauseTime === false)
-        {
-            this.dayCounter ++
+        // Day night cycle counter
+        // if(this.params.dayNightCycle === true && this.params.pauseTime === false)
+        // {
+        //     this.dayCounter ++
 
-            if(this.dayCounter >= this.params.dayLength)
-            {
-                if(this.day === true)
-                {
-                    this.day = false
-                    this.environment.nighttime()
-                }
-                else if(this.day === false)
-                {
-                    this.day = true
-                    this.environment.daytime()
-                }
-                this.dayCounter = 0
-            }
-        }
+        //     if(this.dayCounter >= this.params.dayLength)
+        //     {
+        //         if(this.day === true)
+        //         {
+        //             this.day = false
+        //             this.environment.nighttime()
+        //         }
+        //         else if(this.day === false)
+        //         {
+        //             this.day = true
+        //             this.environment.daytime()
+        //         }
+        //         this.dayCounter = 0
+        //     }
+        // }
+
+        // Weather Counter
         if( this.params.weather === true && this.params.pauseTime === false && this.params.indefiniteRain === false )
         {
             this.weatherCounter ++
@@ -116,7 +114,8 @@ export default class Actors
     {
         if( this.debug.active )
         {
-            this.debugFolder = this.debug.environmentDebugFolder
+            this.debugFolder = this.debug.environmentDebugFolder.addFolder('Weather')
+            this.debugFolder.close()
             this.debugFolder.add( this.params, 'weather' ).name('Weather')
             this.debugFolder.add( this.params, 'rainFrequency' ).name('Rain Frequency')
             this.debugFolder.add( this.params, 'indefiniteRain' ).name('Toggle Rain')

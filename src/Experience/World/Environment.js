@@ -11,30 +11,25 @@ export default class Environment
         this.debug = this.experience.debug
 
         this.params = {
-            backgroundColor: '#000000',
-            ambientLightInt: 0.7,
+            skybox: true,
+            lightingStyle: 'default',
+            backgroundColor: '#636363',
+            ambientLightInt: 0,
             ambientLightCol: '#ffffff',
-            dirLightInt: 0,
+            dirLightInt: 1,
             dirLightCol: '#ffffff',
             dirLightPosX: 3.5,
             dirLightPosY: 2,
             dirLightPosZ: - 1.25,
             fogNear: 30,
-            fogDistance: 20,
-
-            // Day/Night Cycle
-            dayColor: '#5c5c5c',
-            dayFog: 50,
-            nightColor: '#000000',
-            nightFog: 30,
-            fadeDuration: 150,
+            fogDistance: 50,
         }
         
 
         this.setDebug()
-        this.setAmbientLight()
+        // this.setAmbientLight()
         this.setDirectionalLight()
-        this.setSimpleBackground()
+        // this.setSimpleBackground()
         this.setEnvironmentMap()
         this.setFog()
     }
@@ -60,7 +55,6 @@ export default class Environment
     setSimpleBackground()
     {
         this.scene.background = new THREE.Color( this.params.backgroundColor )
-
     }
 
     setBackground(color)
@@ -68,54 +62,45 @@ export default class Environment
         this.scene.background = new THREE.Color( color )
     }
 
-    nighttime()
-    {
-        this.toNight = gsap.to(this.scene.background,{r: 0.01, g: 0.01, b: 0.01, duration: this.params.fadeDuration})
-        this.toNightFog = gsap.to(this.scene.fog.color,{r: 0.01, g: 0.01, b: 0.01, duration: this.params.fadeDuration})
-        this.toNightFogThickness = gsap.to(this.scene.fog,{near: this.params.nightFog, far: this.params.nightFog + 15, duration: this.params.fadeDuration})
-        this.toNight.play()
-        this.toNightFog.play()
-        this.toNightFogThickness.play()
-    }
-
-    daytime()
-    {   
-        this.toDay = gsap.to(this.scene.background,{r: 0.36, g: 0.36, b: 0.36, duration: this.params.fadeDuration})
-        this.toDayFog = gsap.to(this.scene.fog.color,{r: 0.36, g: 0.36, b: 0.36, duration: this.params.fadeDuration})
-        this.toDayFogThickness = gsap.to(this.scene.fog,{near: this.params.fogNear, far: this.params.fogFar, duration: this.params.fadeDuration})
-        this.toDay.play()
-        this.toDayFog.play()
-        this.toDayFogThickness.play()
-    }
-
     setEnvironmentMap()
     {
-        // this.environmentMap = {}
-        // this.environmentMap.intensity = 0.4
-        // // this.environmentMap.texture = this.resources.items.stormydaysEnvMap
-        // this.environmentMap.texture.encoding = THREE.sRGBEncoding
+        // CUBEMAP SETUP
+        if(this.params.skybox === true)
+        {
+            this.environmentMap = {}
+            this.environmentMap.intensity = 0.4
+            this.environmentMap.texture = this.resources.items.dayMap
+            this.environmentMap.texture.encoding = THREE.sRGBEncoding
+            
+            if(this.params.lightingStyle === 'default')
+            {
+                this.scene.environment = this.environmentMap.texture
+            }
 
-        // this.scene.environment = this.environmentMap.texture
+            this.setEnvironmentMap.updateMaterial = () =>
+            {
+                this.scene.traverse((child) => 
+                {
+                    if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
+                    {
+                        child.material.envMap = this.environmentMap.texture
+                        child.material.envMapIntensity = this.environmentMap.intensity
+                        child.material.needsUpdate = true
+                    }
+                })
+            }
+            this.setEnvironmentMap.updateMaterial()
 
-        // this.setEnvironmentMap.updateMaterial = () =>
-        // {
-        //     this.scene.traverse((child) => 
-        //     {
-        //         if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
-        //         {
-        //             child.material.envMap = this.environmentMap.texture
-        //             child.material.envMapIntensity = this.environmentMap.intensity
-        //             child.material.needsUpdate = true
-        //         }
-        //     })
-        // }
-        // this.setEnvironmentMap.updateMaterial()
+            this.scene.background = this.environmentMap.texture
+        }
 
-        // this.scene.background = this.environmentMap.texture
-
-        // this.studioHDR = this.resources.items.studioHDR
-        // this.studioHDR.mapping = THREE.EquirectangularReflectionMapping
-        // this.scene.environment = this.studioHDR
+        // STUDIO HDR SETUP
+        if(this.params.lightingStyle === 'HDR')
+        {
+            this.studioHDR = this.resources.items.studioHDR
+            this.studioHDR.mapping = THREE.EquirectangularReflectionMapping
+            this.scene.environment = this.studioHDR
+        }   
     }
 
     /**------------------------------------------------------------------

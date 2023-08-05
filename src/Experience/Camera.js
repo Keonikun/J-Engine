@@ -36,7 +36,6 @@ export default class Camera{
     {
         this.instance = new THREE.PerspectiveCamera(this.params.startFov, this.sizes.width / this.sizes.height, 0.1, this.params.clip)
         this.instance.position.set(this.params.posX,this.params.posY,this.params.posZ)
-        this.instance.rotation.y = Math.PI * 0.5
         this.scene.add(this.instance)
 
         this.fovTransitioning = false

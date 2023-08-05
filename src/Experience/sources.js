@@ -28,6 +28,21 @@ export default [
         type: 'texture',
         path: '/textures/animated/rainAnim.png'
     },
+    {
+        name: 'staticAnim',
+        type: 'texture',
+        path: '/textures/animated/static.png'
+    },
+    {
+        name: 'rippleAnim',
+        type: 'texture',
+        path: '/textures/animated/ripple.png'
+    },
+    {
+        name: 'fanAnim',
+        type: 'texture',
+        path: '/textures/animated/fan.png'
+    },
     /**
      * ---------AUDIO-----------
      */
@@ -62,14 +77,39 @@ export default [
         path: '/audio/rain.mp3'
     },
     {
-        name: 'doorOpen',
+        name: 'doorOpen1',
         type: 'audio',
-        path: '/audio/doorOpen.mp3'
+        path: '/audio/doorOpen1.mp3'
     },
     {
-        name: 'doorClose',
+        name: 'doorOpen2',
         type: 'audio',
-        path: '/audio/doorClose.mp3'
+        path: '/audio/doorOpen2.mp3'
+    },
+    {
+        name: 'doorOpen3',
+        type: 'audio',
+        path: '/audio/doorOpen3.mp3'
+    },
+    {
+        name: 'doorOpen4',
+        type: 'audio',
+        path: '/audio/doorOpen4.mp3'
+    },
+    {
+        name: 'doorClose1',
+        type: 'audio',
+        path: '/audio/doorClose1.mp3'
+    },
+    {
+        name: 'doorClose2',
+        type: 'audio',
+        path: '/audio/doorClose2.mp3'
+    },
+    {
+        name: 'doorClose3',
+        type: 'audio',
+        path: '/audio/doorClose3.mp3'
     },
     {
         name: 'water',
@@ -101,6 +141,26 @@ export default [
         type: 'audio',
         path: '/audio/drip.mp3'
     },
+    {
+        name: 'static',
+        type: 'audio',
+        path: '/audio/static.mp3'
+    },
+    {
+        name: 'elevatorMoving',
+        type: 'audio',
+        path: '/audio/elevatorMoving.mp3'
+    },
+    {
+        name: 'elevatorOpen',
+        type: 'audio',
+        path: '/audio/elevatorOpen.mp3'
+    },
+    {
+        name: 'elevatorClose',
+        type: 'audio',
+        path: '/audio/elevatorClose.mp3'
+    },
     /**
      * ---------HDR-----------
      */
@@ -108,5 +168,22 @@ export default [
         name: 'studioHDR',
         type: 'HDR',
         path: '/textures/static/studio.hdr'
+    },
+    /**
+     * --------Cube Map---------
+     */
+    {
+        name: 'dayMap',
+        type: 'cubeTexture',
+        path: 
+       [
+            '/textures/static/cubeMap/px.jpg',
+            '/textures/static/cubeMap/nx.jpg',
+            '/textures/static/cubeMap/py.jpg',
+            '/textures/static/cubeMap/ny.jpg',
+            '/textures/static/cubeMap/pz.jpg',
+            '/textures/static/cubeMap/nz.jpg'
+
+        ]
     },
 ]

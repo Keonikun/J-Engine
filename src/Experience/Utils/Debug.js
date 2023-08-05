@@ -29,9 +29,6 @@ export default class Debug
             this.renderDebugFolder = this.gui.addFolder( 'Render Settings' ).close()  
             this.environmentDebugFolder = this.gui.addFolder( 'Environment Settings' ).close()    
             this.playerDebugFolder = this.gui.addFolder( 'Player Settings' ).close()
-            this.shadersDebugFolder = this.gui.addFolder( 'Shader Settings' ).close()
-            this.audioDebugFolder = this.gui.addFolder( 'Audio Settings' ).close()
-            this.osDebugFolder = this.gui.addFolder('OS').close()
             this.debugFolder = this.gui.addFolder('Dev Tools')
             this.debugFolder.add(this.params, 'fpsMonitor').onChange(() =>
             {

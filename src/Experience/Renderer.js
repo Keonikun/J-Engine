@@ -1,12 +1,12 @@
 import * as THREE from 'three'
 import EventEmitter from './Utils/EventEmitter.js'
+import basicVertex from './World/Shaders/basicVertex.glsl'
+import VHSFragment from './World/Shaders/VHSFragment.glsl'
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js'
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
-import {FilmPass} from 'three/examples/jsm/postprocessing/FilmPass.js'
 import {GammaCorrectionShader} from 'three/examples/jsm/shaders/GammaCorrectionShader.js'
-import {VignetteShader} from 'three/examples/jsm/shaders/VignetteShader.js'
 
 export default class Renderer extends EventEmitter
 {
@@ -22,34 +22,33 @@ export default class Renderer extends EventEmitter
         this.camera = this.experience.camera
         this.debug = this.experience.debug
         this.world = this.experience.world
+        this.time = this.experience.time
 
         this.params = { 
 
-            resolution: 0.3,
-            renderDistance: 50,
+            resolution: 0.5,
+            renderDistance: 100,
 
             postprocessing: true,
 
             // BLOOM
             bloom: true,
-            bloomResolution: 64,
-            bloomPower: 0.5,
-            bloomRadius: 0,
+            bloomResolution: 16,
+            bloomPower: 0.2,
+            bloomRadius: 0.05,
             bloomThreshold: 0.5,
 
-            // Film Shader
-            filmic: true,
-            noiseIntensity: 0.15,
-            scanlineIntensity: 0.5,
-            scanlineCount: 1000,
-            grayscale: false,
+            // Custom Grain Shader
+            grain: true,
+            grainIntensity: 0.1,
+            chromaticAberration: 0.1,
+            sharpen: 1.0,
 
             // Vignette
-            vignette: true,
+            vignette: false,
             vignetteIntensity: 1.2,
 
             gammaCorrection: true,
-
         }
 
         this.highlightedObject = null
@@ -69,7 +68,7 @@ export default class Renderer extends EventEmitter
             precision: "lowp",
             alpha: "true"
         })
-        this.instance.outputEncoding = THREE.sRGBEncoding
+        this.instance.outputColorSpace = THREE.SRGBColorSpace
         this.instance.physicallyCorrectLights = true
         this.instance.setClearColor( '#ffffff' )
         this.instance.setSize( this.sizes.width, this.sizes.height )
@@ -91,18 +90,31 @@ export default class Renderer extends EventEmitter
                 this.params.bloomPower, this.params.bloomRadius, this.params.bloomThreshold 
             ))
         }
-        if( this.params.filmic === true && this.params.postprocessing === true )
-        {
-            this.composer.addPass( new FilmPass( this.params.noiseIntensity, this.params.scanlineIntensity, this.params.scanlineCount, this.params.grayscale ))
-        }
-        if( this.params.gammaCorrection === true && this.params.postprocessing === true )
-        {
-            this.composer.addPass( new ShaderPass( GammaCorrectionShader ))
-        }
         if( this.params.vignette === true && this.params.postprocessing === true )
         {
             VignetteShader.uniforms.darkness.value = this.params.vignetteIntensity
             this.composer.addPass(new ShaderPass( VignetteShader ))
+        }
+        if( this.params.grain === true && this.params.postprocessing === true )
+        {
+             // CUSTOM VHS SHADER
+            this.VHSShader = {
+                uniforms: {
+                    tDiffuse: { value: null },
+                    uTime: { value: 0 },
+                    uGrainIntensity: { value: this.params.grainIntensity },
+                    uChromaticAberration: { value: this.params.chromaticAberration },
+                    uSharpen: { value: this.params.sharpen },
+                },
+                vertexShader: basicVertex, 
+                fragmentShader: VHSFragment
+            }
+            this.VHSShaderPass = new ShaderPass(this.VHSShader)
+            this.composer.addPass(this.VHSShaderPass)
+        }
+        if( this.params.gammaCorrection === true && this.params.postprocessing === true )
+        {
+            this.composer.addPass( new ShaderPass( GammaCorrectionShader ))
         }
     }
 
@@ -123,6 +135,9 @@ export default class Renderer extends EventEmitter
         else if( this.params.postprocessing === true )
         {
             this.composer.render()
+
+            // UPDATE VHS SHADER
+            this.VHSShaderPass.uniforms.uTime.value = this.time.elapsedTime / 1000
         }
     }
 
@@ -143,19 +158,18 @@ export default class Renderer extends EventEmitter
                 this.composer.setPixelRatio( this.params.resolution )
             })
 
-            this.debugFolder = this.debug.renderDebugFolder.addFolder('Postprocessing')
-            this.debugFolder.close()
+            this.debugFolder = this.debug.renderDebugFolder
             this.debugFolder.add( this.params, 'postprocessing' ).name('Postprocessing Enabled?')
 
-            this.debugFolder.add( this.params, 'bloom' ).name('Bloom')
-            this.debugFolder.add( this.params, 'bloomPower' ).name('Bloom Amount')
-            this.debugFolder.add( this.params, 'filmic' ).name('Film Effect')
-            this.debugFolder.add( this.params, 'scanlineCount' ).name('Scanline Count')
-            this.debugFolder.add( this.params, 'scanlineIntensity' ).name('Scanline Intensity')
-            this.debugFolder.add( this.params, 'grayscale' ).name('Greyscale')
-            this.debugFolder.add( this.params, 'noiseIntensity' ).name('Noise Intensity')
-            this.debugFolder.add( this.params, 'gammaCorrection' ).name('Gamma Correction')
-            this.debugFolder.add( this.params, 'scanlineCount' ).name('Scanline Count')
+            // this.debugFolder.add( this.params, 'bloom' ).name('Bloom')
+            // this.debugFolder.add( this.params, 'bloomPower' ).name('Bloom Amount')
+            // this.debugFolder.add( this.params, 'filmic' ).name('Film Effect')
+            // this.debugFolder.add( this.params, 'scanlineCount' ).name('Scanline Count')
+            // this.debugFolder.add( this.params, 'scanlineIntensity' ).name('Scanline Intensity')
+            // this.debugFolder.add( this.params, 'grayscale' ).name('Greyscale')
+            // this.debugFolder.add( this.params, 'noiseIntensity' ).name('Noise Intensity')
+            // this.debugFolder.add( this.params, 'gammaCorrection' ).name('Gamma Correction')
+            // this.debugFolder.add( this.params, 'scanlineCount' ).name('Scanline Count')
         }
     }
 }

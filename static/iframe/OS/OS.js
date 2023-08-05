@@ -61,13 +61,7 @@ const openFolder = () =>
 
 const text1 = 
 `
-Just after arriving, I thought I heard somebody call out to me. 
-When I searched for where the sound came from, everything around me immidiately hushed. 
-It was almost as if the world around me was hiding behind a corner, just out of sight...
-
-It does not hide for too long.
-
-Is somebody there?
+Write something here?
 `
 
 let txtApp = {
@@ -405,10 +399,7 @@ const createApp = ( appObject, appType ) =>
             netEnvironmentsPara1.classList.add("netEnvironmentsPara1")
             netEnvironmentsPara1.innerHTML = 
             `
-            If you have wound up here, you must have found yourself lost in a strange and unknown location.
-            Many have found themselves in your shoes. We have, or will, be lost at some point or another.
-            This place has structure, but one which folds upon itself instantaneously.
-            In hopes to alleviate the weeriness that this place enforces upon its inhabitants, 
+            Web Pages In progress...
             `
             netEnvironments.appendChild( netEnvironmentsPara1 )
         }

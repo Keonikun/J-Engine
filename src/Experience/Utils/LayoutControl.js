@@ -445,7 +445,7 @@ export default class Layout
     {
         if(this.debug.active)
         {
-            this.debugFolder = this.debug.osDebugFolder
+            this.debugFolder = this.debug.debugFolder
             this.debugFolder.add(this.params, 'OSOpened').onChange(() =>
             {
                 if(this.params.OSOpened === true)

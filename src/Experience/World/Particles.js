@@ -15,19 +15,19 @@ export default class Particles
         this.params = {
             rainEnabled: true,
             rainDropCount: 50,
-            rainDropSpeed: 0.1,
-            rainDropColor: '#ffffff',
-            rainDropSize: 0.2,
-            rainSimDistance: 0.1,
-            rainHeightSpawn: 40,
-            rainHeightDeath: -20,
+            rainDropSpeed: 0.05,
+            rainDropColor: '#1010ff',
+            rainDropSize: 1,
+            rainSimDistance: 0.2,
+            rainHeightSpawn: -0.5,
+            rainHeightDeath: -10,
             windX: 0,
             windZ: 0,
-            visible: false,
+            visible: true,
 
-            posX: -4,
-            posY: -0,
-            posZ: -4.2
+            posX: 2.48,
+            posY: -0.37,
+            posZ: 10.97
         }
 
         this.staticPosition = false

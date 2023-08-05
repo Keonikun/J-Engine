@@ -25,11 +25,13 @@ export default class FirstPerson
             playerSpeed: 0.04, 
             sprintFactor: 1.5, 
             gravity: 0.08,
+            reticle: false,
             sprintingEnabled: true,
             collisionDistance: 0.5,
             locationHelper: false,
-            interactionDistance: 3.3,
-            spawnPoint: { x: -0.5, y: 0, z: 0, r: 1, r2: 0.1 },
+            interactionDistance: 2.5,
+            spawnpoint: { x: -0.5, y: 6, z: 0, r: 1, r2: 0.1 },
+            spawnpointOverride: false,
             locations: 'spawn',
             resetPosition: () =>
             {
@@ -80,32 +82,77 @@ export default class FirstPerson
         this.collisionMin = new THREE.Vector3( -1000, -1000, -1000 )
         this.collisionMax = new THREE.Vector3( 1000, 1000, 1000 )
 
-        this.setPosition(
-            this.params.spawnPoint.x,
-            this.params.spawnPoint.y, 
-            this.params.spawnPoint.z,
-            this.params.spawnPoint.r,
-        )
+        if(this.models.spawnpoint === true && this.params.spawnpointOverride === false)
+        {
+            this.setPosition(
+                this.models.spawn.x,
+                this.models.spawn.y,
+                this.models.spawn.z,
+                this.models.spawnRotationY
+            )
+        }
+        else
+        {
+            this.setPosition(
+                this.params.spawnpoint.x,
+                this.params.spawnpoint.y, 
+                this.params.spawnpoint.z,
+                this.params.spawnpoint.r,
+            )
+        }
+        
         this.setCollisionRayCaster()
         this.setKeyListener()
         this.setPointerLockControls()
+        
+        if(this.params.reticle === true)
+        {
+            // set reticle
+            this.overlayGeometry = new THREE.PlaneGeometry(0.015, 0.015, 1, 1)
+            this.overlayMaterial = new THREE.ShaderMaterial({
+                side: THREE.DoubleSide,
+                vertexShader: `
+                    varying vec2 vUv;
+
+                    void main()
+                    {
+                        gl_Position = vec4(position, 1.0);
+
+                        vUv = uv;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+
+                    void main()
+                    {
+                        float strength = step(0.35, max(abs(vUv.x - 0.1), abs(vUv.y - 0.5)));
+
+                        gl_FragColor = vec4(strength, strength, strength, 1.0);
+                    }
+                `
+            })
+            this.overlay = new THREE.Mesh(this.overlayGeometry,this.overlayMaterial)
+            this.overlay.frustumCulled = false
+            this.scene.add(this.overlay)
+        } 
     }
 
     setPosition( x, y, z, r, r2 )
     {
-        this.camera.position.set( x, y + 1.6, z )
+        this.camera.position.set( x, y + this.params.playerHeight, z )
         if(r)
         {
-            this.camera.rotation.y = Math.PI * r
+            this.camera.rotation.copy(r)
         }
     }
 
     resetPosition()
     {
         this.camera.position.set(
-            this.params.spawnPoint.x,
-            this.params.spawnPoint.y + 1.6,
-            this.params.spawnPoint.z
+            this.params.spawnpoint.x,
+            this.params.spawnpoint.y + 1.6,
+            this.params.spawnpoint.z
         )
     }
 
@@ -133,25 +180,39 @@ export default class FirstPerson
         this.detectWest = new THREE.Raycaster()
         this.detectWest.firstHitOnly = true
         this.westDirection = new THREE.Vector3( -1, 0, 0 )
+
+        if(this.models.dynamicScene === true)
+        {
+            this.collisionMap = [this.models.physMesh,this.models.dynamicObjects]
+        }
+        else
+        {
+            this.collisionMap = [this.models.physMesh]
+        }
+
+        // collision height vector
+        this.adjustedHeight = new THREE.Vector3()
     }
 
     floorCollision()
     {
         this.detectFloor.set( this.camera.position, this.floorDirection )
-        this.floorDetection = this.detectFloor.intersectObject( this.models.physMesh )
+        this.floorDetection = this.detectFloor.intersectObjects( this.collisionMap )
     }
 
     cardinalCollision()
     {
-        this.northDetection = this.detectNorth.intersectObject( this.models.physMesh )
-        this.eastDetection = this.detectEast.intersectObject( this.models.physMesh )
-        this.southDetection = this.detectSouth.intersectObject( this.models.physMesh )
-        this.westDetection = this.detectWest.intersectObject( this.models.physMesh )
+        this.adjustedHeight.set(this.camera.position.x,this.camera.position.y - 1.0, this.camera.position.z)
 
-        this.detectNorth.set( this.camera.position, this.northDirection)
-        this.detectEast.set( this.camera.position, this.eastDirection)
-        this.detectSouth.set( this.camera.position, this.southDirection)
-        this.detectWest.set( this.camera.position, this.westDirection)
+        this.detectNorth.set( this.adjustedHeight, this.northDirection)
+        this.detectEast.set( this.adjustedHeight, this.eastDirection)
+        this.detectSouth.set( this.adjustedHeight, this.southDirection)
+        this.detectWest.set( this.adjustedHeight, this.westDirection)
+        
+        this.northDetection = this.detectNorth.intersectObjects( this.collisionMap )
+        this.eastDetection = this.detectEast.intersectObjects( this.collisionMap )
+        this.southDetection = this.detectSouth.intersectObjects( this.collisionMap )
+        this.westDetection = this.detectWest.intersectObjects( this.collisionMap )
     }
 
     setArrowControls()
@@ -422,9 +483,8 @@ export default class FirstPerson
                 this.textAdventure.printString( this.locationHelperMessage )
             }
             // Object interactions
-            if( this.camRayIntersect[0].distance < 4 )
+            if( this.camRayIntersect[0].distance < this.params.interactionDistance )
             {
-                console.log(this.camRayIntersect[0].object)
                 if( this.camRayIntersect[0].object.interactive === true )
                 {
                     this.interactiveObjects.trigger( this.camRayIntersect[0].object )

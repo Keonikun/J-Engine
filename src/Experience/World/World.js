@@ -29,10 +29,10 @@ export default class World extends EventEmitter
         this.resources.on('ready', () =>
         {
             // Setup
+            this.environment = new Environment(this.experience)  
             this.models = new Models(this.experience)
             this.materials = new Materials(this.experience)
             this.audio = new Audio(this.experience)
-            this.environment = new Environment(this.experience)  
             this.particles = new Particles(this.experience)
             
             gsap.delayedCall(1,() =>
@@ -60,7 +60,10 @@ export default class World extends EventEmitter
             this.materials.update()
             this.particles.update()
             this.audio.update()
-            // this.interactiveObjects.update()
+            if(this.models.dynamicScene === true)
+            {
+                this.interactiveObjects.update()
+            }
             this.firstPerson.update( this.time.delta )
             this.actors.update()
         }

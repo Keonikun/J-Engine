@@ -20,9 +20,11 @@ export default class Models
         this.physMesh = null
         this.staticMesh = null
         this.dynamicObjects = null
+        this.spawn = {}
 
         this.staticScene = false
         this.dynamicScene = false
+        this.spawnpoint = false
         
         // GLTF Setup
         this.gltfScene = this.resources.items.gltfScene
@@ -46,21 +48,17 @@ export default class Models
                 this.staticMesh = element
                 this.staticScene = true
             }
-            if(element.name === "ArchSpeaker")
+            if(element.name === "Speaker")
             {
-                this.archSpeaker = element
+                this.speaker = element
             }
-            if(element.name === "DripSpeaker")
+            if(element.name === "Spawnpoint")
             {
-                this.dripSpeaker= element
-            }
-            if(element.name === "ClockSpeaker")
-            {
-                this.clockSpeaker = element
-            }
-            if(element.name === "WindowSpeaker")
-            {
-                this.windowSpeaker = element
+                this.spawnpoint = true
+                this.spawn.x = element.position.x
+                this.spawn.y = element.position.y
+                this.spawn.z = element.position.z
+                this.spawnRotationY = element.rotation
             }
         })
     }
