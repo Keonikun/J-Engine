@@ -1,6 +1,13 @@
 import { gsap } from "gsap"
 import Typewriter from "typewriter-effect/dist/core";
 
+/**
+ * TO DO:
+ * - Improve mobile controls by adding the ability to hide navbox
+ * - add mute/unmute button
+ * - mobile drag to look around?
+ */
+
 export default class Layout
 {
     constructor(experience)
@@ -42,10 +49,11 @@ export default class Layout
         
         if(window.mobileCheck())
         {
-            console.log("mobile controls activated")
+            console.log("mobile detected")
             this.arrowControls = document.querySelector('.arrowControls')
             this.arrowControls.classList.remove('hidden')
             this.mobile = true
+            this.camera.instance.fov = 65
         }
 
         // Load new game
@@ -58,29 +66,40 @@ export default class Layout
                 this.firstPerson.setArrowControls()
             }
             this.audio = this.experience.world.audio
-            document.querySelector('.loadingText').classList.add('hidden')
-            document.querySelector('.startGame').classList.remove('hidden')
+                            document.querySelector('.loadingText').classList.add('hidden')
 
-            document.querySelector('.startGame').addEventListener('click', () =>
+            gsap.delayedCall(1.0, () =>
             {
-                
-                this.audio.beginAudio()
-                document.querySelector('.titleScreen').classList.add('hidden')
-                this.experience.params.appStart = true
-                gsap.delayedCall(0.5, () =>
-                {
-                    document.querySelector('.titleScreen').remove()
-                    if(this.experience.params.portfolioMode === true)
-                    {
-                        this.setNavBox('disappear')
-                        console.log("hello")
-                    }
-                    if(this.experience.params.portfolioMode === false)
-                    {
-                        this.setNavBox('default')
+                document.querySelector('.startGame').classList.remove('hidden')
 
-                        this.textAdventure.progressToNextEvent(1)
-                    }
+                document.querySelector('.startGame').addEventListener('click', () =>
+                {
+                    this.experience.resize()
+                    this.audio.beginAudio()
+                    document.querySelector('.titleScreen').classList.add('hidden')
+                    this.experience.params.appStart = true
+                    gsap.delayedCall(0.5, () =>
+                    {
+                        document.querySelector('.titleScreen').remove()
+                        if(this.experience.params.portfolioMode === true)
+                        {
+                            this.setNavBox('disappear')
+                        }
+                        if(this.experience.params.portfolioMode === false)
+                        {
+                            this.setNavBox('default')
+
+                            this.textAdventure.progressToNextEvent(1)
+                        }
+
+                        if(this.renderer.params.logStats === true)
+                        {
+                            console.log("Scene Triangles:", this.renderer.instance.info.render.triangles)
+                            console.log("Active Drawcalls:", this.renderer.instance.info.render.calls)
+                            console.log("Textures in Memory", this.renderer.instance.info.memory.textures)
+                            console.log("Geometries in Memory", this.renderer.instance.info.memory.geometries)
+                        }
+                    })
                 })
             })   
         })

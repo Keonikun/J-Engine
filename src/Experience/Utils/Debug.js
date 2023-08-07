@@ -35,10 +35,7 @@ export default class Debug
                 if(this.params.fpsMonitor === true)
                 {
                     this.stats.setMode(0)
-                }
-                else
-                {
-                    this.stats.setMode()
+
                 }
             })
             this.debugFolder.close()

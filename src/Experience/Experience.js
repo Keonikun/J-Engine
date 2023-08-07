@@ -35,11 +35,11 @@ export default class Experience
             portfolioMode: false,
             appStart: false,
         }
-       
+
         this.worldLoaded = false
         this.world.on( 'ready', () =>
         {
-            this.worldLoaded = true;
+            this.worldLoaded = true
         })
 
         // Detect resize

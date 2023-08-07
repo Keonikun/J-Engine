@@ -14,7 +14,7 @@ export default class Audio
 
         this.params = {
             audioEnabled: true,
-            masterVolume: 1.0,
+            masterVolume: 0.5,
             speakersVisible: false,
             audioHelper: true,
         }

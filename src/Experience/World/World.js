@@ -33,15 +33,15 @@ export default class World extends EventEmitter
             this.models = new Models(this.experience)
             this.materials = new Materials(this.experience)
             this.audio = new Audio(this.experience)
-            this.particles = new Particles(this.experience)
+            // this.particles = new Particles(this.experience)
             
-            gsap.delayedCall(1,() =>
+            gsap.delayedCall(0.1,() =>
             {
                 if(this.models.dynamicScene === true)
                 {
                     this.interactiveObjects = new InteractiveObjects(this.experience)
                 }
-                this.actors = new Actors(this.experience)
+                // this.actors = new Actors(this.experience)
                 this.firstPerson = new FirstPerson(this.experience)
 
                 // Enable desired controls
@@ -56,16 +56,15 @@ export default class World extends EventEmitter
     {  
         if(this.experience.worldLoaded === true)
         {
-            // Animations 
             this.materials.update()
-            this.particles.update()
+            // this.particles.update()
+            // this.actors.update()
             this.audio.update()
             if(this.models.dynamicScene === true)
             {
                 this.interactiveObjects.update()
             }
             this.firstPerson.update( this.time.delta )
-            this.actors.update()
         }
     }
 }

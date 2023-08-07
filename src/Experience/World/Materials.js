@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import { PlainAnimator } from 'three-plain-animator/lib/plain-animator'
-
+import { PlainAnimator } from 'three-plain-animator/lib/plain-animator.js'
+import { WaterRefractionShader } from 'three/examples/jsm/shaders/WaterRefractionShader.js'
 
 export default class Materials
 {
@@ -53,6 +53,19 @@ export default class Materials
     {
         this.physMesh.children.forEach( element => {
             this.replaceMaterials(element)
+
+            if( element.material.name === "Textures")
+            {
+                element.material.side = THREE.FrontSide
+                element.material.precision = 'lowp'
+                element.material = new THREE.MeshStandardMaterial().copy( element.material )
+            }
+            if( element.material.name === "TexturesDoubleSide")
+            {
+                element.material.side = THREE.DoubleSide
+                element.material.precision = 'lowp'
+                element.material = new THREE.MeshStandardMaterial().copy( element.material )
+            }
         }) 
         if(this.models.staticScene === true)
         {
@@ -70,23 +83,18 @@ export default class Materials
 
     replaceMaterials(element)
     {
-        if( element.material.name === "Textures")
-        {
-            element.material.side = THREE.FrontSide
-        }
         if( element.material.name === "Water" )
         {
             this.waterExists = true
 
-            this.waterAnim = new PlainAnimator( this.waterAnimTexture, 4, 4, 16, 5 )
-            this.waterAnimMap = this.waterAnim.init()
             this.waterMaterial = new THREE.MeshPhysicalMaterial({ 
+                precision: 'lowp',
                 roughness: 0, 
                 transmission: 0.5,
                 metalness: 0,
                 side: THREE.FrontSide 
             })
-            
+
             element.material = this.waterMaterial
         }
         else if( element.material.name === "WindowRain" )
@@ -95,7 +103,12 @@ export default class Materials
 
             this.rainAnim = new PlainAnimator( this.rainAnimTexture, 8, 8, 60, 10 )
             this.rainAnimMap = this.rainAnim.init()
-            this.rainMaterial = new THREE.MeshStandardMaterial({ map: this.rainAnimMap, transparent: true, side: THREE.DoubleSide })
+            this.rainMaterial = new THREE.MeshStandardMaterial({ 
+                precision: 'lowp',
+                map: this.rainAnimMap, 
+                transparent: true, 
+                side: THREE.DoubleSide 
+            })
             
             element.material = this.rainMaterial
         }
@@ -105,7 +118,11 @@ export default class Materials
 
             this.staticAnim = new PlainAnimator( this.staticAnimTexture, 2, 2, 4, 10 )
             this.staticAnimMap = this.staticAnim.init()
-            this.staticMaterial = new THREE.MeshStandardMaterial({ map: this.staticAnimMap, emissive: '#333333' })
+            this.staticMaterial = new THREE.MeshStandardMaterial({ 
+                precision: 'lowp',
+                map: this.staticAnimMap, 
+                emissive: '#333333' 
+            })
             
             element.material = this.staticMaterial
         }
@@ -115,7 +132,11 @@ export default class Materials
 
             this.rippleAnim = new PlainAnimator( this.rippleAnimTexture, 4, 4, 16, 20 )
             this.rippleAnimMap = this.rippleAnim.init()
-            this.rippleMaterial = new THREE.MeshStandardMaterial({ map: this.rippleAnimMap, transparent: true })
+            this.rippleMaterial = new THREE.MeshStandardMaterial({ 
+                precision: 'lowp',
+                map: this.rippleAnimMap, 
+                transparent: true 
+            })
 
             element.material = this.rippleMaterial
         }
@@ -125,7 +146,11 @@ export default class Materials
 
             this.fanAnim = new PlainAnimator( this.fanAnimTexture, 2, 2, 4, 20 )
             this.fanAnimMap = this.fanAnim.init()
-            this.fanMaterial = new THREE.MeshStandardMaterial({ map: this.fanAnimMap, transparent: true })
+            this.fanMaterial = new THREE.MeshStandardMaterial({ 
+                precision: 'lowp',
+                map: this.fanAnimMap, 
+                transparent: true 
+            })
             
             element.material = this.fanMaterial
         }
@@ -135,31 +160,25 @@ export default class Materials
     {
         this.waterMaterialUniforms = {
             uTime: { value: 0 },
-            uSpeed: { value: 0.0005 },
-            uFrequencyX: { value: 0.5 },
-            uFrequencyZ: { value: 1.5 },
-            uElevation: { value: 0.05 }
         }
 
+        // CREATE WATER SHADER
         this.waterMaterial.onBeforeCompile = (shader) =>
         {
             shader.uniforms.uTime = this.waterMaterialUniforms.uTime
-            shader.uniforms.uSpeed = this.waterMaterialUniforms.uSpeed
-            shader.uniforms.uFrequencyX = this.waterMaterialUniforms.uFrequencyX
-            shader.uniforms.uFrequencyZ = this.waterMaterialUniforms.uFrequencyZ
-            shader.uniforms.uElevation = this.waterMaterialUniforms.uElevation
-
 
             shader.vertexShader = shader.vertexShader.replace(
                 '#include <common>', 
                 `
                     #include <common>
 
+                    // SHADER SETTINGS
+                    #define frequencyX 0.5
+                    #define frequencyZ 1.5
+                    #define speed 0.0005
+                    #define elevation 0.05
+
                     uniform float uTime;
-                    uniform float uSpeed;
-                    uniform float uFrequencyX;
-                    uniform float uFrequencyZ;
-                    uniform float uElevation;
 
                     varying vec2 vUv;  
                 `
@@ -169,9 +188,10 @@ export default class Materials
                 `
                     #include <begin_vertex>
                     
-                    transformed.y = transformed.y - sin(transformed.x * uFrequencyX + (uTime * uSpeed)) * 
-                                    sin(transformed.z * uFrequencyZ + (uTime * uSpeed)) * 
-                                    uElevation;
+                    // Position
+                    transformed.y = transformed.y - sin(transformed.x * frequencyX + (uTime * speed)) * 
+                                    sin(transformed.z * frequencyZ + (uTime * speed)) * 
+                                    elevation;
 
                     vUv = uv;
                 `
@@ -185,44 +205,35 @@ export default class Materials
 
                     varying vec2 vUv;
 
-                    vec4 permute(vec4 x)
-                    {
-                        return mod(((x*34.0)+1.0)*x, 289.0);
-                    }
+                    // Simplex 2D noise
+                    //
+                    vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
 
-                    vec2 fade(vec2 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
-
-                    float cnoise(vec2 P){
-                    vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);
-                    vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);
-                    Pi = mod(Pi, 289.0); // To avoid truncation effects in permutation
-                    vec4 ix = Pi.xzxz;
-                    vec4 iy = Pi.yyww;
-                    vec4 fx = Pf.xzxz;
-                    vec4 fy = Pf.yyww;
-                    vec4 i = permute(permute(ix) + iy);
-                    vec4 gx = 2.0 * fract(i * 0.0243902439) - 1.0; // 1/41 = 0.024...
-                    vec4 gy = abs(gx) - 0.5;
-                    vec4 tx = floor(gx + 0.5);
-                    gx = gx - tx;
-                    vec2 g00 = vec2(gx.x,gy.x);
-                    vec2 g10 = vec2(gx.y,gy.y);
-                    vec2 g01 = vec2(gx.z,gy.z);
-                    vec2 g11 = vec2(gx.w,gy.w);
-                    vec4 norm = 1.79284291400159 - 0.85373472095314 * 
-                        vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11));
-                    g00 *= norm.x;
-                    g01 *= norm.y;
-                    g10 *= norm.z;
-                    g11 *= norm.w;
-                    float n00 = dot(g00, vec2(fx.x, fy.x));
-                    float n10 = dot(g10, vec2(fx.y, fy.y));
-                    float n01 = dot(g01, vec2(fx.z, fy.z));
-                    float n11 = dot(g11, vec2(fx.w, fy.w));
-                    vec2 fade_xy = fade(Pf.xy);
-                    vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);
-                    float n_xy = mix(n_x.x, n_x.y, fade_xy.y);
-                    return 2.3 * n_xy;
+                    float snoise(vec2 v){
+                        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                                -0.577350269189626, 0.024390243902439);
+                        vec2 i  = floor(v + dot(v, C.yy) );
+                        vec2 x0 = v -   i + dot(i, C.xx);
+                        vec2 i1;
+                        i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+                        vec4 x12 = x0.xyxy + C.xxzz;
+                        x12.xy -= i1;
+                        i = mod(i, 289.0);
+                        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+                        + i.x + vec3(0.0, i1.x, 1.0 ));
+                        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+                            dot(x12.zw,x12.zw)), 0.0);
+                        m = m*m ;
+                        m = m*m ;
+                        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+                        vec3 h = abs(x) - 0.5;
+                        vec3 ox = floor(x + 0.5);
+                        vec3 a0 = x - ox;
+                        m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+                        vec3 g;
+                        g.x  = a0.x  * x0.x  + h.x  * x0.y;
+                        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+                        return 130.0 * dot(m, g);
                     }
                     
                 `
@@ -232,21 +243,21 @@ export default class Materials
                 `
                     #include <color_fragment>
 
-                    float strength = sin(cnoise(vec2(vUv.x + uTime * 0.00005, vUv.y + uTime * 0.00005) * 14.0));
-                    vec4 noise = vec4(strength * 0.25,strength* 0.25,strength* 0.25,1.0);
+                    float strength = sin(snoise(vec2(vUv.x + uTime * 0.00005, vUv.y + uTime * 0.00005) * 10.0));
+                    vec3 noise = vec3(strength * 0.25,strength* 0.25,strength* 0.25);
 
-                    float strength2 = sin(cnoise(vec2(vUv.x - uTime * 0.00005, vUv.y - uTime * 0.00005) * 7.0));
-                    vec4 noise2 = vec4(strength2 * 0.25,strength2* 0.25,strength2* 0.25,1.0);
+                    float strength2 = sin(snoise(vec2(vUv.x - uTime * 0.00005, vUv.y - uTime * 0.00005) * 6.0));
+                    vec3 noise2 = vec3(strength2 * 0.25,strength2* 0.25,strength2* 0.25);
 
-                    vec4 combinedNoise = mix(noise2, noise, 0.5);
+                    vec3 combinedNoise = mix(noise2, noise, 0.5);
 
-                    vec4 waterColor1 = vec4(0.15,0.15,0.17,1.0);
-                    vec4 waterColor2 = vec4(0.55,0.6,0.66,1.0);
+                    vec3 waterColor1 = vec3(0.15,0.15,0.17);
+                    vec3 waterColor2 = vec3(0.55,0.6,0.66);
 
-                    vec4 waterColorWithNoise = mix(waterColor1,waterColor2, combinedNoise);
-                    waterColorWithNoise.a = 0.9;
+                    vec3 mixedWaterColor = mix(waterColor1,waterColor2, combinedNoise);
+                    vec4 finalWaterColor = vec4(mixedWaterColor, 0.9);
 
-                    diffuseColor = waterColorWithNoise;
+                    diffuseColor = finalWaterColor;
                 `
             )
         }
@@ -256,7 +267,6 @@ export default class Materials
     {
         if( this.waterExists === true )
         {
-            this.waterAnim.animate()
             this.waterMaterialUniforms.uTime.value = this.time.elapsedTime
         }
         if( this.windowRainExists === true )
@@ -289,10 +299,6 @@ export default class Materials
             this.debugFolder = this.debug.environmentDebugFolder.addFolder('Shaders')
 
             this.waterDebugFolder = this.debugFolder.addFolder('Water')
-            this.waterDebugFolder.add(this.waterMaterialUniforms.uSpeed, 'value').min(0.00001).max(0.02).step(0.00001).name('Speed')
-            this.waterDebugFolder.add(this.waterMaterialUniforms.uElevation, 'value').min(0).max(1).step(0.001).name('Elevation')
-            this.waterDebugFolder.add(this.waterMaterialUniforms.uFrequencyX, 'value').min(0.0001).max(1).step(0.0001).name('X-Frequency')
-            this.waterDebugFolder.add(this.waterMaterialUniforms.uFrequencyZ, 'value').min(0.0001).max(1).step(0.0001).name('Z-Frequency')
 
             this.debugFolder.close()
         }

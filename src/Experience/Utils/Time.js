@@ -8,9 +8,11 @@ export default class Time extends EventEmitter
         super()
 
         // Setup 
+        this.experience = experience
         this.clock = new Clock()
         this.start = Date.now()
-        this.fpsTime = Date.now()
+        this.fpsTime = null
+        this.currentTime = null
         this.current = this.start
         this.elapsed = 0
         this.elapsedTime = 0
@@ -19,43 +21,26 @@ export default class Time extends EventEmitter
         this.fpsMonitor = 0
         this.currentFps = 0
         this.secondCounter = this.current + 1000
-        
-        this.params = {
-            fps: 30
-        }
 
-        this.fpsInterval = 1000 / this.params.fps
+        this.fpsInterval = 1000
 
-        if(this.debug.active)
-        {
-            this.debug.renderDebugFolder.add(this.params, 'fps', 10, 60)
-            .name('Frames Per Second')
-            .onChange(() =>
-            {
-                this.fpsInterval = 1000 / this.params.fps
-            })
-        }
-
-
-        window.requestAnimationFrame(() =>
-        {
-            this.tick()
-        })
+        this.tick()
     }
 
     tick()
     {
-        const currentTime = Date.now()
-        this.delta = currentTime - this.current
-        this.current = currentTime
+        this.currentTime = Date.now()
+
+        this.delta = this.currentTime - this.current
+        this.current = this.currentTime
         this.elapsed = this.current - this.fpsTime
         this.elapsedTime = this.current - this.start
-
+       
         window.requestAnimationFrame(() => 
         {
             this.tick()
         })
-       
+
         // Trigger the next tick depending on the FPS interval
         if(this.elapsed > this.fpsInterval)
         {

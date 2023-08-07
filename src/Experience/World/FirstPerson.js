@@ -3,6 +3,14 @@ import { PointerLockControls } from '../Utils/PointerLockControls.js'
 import { acceleratedRaycast } from 'three-mesh-bvh'
 import gsap from 'gsap'
 
+/**
+ * TO DO:
+ * - Fix footsteps bug
+ * - Fix location helper
+ * - Fix Reticle
+ * - Add reticle options
+ */
+
 export default class FirstPerson
 {
     constructor( experience )
@@ -30,7 +38,6 @@ export default class FirstPerson
             collisionDistance: 0.5,
             locationHelper: false,
             interactionDistance: 2.5,
-            spawnpoint: { x: -0.5, y: 6, z: 0, r: 1, r2: 0.1 },
             spawnpointOverride: false,
             locations: 'spawn',
             resetPosition: () =>
@@ -47,7 +54,7 @@ export default class FirstPerson
 
     setup()
     {
-        // Use Mesh BVH raycaster
+        // Use Mesh BVH raycaster to improve performance
         THREE.Mesh.prototype.raycast = acceleratedRaycast
 
         this.disengaged = false
@@ -71,7 +78,7 @@ export default class FirstPerson
         this.locationHelperGeo = new THREE.BoxGeometry( 0.1, 0.1, 0.1 )
         this.locationHelperMat = new THREE.MeshBasicMaterial({ color: '#ff0000' })
         this.locationHelper = new THREE.Mesh( this.locationHelperGeo, this.locationHelperMat )
-        this.locationHelper.position.set(0,0,0)
+        this.locationHelper.position.set( 0, 0, 0 )
 
         if( this.params.locationHelper === true )
         {
@@ -82,7 +89,7 @@ export default class FirstPerson
         this.collisionMin = new THREE.Vector3( -1000, -1000, -1000 )
         this.collisionMax = new THREE.Vector3( 1000, 1000, 1000 )
 
-        if(this.models.spawnpoint === true && this.params.spawnpointOverride === false)
+        if( this.models.spawnpoint === true && this.params.spawnpointOverride === false )
         {
             this.setPosition(
                 this.models.spawn.x,
@@ -93,12 +100,7 @@ export default class FirstPerson
         }
         else
         {
-            this.setPosition(
-                this.params.spawnpoint.x,
-                this.params.spawnpoint.y, 
-                this.params.spawnpoint.z,
-                this.params.spawnpoint.r,
-            )
+            this.setPosition( 0, 0, 0 )
         }
         
         this.setCollisionRayCaster()
@@ -108,7 +110,7 @@ export default class FirstPerson
         if(this.params.reticle === true)
         {
             // set reticle
-            this.overlayGeometry = new THREE.PlaneGeometry(0.015, 0.015, 1, 1)
+            this.overlayGeometry = new THREE.PlaneGeometry( 0.015, 0.015, 1, 1 )
             this.overlayMaterial = new THREE.ShaderMaterial({
                 side: THREE.DoubleSide,
                 vertexShader: `
@@ -132,18 +134,18 @@ export default class FirstPerson
                     }
                 `
             })
-            this.overlay = new THREE.Mesh(this.overlayGeometry,this.overlayMaterial)
+            this.overlay = new THREE.Mesh( this.overlayGeometry, this.overlayMaterial )
             this.overlay.frustumCulled = false
-            this.scene.add(this.overlay)
+            this.scene.add( this.overlay )
         } 
     }
 
-    setPosition( x, y, z, r, r2 )
+    setPosition( x, y, z, r )
     {
         this.camera.position.set( x, y + this.params.playerHeight, z )
-        if(r)
+        if( r )
         {
-            this.camera.rotation.copy(r)
+            this.camera.rotation.copy( r )
         }
     }
 
@@ -181,16 +183,15 @@ export default class FirstPerson
         this.detectWest.firstHitOnly = true
         this.westDirection = new THREE.Vector3( -1, 0, 0 )
 
-        if(this.models.dynamicScene === true)
+        if( this.models.dynamicScene === true )
         {
-            this.collisionMap = [this.models.physMesh,this.models.dynamicObjects]
+            this.collisionMap = [ this.models.physMesh, this.models.dynamicObjects ]
         }
         else
         {
-            this.collisionMap = [this.models.physMesh]
+            this.collisionMap = [ this.models.physMesh ]
         }
 
-        // collision height vector
         this.adjustedHeight = new THREE.Vector3()
     }
 
@@ -202,12 +203,12 @@ export default class FirstPerson
 
     cardinalCollision()
     {
-        this.adjustedHeight.set(this.camera.position.x,this.camera.position.y - 1.0, this.camera.position.z)
+        this.adjustedHeight.set( this.camera.position.x, this.camera.position.y - 1.0, this.camera.position.z )
 
-        this.detectNorth.set( this.adjustedHeight, this.northDirection)
-        this.detectEast.set( this.adjustedHeight, this.eastDirection)
-        this.detectSouth.set( this.adjustedHeight, this.southDirection)
-        this.detectWest.set( this.adjustedHeight, this.westDirection)
+        this.detectNorth.set( this.adjustedHeight, this.northDirection )
+        this.detectEast.set( this.adjustedHeight, this.eastDirection )
+        this.detectSouth.set( this.adjustedHeight, this.southDirection )
+        this.detectWest.set( this.adjustedHeight, this.westDirection )
         
         this.northDetection = this.detectNorth.intersectObjects( this.collisionMap )
         this.eastDetection = this.detectEast.intersectObjects( this.collisionMap )
@@ -224,7 +225,6 @@ export default class FirstPerson
         this.lookLeftArrowPressed = false
         this.lookRightArrowPressed = false
 
-        // arrow control elements
         this.forwardButton = document.querySelector( '.forwardControl' )
         this.backwardButton = document.querySelector( '.backwardControl' )
         this.leftButton = document.querySelector( '.leftControl' )
@@ -232,71 +232,69 @@ export default class FirstPerson
         this.lookLeftButton = document.querySelector( '.lookLeftControl' )
         this.lookRightButton = document.querySelector( '.lookRightControl' )
 
-        this.forwardButton.addEventListener('mousedown', () =>
-        {
-            this.forwardArrowPressed = true
-            this.walking = true
-            console.log("forward")
-        })
-        this.forwardButton.addEventListener('mouseup', () =>
-        {
-            this.forwardArrowPressed = false
-        })
-        this.backwardButton.addEventListener('mousedown', () =>
-        {
-            this.backwardArrowPressed = true
-            this.walking = true
-            console.log("forward")
+        // FOR DESKTOP
 
-        })
-        this.backwardButton.addEventListener('mouseup', () =>
-        {
-            this.backwardArrowPressed = false
-        })
-        this.leftButton.addEventListener('mousedown', () =>
-        {
-            this.leftArrowPressed = true
-            this.walking = true
-        })
-        this.leftButton.addEventListener('mouseup', () =>
-        {
-            this.leftArrowPressed = false
-        })
-        this.rightButton.addEventListener('mousedown', () =>
-        {
-            this.rightArrowPressed = true
-            this.walking = true
-        })
-        this.rightButton.addEventListener('mouseup', () =>
-        {
-            this.rightArrowPressed = false
-        })
-        this.lookLeftButton.addEventListener('mousedown', () =>
-        {
-            this.lookLeftArrowPressed = true
-            this.walking = true
-        })
-        this.lookLeftButton.addEventListener('mouseup', () =>
-        {
-            this.lookLeftArrowPressed = false
-        })
-        this.lookRightButton.addEventListener('mousedown', () =>
-        {
-            this.lookRightArrowPressed = true
-            this.walking = true
-        })
-        this.lookRightButton.addEventListener('mouseup', () =>
-        {
-            this.lookRightArrowPressed = false
-        })
+        // this.forwardButton.addEventListener( 'mousedown', () =>
+        // {
+        //     this.forwardArrowPressed = true
+        //     this.walking = true
+        // })
+        // this.forwardButton.addEventListener( 'mouseup', () =>
+        // {
+        //     this.forwardArrowPressed = false
+        // })
+        // this.backwardButton.addEventListener( 'mousedown', () =>
+        // {
+        //     this.backwardArrowPressed = true
+        //     this.walking = true
+        // })
+        // this.backwardButton.addEventListener( 'mouseup', () =>
+        // {
+        //     this.backwardArrowPressed = false
+        // })
+        // this.leftButton.addEventListener( 'mousedown', () =>
+        // {
+        //     this.leftArrowPressed = true
+        //     this.walking = true
+        // })
+        // this.leftButton.addEventListener( 'mouseup', () =>
+        // {
+        //     this.leftArrowPressed = false
+        // })
+        // this.rightButton.addEventListener( 'mousedown', () =>
+        // {
+        //     this.rightArrowPressed = true
+        //     this.walking = true
+        // })
+        // this.rightButton.addEventListener( 'mouseup', () =>
+        // {
+        //     this.rightArrowPressed = false
+        // })
+        // this.lookLeftButton.addEventListener( 'mousedown', () =>
+        // {
+        //     this.lookLeftArrowPressed = true
+        //     this.walking = true
+        // })
+        // this.lookLeftButton.addEventListener( 'mouseup', () =>
+        // {
+        //     this.lookLeftArrowPressed = false
+        // })
+        // this.lookRightButton.addEventListener( 'mousedown', () =>
+        // {
+        //     this.lookRightArrowPressed = true
+        //     this.walking = true
+        // })
+        // this.lookRightButton.addEventListener( 'mouseup', () =>
+        // {
+        //     this.lookRightArrowPressed = false
+        // })
 
-        //
+        // FOR MOBILE
 
         this.forwardButton.addEventListener('touchstart', () =>
         {
             this.forwardArrowPressed = true
             this.walking = true
-            console.log("forward")
         })
         this.forwardButton.addEventListener('touchend', () =>
         {
@@ -306,8 +304,6 @@ export default class FirstPerson
         {
             this.backwardArrowPressed = true
             this.walking = true
-            console.log("forward")
-
         })
         this.backwardButton.addEventListener('touchend', () =>
         {
@@ -349,17 +345,14 @@ export default class FirstPerson
         {
             this.lookRightArrowPressed = false
         })
-
         if( this.rightArrowPressed === false && this.leftArrowPressed === false && this.forwardArrowPressed === false && this.backwardArrowPressed === false && this.lookLeftArrowPressed === false && this.lookRightArrowPressed === false )
         {
             this.walking = false
         }
-
     }
 
     setKeyListener()
     {
-        // Listen to all keyboard events and add them to the keyboard object
         this.keyboard = {}
 
         this.keyDown = ( event ) =>
@@ -398,7 +391,7 @@ export default class FirstPerson
                 {
                     if(this.firstTimeInteraction === true)
                     {
-                        this.experience.camera.animateFovTo(this.experience.camera.params.defaultFov)
+                        this.experience.camera.animateFovTo(this.experience.renderer.params.fov)
                         this.firstTimeInteraction = false
                         document.querySelector('.navBox').classList.add('default')
                         document.querySelector('.boxShadow').classList.add('default')

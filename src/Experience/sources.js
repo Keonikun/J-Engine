@@ -164,11 +164,11 @@ export default [
     /**
      * ---------HDR-----------
      */
-    {
-        name: 'studioHDR',
-        type: 'HDR',
-        path: '/textures/static/studio.hdr'
-    },
+    // {
+    //     name: 'studioHDR',
+    //     type: 'HDR',
+    //     path: '/textures/static/studio.hdr'
+    // },
     /**
      * --------Cube Map---------
      */

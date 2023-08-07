@@ -8,6 +8,12 @@ import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import {GammaCorrectionShader} from 'three/examples/jsm/shaders/GammaCorrectionShader.js'
 
+/**
+ * TO DO:
+ * - Add debug options for fps, fov, and render distance
+ * - Change Postprocessing options on the fly?
+ */
+
 export default class Renderer extends EventEmitter
 {
     constructor( experience )
@@ -26,41 +32,40 @@ export default class Renderer extends EventEmitter
 
         this.params = { 
 
+            // RENDER OPTIONS
             resolution: 0.5,
             renderDistance: 100,
+            fps: 30,
+            fov: 50,
 
+            // ANIMATE THE FOV
+            startFov: 60,
+            fovAnimationTime: 1,
+
+            // POSTPROCESSING
             postprocessing: true,
 
             // BLOOM
             bloom: true,
-            bloomResolution: 16,
+            bloomResolution: 1,
             bloomPower: 0.2,
             bloomRadius: 0.05,
-            bloomThreshold: 0.5,
+            bloomThreshold: 0.01,
 
-            // Custom Grain Shader
-            grain: true,
-            grainIntensity: 0.1,
-            chromaticAberration: 0.1,
-            sharpen: 1.0,
+            // VHS
+            VHS: true,
 
-            // Vignette
-            vignette: false,
-            vignetteIntensity: 1.2,
-
-            gammaCorrection: true,
+            // DEBUGGING
+            logStats: false,
         }
 
-        this.highlightedObject = null
-        this.objectsToOutline = []
-
         this.setInstance()
-        this.setComposer()
         this.setDebug()
     }
     
     setInstance()
     {
+        // Base Renderer
         this.instance = new THREE.WebGLRenderer({
             canvas: this.canvas,
             antialias: false,
@@ -74,37 +79,26 @@ export default class Renderer extends EventEmitter
         this.instance.setSize( this.sizes.width, this.sizes.height )
         this.instance.setPixelRatio( this.sizes.pixelRatio * this.params.resolution )
 
-        this.camera.setRenderDistance(this.params.renderDistance)
-    }
+        if( this.params.postprocessing === true )
+        {
+            // Post Processing Renderer
+            this.composer = new EffectComposer( this.instance )
+            this.composer.addPass( new RenderPass( this.scene, this.camera.instance ))
+            this.composer.powerPreference = "low-power"
 
-    setComposer()
-    {
-        this.composer = new EffectComposer( this.instance )
-        this.composer.addPass( new RenderPass( this.scene, this.camera.instance ))
-        this.composer.powerPreference = "low-power"
-
-        if( this.params.bloom === true && this.params.postprocessing === true )
-        {
-            this.composer.addPass( new UnrealBloomPass(
-                { x: this.params.bloomResolution, y: this.params.bloomResolution }, 
-                this.params.bloomPower, this.params.bloomRadius, this.params.bloomThreshold 
-            ))
-        }
-        if( this.params.vignette === true && this.params.postprocessing === true )
-        {
-            VignetteShader.uniforms.darkness.value = this.params.vignetteIntensity
-            this.composer.addPass(new ShaderPass( VignetteShader ))
-        }
-        if( this.params.grain === true && this.params.postprocessing === true )
-        {
-             // CUSTOM VHS SHADER
+            // Post Processing Passes
+            if( this.params.bloom === true && this.params.postprocessing === true )
+            {
+                this.composer.addPass( new UnrealBloomPass(
+                    { x: this.params.bloomResolution, y: this.params.bloomResolution }, 
+                    this.params.bloomPower, this.params.bloomRadius, this.params.bloomThreshold 
+                ))
+            }
+            // CUSTOM VHS SHADER
             this.VHSShader = {
                 uniforms: {
                     tDiffuse: { value: null },
                     uTime: { value: 0 },
-                    uGrainIntensity: { value: this.params.grainIntensity },
-                    uChromaticAberration: { value: this.params.chromaticAberration },
-                    uSharpen: { value: this.params.sharpen },
                 },
                 vertexShader: basicVertex, 
                 fragmentShader: VHSFragment
@@ -112,10 +106,12 @@ export default class Renderer extends EventEmitter
             this.VHSShaderPass = new ShaderPass(this.VHSShader)
             this.composer.addPass(this.VHSShaderPass)
         }
-        if( this.params.gammaCorrection === true && this.params.postprocessing === true )
-        {
-            this.composer.addPass( new ShaderPass( GammaCorrectionShader ))
-        }
+   
+        this.time.fpsInterval = 1000 / this.params.fps
+        this.camera.instance.fov = this.params.startFov
+        this.camera.instance.far = this.params.renderDistance
+        this.camera.fovVariable.fov = this.params.startFov
+        this.camera.fovAnimationTime = this.params.fovAnimationTime
     }
 
     resize()
@@ -137,7 +133,10 @@ export default class Renderer extends EventEmitter
             this.composer.render()
 
             // UPDATE VHS SHADER
-            this.VHSShaderPass.uniforms.uTime.value = this.time.elapsedTime / 1000
+            if( this.params.VHS === true )
+            {
+                this.VHSShaderPass.uniforms.uTime.value = this.time.elapsedTime / 1000
+            }
         }
     }
 
