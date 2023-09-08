@@ -1,6 +1,6 @@
 #define grainIntensity 0.1
 #define chromaticAberrationIntensity 0.2
-#define darken 0.01
+#define darken 0.0
 
 uniform sampler2D tDiffuse;
 uniform float uTime;

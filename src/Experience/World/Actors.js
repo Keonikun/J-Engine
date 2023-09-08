@@ -1,6 +1,10 @@
 import * as THREE from 'three'
 import { gsap } from 'gsap'
-import { TweenLite } from 'gsap/gsap-core'
+
+/**
+ * TO DO:
+ * Fix rain with shader
+ */
 
 export default class Actors
 {
@@ -17,8 +21,8 @@ export default class Actors
 
         this.params = {
             weather: false,
-            indefiniteRain: false,
-            weatherFollowsYou: false,
+            indefiniteRain: true,
+            weatherFollowsYou: true,
             rainFrequency: 1000,
             weatherClearFrequency: 100,
             silentWeather: false,
@@ -57,27 +61,6 @@ export default class Actors
     // NOTE: not using delta
     update()
     {
-        // Day night cycle counter
-        // if(this.params.dayNightCycle === true && this.params.pauseTime === false)
-        // {
-        //     this.dayCounter ++
-
-        //     if(this.dayCounter >= this.params.dayLength)
-        //     {
-        //         if(this.day === true)
-        //         {
-        //             this.day = false
-        //             this.environment.nighttime()
-        //         }
-        //         else if(this.day === false)
-        //         {
-        //             this.day = true
-        //             this.environment.daytime()
-        //         }
-        //         this.dayCounter = 0
-        //     }
-        // }
-
         // Weather Counter
         if( this.params.weather === true && this.params.pauseTime === false && this.params.indefiniteRain === false )
         {
@@ -90,7 +73,6 @@ export default class Actors
                     this.rain = true
                     if(this.params.silentWeather === false)
                     {
-                        console.log("hello")
                         this.audio.play('rain')
                     }
                     this.particles.params.visible = true
@@ -104,8 +86,7 @@ export default class Actors
                     }
                     this.particles.params.visible = false
                 }
-                this.weatherCounter = 0
-                
+                this.weatherCounter = 0         
             }
         }
     }

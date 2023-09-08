@@ -176,6 +176,16 @@ a
 
 }
 
+.previewImage
+{
+    position: absolute;
+    left: 200%;
+    top: 50%;
+    transform: translate(-50%,0%);
+    width: 70px;
+    z-index: 0;
+}
+
 .startGame
 {
     position: absolute;

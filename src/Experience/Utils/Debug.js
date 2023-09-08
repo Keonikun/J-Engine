@@ -29,7 +29,7 @@ export default class Debug
             this.renderDebugFolder = this.gui.addFolder( 'Render Settings' ).close()  
             this.environmentDebugFolder = this.gui.addFolder( 'Environment Settings' ).close()    
             this.playerDebugFolder = this.gui.addFolder( 'Player Settings' ).close()
-            this.debugFolder = this.gui.addFolder('Dev Tools')
+            this.debugFolder = this.gui.addFolder('Misc')
             this.debugFolder.add(this.params, 'fpsMonitor').onChange(() =>
             {
                 if(this.params.fpsMonitor === true)

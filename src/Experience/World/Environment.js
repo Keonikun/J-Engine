@@ -19,21 +19,21 @@ export default class Environment
             
             skybox: true,
 
-            backgroundColor: '#636363',
-            ambientLightInt: 0,
+            backgroundColor: '#333c48',
+            ambientLightInt: 2,
             ambientLightCol: '#ffffff',
             dirLightInt: 5.0,
             dirLightCol: '#ffffff',
             dirLightPosX: 3.5,
             dirLightPosY: 2,
             dirLightPosZ: - 1.25,
-            fogNear: 30,
-            fogDistance: 50,
+            fogNear: 50,
+            fogDistance: 100,
         }
         
 
         this.setDebug()
-        // this.setAmbientLight()
+        this.setAmbientLight()
         // this.setDirectionalLight()
         this.setEnvironmentMap()
         this.setFog()
@@ -76,25 +76,25 @@ export default class Environment
         if( this.params.skybox === true )
         {
             this.environmentMap = {}
-            this.environmentMap.intensity = 0.5
+            this.environmentMap.intensity = 20
             this.environmentMap.texture = this.resources.items.dayMap  
             this.environmentMap.texture.encoding = 3001          
             this.scene.environment = this.environmentMap.texture
 
             // Does not work unless using MeshPhysicalMaterial
-            // this.setEnvironmentMap.updateMaterial = () =>
-            // {
-            //     this.scene.traverse( ( child ) => 
-            //     {
-            //         if( child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial )
-            //         {
-            //             child.material.envMap = this.environmentMap.texture
-            //             child.material.envMapIntensity = this.environmentMap.intensity
-            //             child.material.needsUpdate = true
-            //         }
-            //     })
-            // }
-            // this.setEnvironmentMap.updateMaterial()
+            this.setEnvironmentMap.updateMaterial = () =>
+            {
+                this.scene.traverse( ( child ) => 
+                {
+                    if( child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial )
+                    {
+                        child.material.envMap = this.environmentMap.texture
+                        child.material.envMapIntensity = this.environmentMap.intensity
+                        child.material.needsUpdate = true
+                    }
+                })
+            }
+            this.setEnvironmentMap.updateMaterial()
 
             this.scene.background = this.environmentMap.texture
         }

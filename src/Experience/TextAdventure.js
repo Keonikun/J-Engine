@@ -39,6 +39,13 @@ export default class TextAdventure
         this.choiceResult = null
         this.typewriterWorking = false
         this.dialogueFocused = false
+
+        this.textBox = document.querySelector( '.textBox' )
+        this.typewriter = new Typewriter( this.textBox, { 
+            loop: false, 
+            delay: this.params.typeSpeed, 
+            cursor: this.params.textCursor 
+        })
     }
 
     event( eventNumber, choiceResult )
@@ -48,13 +55,30 @@ export default class TextAdventure
         {
             if( this.debug.active )
             {
-                
+                this.typewriter.typeString( "Use ghost mode with 'V'" )
+                this.typewriter.typeString( '<br class=textLineBreak>' )
+                this.typewriter.typeString( "Change Environment with Controls Tab in the upper right" )
+                this.typewriter.typeString( '<br class=textLineBreak>' )
                 this.typewriter.typeString( "<a class='choice1' href='#home' style='color:crimson'>Exit Dev Mode</a>" )
                 this.typeEvent( 'singleChoice',2 )
             }
             else
             {
-                this.typewriter.typeString( "<a class='choice1' href='#debug' style='color:green'>Dev Mode</a>" )
+                
+                this.typewriter.typeString( "---------------  Cliffside  --------------" )
+                this.typewriter.typeString( '<br class=textLineBreak>' )
+                this.typewriter.typeString( '<br class=textLineBreak>' )
+                this.typewriter.typeString( "Movement Controls: 'W', 'A', 'S', 'D' Keys" )
+                this.typewriter.typeString( '<br class=textLineBreak>' )
+
+                this.typewriter.typeString( "Look Around: Trackpad or Mouse" )
+                this.typewriter.typeString( '<br class=textLineBreak>' )
+
+                this.typewriter.typeString( "Click the scene above to continue." )
+                this.typewriter.typeString( '<br class=textLineBreak>' )
+                this.typewriter.typeString( '<br class=textLineBreak>' )
+                this.typewriter.typeString( "<a class='choice1' href='#debug' style='color:green'>Settings.</a>" )
+               
                 this.typeEvent( 'singleChoice', 2 )
             }    
         }
@@ -192,8 +216,7 @@ export default class TextAdventure
 
     createTypewriter()
     {
-        this.textBox = document.querySelector( '.textBox' )
-        this.typewriter = new Typewriter( this.textBox, { loop: false, delay: this.params.typeSpeed, cursor: this.params.textCursor } )
+        
     }
 
     textDelay()

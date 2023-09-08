@@ -36,11 +36,20 @@ export default class Models
             {
                 this.physMesh = element
             }
-            // Setup for dynamic collider environment
+            // Setup for dynamic objects
             if( element.name === "DynamicObjects" )
             {
                 this.dynamicObjects = element
                 this.dynamicScene = true
+
+
+                if( element.name === "door 1" )
+                {
+                }
+                if( element.name === "OS" )
+                {
+                    this.door1
+                }
             }
             // Setup for visual environment
             if(element.name === "StaticMesh")
@@ -48,9 +57,33 @@ export default class Models
                 this.staticMesh = element
                 this.staticScene = true
             }
-            if(element.name === "Speaker")
+            if(element.name === "frogSpeaker")
             {
-                this.speaker = element
+                this.frogSpeaker = element
+            }
+            if(element.name === "waterSpeaker1")
+            {
+                this.waterSpeaker1 = element
+            }
+            if(element.name === "waterSpeaker2")
+            {
+                this.waterSpeaker2 = element
+            }
+            if(element.name === "bellSpeaker")
+            {
+                this.bellSpeaker = element
+            }
+            if(element.name === "fireSpeaker")
+            {
+                this.fireSpeaker = element
+            }
+            if(element.name === "cricketsSpeaker")
+            {
+                this.cricketsSpeaker = element
+            }
+            if(element.name === "roomwSpeaker")
+            {
+                this.roomwSpeaker = element
             }
             if(element.name === "Spawnpoint")
             {

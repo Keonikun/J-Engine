@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import rainVertex from './Shaders/rainVertex.glsl'
+import rainFragment from './Shaders/rainFragment.glsl'
 
 export default class Particles
 {
@@ -14,20 +16,19 @@ export default class Particles
 
         this.params = {
             rainEnabled: true,
-            rainDropCount: 50,
+            rainDropCount: 100,
             rainDropSpeed: 0.05,
-            rainDropColor: '#1010ff',
-            rainDropSize: 1,
-            rainSimDistance: 0.2,
+            rainDropColor: '#ffffff',
+            rainDropSize: 0.2,
+            rainSimDistance: 7,
             rainHeightSpawn: -0.5,
             rainHeightDeath: -10,
             windX: 0,
             windZ: 0,
-            visible: true,
 
-            posX: 2.48,
-            posY: -0.37,
-            posZ: 10.97
+            posX: 0,
+            posY: 0,
+            posZ: -35
         }
 
         this.staticPosition = false
@@ -54,19 +55,23 @@ export default class Particles
         for( let i=0;i<this.params.rainDropCount * 3; i+=3 )
         {
             this.rainArray[i] = Math.random() * (this.params.rainSimDistance * 2) - this.params.rainSimDistance
-            this.rainArray[i + 1] = Math.random() * this.params.rainHeightSpawn
+            this.rainArray[i + 1] = Math.random() * this.params.rainSimDistance
             this.rainArray[i + 2] = Math.random() * (this.params.rainSimDistance * 2) - this.params.rainSimDistance
         }
 
         this.rainGeo.setAttribute( 'position', new THREE.BufferAttribute( this.rainArray, 3 ))
 
-        this.rainMat = new THREE.PointsMaterial({
-            map: this.resources.items.rainTexture,
-            color: this.params.rainDropColor,
-            size: this.params.rainDropSize,
-            sizeAttenuation: true,
+        this.rainMat = new THREE.ShaderMaterial({
+            depthWrite: false,
+            vertexColors: true,
             transparent: true,
-            
+            vertexShader: rainVertex,
+            fragmentShader: rainFragment,
+            uniforms:
+            {
+                uTime: { value: 0 },
+                map: { value: this.resources.items.rainTexture }
+            }
         })
 
         this.rain = new THREE.Points(this.rainGeo, this.rainMat)
@@ -76,43 +81,17 @@ export default class Particles
 
     update()
     {
-        if(this.params.visible === true)
-        {
-            if(this.params.rainEnabled === true && this.experience.worldLoaded === true)
+        if(this.params.rainEnabled === true && this.experience.worldLoaded === true)
+        {   
+            if(this.staticPosition === false)
             {
-                this.rainAnimPositions = this.rain.geometry.attributes.position.array
-                for( let i = 0; i < this.params.rainDropCount * 3; i+=3 )
-                {
-                    // Rain fall speed
-                    this.rainAnimPositions[i+1] -= this.params.rainDropSpeed + Math.random() * 0.1
-                    if( this.rainAnimPositions[i+1] < (this.params.rainHeightDeath * Math.random()))
-                    {
-                        this.rainAnimPositions[i+1] = this.params.rainHeightSpawn
-                    }
-                    this.rain.geometry.attributes.position.needsUpdate = true
-                }
-
-                // Update particle size when looking up -- prevent spaghetti rain
-                if(this.experience.worldLoaded === true)
-                {
-                    this.camX = this.experience.world.firstPerson.pointerLockControls.eulerX
-                    if(this.camX > 0 && this.camX < Math.PI * 0.5)
-                    {
-                        this.rain.material.size = this.params.rainDropSize - (this.params.rainDropSize * ( this.camX / (Math.PI * 0.7)))
-                    }
-                }
-                
-                if(this.staticPosition === false)
-                {
-                    this.rain.position.y = this.camera.position.y 
-                    this.rain.position.x = this.camera.position.x
-                    this.rain.position.z = this.camera.position.z 
-                }
+                this.rain.position.y = this.camera.position.y 
+                this.rain.position.x = this.camera.position.x
+                this.rain.position.z = this.camera.position.z 
             }
-        }
-        else if(this.params.visible === false)
-        {
-            this.rain.position.y = 1000
+
+            // Update rain shader
+            this.rainMat.uniforms.uTime.value ++
         }
     }
 

@@ -31,9 +31,10 @@ export default class FirstPerson
         this.params = { 
             playerHeight: 1.6, 
             playerSpeed: 0.04, 
-            sprintFactor: 1.5, 
-            gravity: 0.08,
+            sprintFactor: 2, 
+            gravity: 0.04,
             reticle: false,
+            noClipEnabled: false,
             sprintingEnabled: true,
             collisionDistance: 0.5,
             locationHelper: false,
@@ -62,6 +63,14 @@ export default class FirstPerson
         this.arrowControlsEnabled = true
 
         this.camera.rotation.x = Math.PI * 0.05
+
+        this.noClip = false
+        this.savedGravity = this.params.gravity
+        this.savedPlayerSpeed = this.params.playerSpeed
+        this.cameraTilt = null
+
+        this.gravityMultiplier = 0
+        this.gravityMultiplierStarted = false
 
         this.velocity = 0
         this.fpsGravity = 0
@@ -351,6 +360,7 @@ export default class FirstPerson
         }
     }
 
+    // Listen for key presses
     setKeyListener()
     {
         this.keyboard = {}
@@ -505,11 +515,17 @@ export default class FirstPerson
             {
                 this.vector = this.camera.getWorldDirection( this.cameraDirection )
                 this.yAngle = Math.atan2( this.vector.x, this.vector.z )
+                this.camTiltAngle = Math.atan2( this.vector.y, this.vector.x )
                 // Forward ('W')
                 if( this.keyboard[87] || this.forwardArrowPressed === true )
                 {
                     this.camera.position.x -= -Math.sin( this.yAngle ) * this.fpsVelocity
                     this.camera.position.z += Math.cos( this.yAngle ) * this.fpsVelocity
+
+                    if( this.noClip === true )
+                    {
+                        this.camera.position.y += Math.sin( this.camTiltAngle )
+                    }
                 }
                 // Left ('A')
                 if( this.keyboard[65] || this.leftArrowPressed )
@@ -522,6 +538,11 @@ export default class FirstPerson
                 {
                     this.camera.position.x += -Math.sin( this.yAngle ) * this.fpsVelocity
                     this.camera.position.z -= Math.cos( this.yAngle ) * this.fpsVelocity
+
+                    if( this.noClip === true )
+                    {
+                        this.camera.position.y -= Math.sin( this.camTiltAngle )
+                    }
                 }
                 // Right ('D')
                 if( this.keyboard[68] || this.rightArrowPressed )
@@ -543,6 +564,19 @@ export default class FirstPerson
                 else
                 {
                     this.velocity = this.params.playerSpeed
+                }
+                // No Clip ('V')
+                if( this.keyboard[86] && this.params.noClipEnabled === true )
+                {
+                    this.params.gravity = 0
+                    this.params.playerSpeed = 0.4
+                    this.noClip = true
+                }
+                else if( this.params.noClipEnabled === true )
+                {
+                    this.params.gravity = this.savedGravity
+                    this.params.playerSpeed = this.savedPlayerSpeed
+                    this.noClip = false
                 }
                 // Mobile controls
                 if( this.lookLeftArrowPressed )
@@ -612,7 +646,7 @@ export default class FirstPerson
             /**
              *  Collision Detection
              */
-            if( this.experience.world.FPCollisions === true && this.disengaged === false || this.experience.world.FPCollisions === true && this.arrowControlsEnabled === true)
+            if( this.experience.world.FPCollisions === true && this.disengaged === false && this.noClip === false || this.experience.world.FPCollisions === true && this.arrowControlsEnabled === true && this.noClip === false )
             {       
                 // Always raycast the floor so that the player cannot stop midair
                 this.floorCollision()
@@ -623,10 +657,12 @@ export default class FirstPerson
                     if( this.floorDetection[0].distance <= ( this.params.playerHeight + 0.1 ) )
                     {
                         this.camera.position.y = this.floorDetection[0].point.y + this.params.playerHeight
+                        this.gravityMultiplier = 0
                     }
                     else if( this.floorDetection[0].distance > ( this.params.playerHeight + 0.1 ) )
                     {
-                        this.camera.position.y -= this.params.gravity / this.time.currentFps * 60
+                        this.camera.position.y -= (this.params.gravity / this.time.currentFps * 60) + this.gravityMultiplier
+                        this.gravityMultiplier += 0.04
                     }
                 }
 
@@ -719,6 +755,9 @@ export default class FirstPerson
     {
         if( this.debug.active )
         {
+            // Enable No Clip
+            this.params.noClipEnabled = true
+
             this.debugFolder = this.debug.playerDebugFolder
             this.debugFolder.add( this.params, 'resetPosition' )
             // this.locationsFolder = this.debug.locationsFolder

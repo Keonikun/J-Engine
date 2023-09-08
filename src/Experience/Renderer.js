@@ -33,10 +33,10 @@ export default class Renderer extends EventEmitter
         this.params = { 
 
             // RENDER OPTIONS
-            resolution: 0.5,
-            renderDistance: 100,
-            fps: 30,
-            fov: 50,
+            resolution: 0.25,
+            renderDistance: 250,
+            fps: 25,
+            fov: 45,
 
             // ANIMATE THE FOV
             startFov: 60,
@@ -47,10 +47,10 @@ export default class Renderer extends EventEmitter
 
             // BLOOM
             bloom: true,
-            bloomResolution: 1,
-            bloomPower: 0.2,
-            bloomRadius: 0.05,
-            bloomThreshold: 0.01,
+            bloomResolution: 5,
+            bloomPower: 0.15,
+            bloomRadius: 0.005,
+            bloomThreshold: 0.005,
 
             // VHS
             VHS: true,

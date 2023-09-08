@@ -12,32 +12,32 @@ export default [
      * ---------TEXTURES---------
      */
     // simple textures
-    {
-        name: 'rainTexture',
-        type: 'texture',
-        path: '/textures/static/rain.png'
-    },
+    // {
+    //     name: 'rainTexture',
+    //     type: 'texture',
+    //     path: '/textures/static/rain.png'
+    // },
     // texture animations
-    {
-        name: 'waterAnim',
-        type: 'texture',
-        path: '/textures/animated/waterAnim.png'
-    },
+    // {
+    //     name: 'waterAnim',
+    //     type: 'texture',
+    //     path: '/textures/animated/waterAnim.png'
+    // },
     {
         name: 'rainAnim',
         type: 'texture',
         path: '/textures/animated/rainAnim.png'
     },
-    {
-        name: 'staticAnim',
-        type: 'texture',
-        path: '/textures/animated/static.png'
-    },
-    {
-        name: 'rippleAnim',
-        type: 'texture',
-        path: '/textures/animated/ripple.png'
-    },
+    // {
+    //     name: 'staticAnim',
+    //     type: 'texture',
+    //     path: '/textures/animated/static.png'
+    // },
+    // {
+    //     name: 'rippleAnim',
+    //     type: 'texture',
+    //     path: '/textures/animated/ripple.png'
+    // },
     {
         name: 'fanAnim',
         type: 'texture',
@@ -111,41 +111,62 @@ export default [
         type: 'audio',
         path: '/audio/doorClose3.mp3'
     },
+    // project specific sounds
     {
         name: 'water',
         type: 'audio',
         path: '/audio/water.mp3'
     },
     {
-        name: 'wind',
+        name: 'frogs',
         type: 'audio',
-        path: '/audio/wind.mp3'
+        path: '/audio/frogBeepBeep.mp3'
     },
+    {
+        name: 'chimes',
+        type: 'audio',
+        path: '/audio/chimes.mp3'
+    },
+    {
+        name: 'crickets',
+        type: 'audio',
+        path: '/audio/crickets.mp3'
+    },
+    {
+        name: 'fire',
+        type: 'audio',
+        path: '/audio/fire.mp3'
+    },
+    // {
+    //     name: 'wind',
+    //     type: 'audio',
+    //     path: '/audio/wind.mp3'
+    // },
     {
         name: 'bootUp',
         type: 'audio',
         path: '/audio/bootUp.mp3'
     },
-    {
-        name: 'wood',
-        type: 'audio',
-        path: '/audio/wood.mp3'
-    },
-    {
-        name: 'clock',
-        type: 'audio',
-        path: '/audio/clock.mp3'
-    },
-    {
-        name: 'drip',
-        type: 'audio',
-        path: '/audio/drip.mp3'
-    },
-    {
-        name: 'static',
-        type: 'audio',
-        path: '/audio/static.mp3'
-    },
+    // {
+    //     name: 'wood',
+    //     type: 'audio',
+    //     path: '/audio/wood.mp3'
+    // },
+    // {
+    //     name: 'clock',
+    //     type: 'audio',
+    //     path: '/audio/clock.mp3'
+    // },
+    // {
+    //     name: 'drip',
+    //     type: 'audio',
+    //     path: '/audio/drip.mp3'
+    // },
+    // {
+    //     name: 'static',
+    //     type: 'audio',
+    //     path: '/audio/static.mp3'
+    // },
     {
         name: 'elevatorMoving',
         type: 'audio',
@@ -177,12 +198,12 @@ export default [
         type: 'cubeTexture',
         path: 
        [
-            '/textures/static/cubeMap/px.jpg',
-            '/textures/static/cubeMap/nx.jpg',
-            '/textures/static/cubeMap/py.jpg',
-            '/textures/static/cubeMap/ny.jpg',
-            '/textures/static/cubeMap/pz.jpg',
-            '/textures/static/cubeMap/nz.jpg'
+            '/textures/static/cubeMap/1.jpg', // px
+            '/textures/static/cubeMap/2.jpg', // nx
+            '/textures/static/cubeMap/3.jpg', // py
+            '/textures/static/cubeMap/4.jpg', // ny
+            '/textures/static/cubeMap/5.jpg', // pz
+            '/textures/static/cubeMap/6.jpg'  // nz
 
         ]
     },
